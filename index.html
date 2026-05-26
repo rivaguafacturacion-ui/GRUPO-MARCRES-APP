@@ -492,6 +492,12 @@ tickClock();setInterval(tickClock,30000);
 
 buildAlbaranTables();buildChecklistTables();buildElec();initFotos();initFirmas();
 addMatRowFor('simple');addMatRowFor('mant');addMatRowFor('elec');addMatRowFor('hid');
+// Bloquear edición de fecha en móvil
+document.getElementById('c-fecha').addEventListener('touchstart',e=>e.preventDefault(),{passive:false});
+document.getElementById('c-fecha').addEventListener('click',e=>e.preventDefault());
+document.getElementById('a-fecha').addEventListener('touchstart',e=>e.preventDefault(),{passive:false});
+document.getElementById('a-fecha').addEventListener('click',e=>e.preventDefault());
+
 const nowInit=new Date();
 const horaStr=String(nowInit.getHours()).padStart(2,'0')+':'+String(nowInit.getMinutes()).padStart(2,'0');
 const fechaStr=nowInit.toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'});
