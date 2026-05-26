@@ -183,12 +183,16 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       <div class="holded-dropdown" id="c-holded-drop" style="display:none;"></div>
     </div>
     <div class="field-group"><label class="field-label">Dirección</label><input type="text" class="field-input" id="c-direccion" placeholder="Dirección del servicio"></div>
+    <div class="field-group field-row">
+      <div><label class="field-label">Población</label><input type="text" class="field-input" id="c-poblacion" placeholder="Población"></div>
+      <div><label class="field-label">C.P.</label><input type="text" class="field-input" id="c-cp" placeholder="Código postal"></div>
+    </div>
     <div class="field-group"><label class="field-label">Técnico <span style="color:var(--bad)">*</span></label><input type="text" class="field-input" id="c-tecnico" placeholder="Nombre del técnico"></div>
     <div class="field-group">
       <label class="field-label">Corte de agua</label>
       <div class="pill-group">
-        <span class="pill" onclick="selectCorte(this,'Si')">Sí</span>
-        <span class="pill" onclick="selectCorte(this,'No')">No</span>
+        <span class="pill" onclick="selectCorte(this,'c','Si')">Sí</span>
+        <span class="pill" onclick="selectCorte(this,'c','No')">No</span>
       </div>
       <div class="corte-horas" id="c-corte-horas">
         <input type="text" placeholder="Número de horas del corte (ej: 2h)" id="c-corte-horas-val">
@@ -268,8 +272,21 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       <div class="holded-dropdown" id="a-holded-drop" style="display:none;"></div>
     </div>
     <div class="field-group"><label class="field-label">Dirección</label><input type="text" class="field-input" id="a-direccion" placeholder="Dirección del servicio"></div>
-    <div class="field-group"><label class="field-label">Población</label><input type="text" class="field-input" id="a-poblacion" placeholder="Población"></div>
+    <div class="field-group field-row">
+      <div><label class="field-label">Población</label><input type="text" class="field-input" id="a-poblacion" placeholder="Población"></div>
+      <div><label class="field-label">C.P.</label><input type="text" class="field-input" id="a-cp" placeholder="Código postal"></div>
+    </div>
     <div class="field-group"><label class="field-label">Técnico <span style="color:var(--bad)">*</span></label><input type="text" class="field-input" id="a-tecnico" placeholder="Nombre del técnico"></div>
+    <div class="field-group">
+      <label class="field-label">Corte de agua</label>
+      <div class="pill-group">
+        <span class="pill" onclick="selectCorte(this,'a','Si')">Sí</span>
+        <span class="pill" onclick="selectCorte(this,'a','No')">No</span>
+      </div>
+      <div class="corte-horas" id="a-corte-horas">
+        <input type="text" placeholder="Número de horas del corte (ej: 2h)" id="a-corte-horas-val">
+      </div>
+    </div>
   </div>
   <div class="card" style="padding:14px;">
     <label class="field-label" style="margin-bottom:10px;display:block;">Albarán de</label>
@@ -362,7 +379,18 @@ function switchChecklist(tab){document.getElementById('panel-elec').classList.to
 function selectEmpresa(e,prefix){if(prefix==='c'){empresaChecklist=e;document.getElementById('c-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('c-btn-marcres').classList.toggle('active',e==='marcres');}else{empresaAlbaran=e;document.getElementById('a-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('a-btn-marcres').classList.toggle('active',e==='marcres');}document.getElementById('header-empresa-label').textContent=e==='rivagua'?'Rivagua':'Marcres';}
 function selectTipo(t){tipoAlbaran=t;['mantenimiento','aviso','trabajo','guardia'].forEach(x=>document.getElementById('tipo-'+x).classList.toggle('active',x===t));const esMant=t==='mantenimiento';document.getElementById('panel-mantenimiento').classList.toggle('active',esMant);document.getElementById('panel-simple').classList.toggle('active',!esMant);if(!esMant){const labels={aviso:'Aviso',trabajo:'Trabajo',guardia:'Guardia'};document.getElementById('send-simple-btn').textContent='📤 Enviar albarán de '+labels[t];}}
 function toggleSec(id){const sec=document.getElementById(id);const hdr=sec.querySelector('.section-header');const body=sec.querySelector('.section-body');const open=hdr.classList.contains('section-open');hdr.classList.toggle('section-open',!open);body.style.display=open?'none':'block';}
-function selectCorte(el,val){el.parentElement.querySelectorAll('.pill').forEach(p=>p.className='pill');if(val==='Si')el.classList.add('p-bad');else if(val==='Parcial')el.classList.add('p-warn');else el.classList.add('p-ok');el.dataset.group='corte';document.getElementById('c-corte-horas').classList.toggle('show',val==='Si'||val==='Parcial');}
+function selectCorte(el,prefix,val){
+  const yaActivo=el.classList.contains('p-ok')||el.classList.contains('p-bad');
+  el.parentElement.querySelectorAll('.pill').forEach(p=>p.className='pill');
+  if(yaActivo&&el.textContent.trim()===(val==='Si'?'Sí':'No')){
+    document.getElementById(prefix+'-corte-horas').classList.remove('show');
+    return;
+  }
+  if(val==='Si') el.classList.add('p-bad');
+  else el.classList.add('p-ok');
+  el.dataset.group=prefix+'-corte';
+  document.getElementById(prefix+'-corte-horas').classList.toggle('show',val==='Si');
+}
 
 const OK_VALS=['Bien','OK','Sí','Si hay','Favorable','Sin ruido','Sin fugas','No'];
 const WARN_VALS=['Regular','Bajo','Sucio','Desfavorable','Alta','Con ruido','Con fugas'];
@@ -460,7 +488,7 @@ async function enviarChecklist(tipo){
   btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
   const ubicacion=await obtenerUbicacion();
   btn.textContent='⏳ Enviando...';
-  const payload={empresa:empresaChecklist,tipo:tipoNombre,fecha:fechaFmt('c-fecha'),horaInicio:document.getElementById('c-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),cliente,direccion:document.getElementById('c-direccion').value.trim(),poblacion:'',tecnico,corte:getPill('corte'),corteHoras:document.getElementById('c-corte-horas-val')?.value.trim()||'',resumen:buildResumenChecklist(tipo),observaciones:tipo==='elec'?document.getElementById('elec-obs').value.trim():document.getElementById('hid-obs').value.trim(),materiales:getMaterilesFor(tipo),estadoGeneral:null,numDoc:genNumDoc(),fotos:fotosData[tipo].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+tipo),firmaCliente:ausenteState[tipo]?null:getFirmaBase64('cliente-'+tipo),clienteAusente:ausenteState[tipo],motivoAusencia:document.getElementById('ausente-motivo-'+tipo)?.value.trim()||'',presupuestoPdf:pdfData[tipo]||null,ubicacion,horaEnvio:calcHoraFin()};
+  const payload={empresa:empresaChecklist,tipo:tipoNombre,fecha:fechaFmt('c-fecha'),horaInicio:document.getElementById('c-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),cliente,direccion:document.getElementById('c-direccion').value.trim(),poblacion:document.getElementById('c-poblacion').value.trim(),cp:document.getElementById('c-cp').value.trim(),tecnico,corte:getPill('c-corte'),corteHoras:document.getElementById('c-corte-horas-val')?.value.trim()||'',resumen:buildResumenChecklist(tipo),observaciones:tipo==='elec'?document.getElementById('elec-obs').value.trim():document.getElementById('hid-obs').value.trim(),materiales:getMaterilesFor(tipo),estadoGeneral:null,numDoc:genNumDoc(),fotos:fotosData[tipo].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+tipo),firmaCliente:ausenteState[tipo]?null:getFirmaBase64('cliente-'+tipo),clienteAusente:ausenteState[tipo],motivoAusencia:document.getElementById('ausente-motivo-'+tipo)?.value.trim()||'',presupuestoPdf:pdfData[tipo]||null,ubicacion,horaEnvio:calcHoraFin()};
   try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal();else throw new Error(data.error||'Error desconocido');}catch(err){showToast('❌ Error: '+(err.message||'sin conexión'),'error');btn.disabled=false;btn.textContent=`📤 Enviar ${tipoNombre.toLowerCase()}`;}
 }
 
@@ -482,7 +510,7 @@ async function enviarAlbaran(panel){
   btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
   const ubicacion=await obtenerUbicacion();
   btn.textContent='⏳ Generando PDF...';
-  const payload={empresa:empresaAlbaran,tipo:tipoLabel,fecha:fechaFmt('a-fecha'),horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),tecnico,estadoGeneral:getPill('estado-general'),resumen:isMant?buildResumenMant():'',observaciones:isMant?document.getElementById('mant-obs').value.trim():document.getElementById('simple-obs').value.trim(),incidencia:isMant?document.getElementById('mant-incidencia').value.trim():'',materiales:getMaterilesFor(pKey),numDoc:genNumDoc(),fotos:fotosData[fotoKey].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+pKey),firmaCliente:ausenteState[pKey]?null:getFirmaBase64('cliente-'+pKey),clienteAusente:ausenteState[pKey],motivoAusencia:document.getElementById('ausente-motivo-'+pKey)?.value.trim()||'',presupuestoPdf:pdfData[pKey]||null,ubicacion,horaEnvio:calcHoraFin()};
+  const payload={empresa:empresaAlbaran,tipo:tipoLabel,fecha:fechaFmt('a-fecha'),horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,corte:getPill('a-corte'),corteHoras:document.getElementById('a-corte-horas-val')?.value.trim()||'',estadoGeneral:getPill('estado-general'),resumen:isMant?buildResumenMant():'',observaciones:isMant?document.getElementById('mant-obs').value.trim():document.getElementById('simple-obs').value.trim(),incidencia:isMant?document.getElementById('mant-incidencia').value.trim():'',materiales:getMaterilesFor(pKey),numDoc:genNumDoc(),fotos:fotosData[fotoKey].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+pKey),firmaCliente:ausenteState[pKey]?null:getFirmaBase64('cliente-'+pKey),clienteAusente:ausenteState[pKey],motivoAusencia:document.getElementById('ausente-motivo-'+pKey)?.value.trim()||'',presupuestoPdf:pdfData[pKey]||null,ubicacion,horaEnvio:calcHoraFin()};
   try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal();else throw new Error(data.error||'Error desconocido');}catch(err){showToast('❌ Error: '+(err.message||'sin conexión'),'error');btn.disabled=false;btn.textContent='📤 Enviar '+tipoLabel;}
 }
 
