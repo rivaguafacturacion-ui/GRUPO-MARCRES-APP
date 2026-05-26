@@ -20,8 +20,6 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:60px;}
-
-/* PANTALLA FINAL */
 .pantalla-final{display:none;position:fixed;inset:0;z-index:9999;background:var(--accent);flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;}
 .pantalla-final.show{display:flex;}
 .pf-check{font-size:80px;margin-bottom:20px;animation:bounce .5s ease;}
@@ -29,30 +27,20 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .pf-titulo{color:#fff;font-size:28px;font-weight:700;margin-bottom:12px;}
 .pf-sub{color:rgba(255,255,255,.75);font-size:16px;line-height:1.6;margin-bottom:24px;}
 .pf-marca{color:var(--celeste);font-size:13px;font-weight:600;letter-spacing:1px;text-transform:uppercase;}
-
-/* HEADER */
 .app-header{background:var(--accent);padding:13px 16px 11px;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,.28);}
 .header-left{display:flex;align-items:center;gap:10px;}
 .header-brand{color:#fff;font-size:14px;font-weight:700;}
 .header-sub{color:rgba(255,255,255,.65);font-size:11px;}
 .header-hora{color:#fff;font-family:var(--mono);font-size:13px;font-weight:500;background:rgba(255,255,255,.13);padding:4px 10px;border-radius:20px;}
-
-/* NAV */
 .app-nav{display:grid;grid-template-columns:1fr 1fr;background:var(--surface2);border-bottom:1px solid var(--border);position:sticky;top:58px;z-index:90;}
 .nav-btn{padding:12px 8px;border:none;background:transparent;font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer;color:var(--muted);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;border-bottom:2px solid transparent;}
 .nav-btn.active{color:var(--accent);font-weight:700;background:var(--surface);border-bottom-color:var(--accent);}
-
-/* LAYOUT */
 .main{padding:14px;max-width:600px;margin:0 auto;}
 .page-title{font-size:15px;font-weight:700;color:var(--accent);text-align:center;margin-bottom:12px;}
-.app-panel{display:none;} .app-panel.active{display:block;}
-
-/* EMPRESA */
+.app-panel{display:none;}.app-panel.active{display:block;}
 .empresa-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
 .empresa-btn{padding:14px 8px;border-radius:var(--radius-sm);border:2px solid var(--accent);background:#fff;font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;text-align:center;color:var(--accent);transition:all .15s;}
 .empresa-btn.active{background:var(--accent);color:#fff;}
-
-/* CARD */
 .card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);margin-bottom:10px;overflow:hidden;}
 .field-group{padding:11px 14px;border-bottom:1px solid var(--border);}
 .field-group:last-child{border-bottom:none;}
@@ -61,58 +49,40 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .field-input::placeholder{color:#ccc;}
 input[type="date"].field-input{font-size:14px;}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-
-/* TIPO */
 .tipo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
 .tipo-btn{padding:12px 8px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;text-align:center;color:var(--muted);transition:all .15s;}
 .tipo-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
-
-/* PANEL TABS */
 .panel-tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-bottom:10px;}
 .ptab-btn{padding:12px 8px;border:none;background:transparent;font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer;color:var(--muted);transition:all .15s;}
 .ptab-btn.active{background:var(--accent);color:#fff;}
-
-/* ACCORDION */
 .section-header{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;cursor:pointer;user-select:none;background:var(--surface);}
 .sec-title{font-size:13px;font-weight:600;color:var(--text);}
 .chevron{font-size:18px;color:var(--muted);transition:transform .2s;display:inline-block;}
 .section-open .chevron{transform:rotate(180deg);}
 .section-body{display:none;border-top:1px solid var(--border);}
 .section-open + .section-body{display:block;}
-
-/* PILLS */
 .pill-group{display:flex;gap:6px;flex-wrap:wrap;}
 .pill{padding:6px 12px;border-radius:99px;border:1.5px solid var(--border);font-family:var(--font);font-size:12px;font-weight:500;cursor:pointer;background:var(--surface);color:var(--muted);transition:all .12s;white-space:nowrap;}
 .pill.p-ok{background:var(--ok-bg);color:var(--ok);border-color:var(--ok);}
 .pill.p-warn{background:var(--warn-bg);color:var(--warn);border-color:var(--warn);}
 .pill.p-bad{background:var(--bad-bg);color:var(--bad);border-color:var(--bad);}
-
-/* TABLES */
 .hid-table-wrap{overflow-x:auto;}
 table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 .hid-table th{background:var(--surface2);padding:8px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap;}
 .hid-table td{padding:9px 6px;border-bottom:1px solid var(--border);vertical-align:middle;}
 .hid-table tr:last-child td{border-bottom:none;}
 .row-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;min-width:80px;}
-
-/* ELEC */
 .elec-item{padding:11px 14px;border-bottom:1px solid var(--border);}
 .elec-item:last-child{border-bottom:none;}
 .elec-item-label{font-size:13px;color:var(--text);margin-bottom:8px;line-height:1.4;}
-
-/* CHECKS */
 .control-grid{display:grid;grid-template-columns:1fr 1fr;}
 .check-item{display:flex;align-items:flex-start;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;}
 .check-item:nth-child(odd){border-right:1px solid var(--border);}
 .check-item input[type=checkbox]{margin-top:2px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
 .check-item label{font-size:12px;color:var(--text);line-height:1.35;cursor:pointer;}
-
-/* OBS */
 .obs-section{padding:12px 14px;}
 .obs-textarea{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-family:var(--font);font-size:14px;color:var(--text);background:var(--surface);resize:vertical;min-height:90px;outline:none;}
 .obs-textarea:focus{border-color:var(--accent);}
-
-/* MATERIALES */
 .mat-table{width:100%;border-collapse:collapse;}
 .mat-table th{background:var(--surface2);padding:7px 8px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);border-bottom:1px solid var(--border);}
 .mat-table td{padding:7px 6px;border-bottom:1px solid var(--border);vertical-align:middle;}
@@ -121,9 +91,6 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 .add-row-btn{margin:10px 14px;padding:9px 14px;border:1.5px dashed var(--border);border-radius:var(--radius-sm);background:transparent;font-family:var(--font);font-size:13px;color:var(--muted);cursor:pointer;width:calc(100% - 28px);}
 .add-row-btn:hover{border-color:var(--accent);color:var(--accent);}
 .del-row-btn{background:none;border:none;color:var(--bad);font-size:17px;cursor:pointer;padding:0 4px;}
-.mat-total-row td{font-weight:700;color:var(--accent);background:var(--surface2);border-top:2px solid var(--accent);}
-
-/* FOTOS */
 .fotos-section{padding:14px;}
 .fotos-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:8px;}
 .foto-slot{aspect-ratio:1;border-radius:8px;border:1.5px dashed var(--border);background:var(--surface2);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:all .15s;}
@@ -135,41 +102,30 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 .foto-input-hidden{display:none;}
 .fotos-aviso{font-size:11px;color:var(--bad);font-weight:600;text-align:center;padding:6px;background:var(--bad-bg);border-radius:var(--radius-sm);margin-top:4px;display:none;}
 .fotos-aviso.show{display:block;}
-
-/* FIRMA */
 .firma-section{padding:14px;}
-.firma-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+.firma-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;}
 .firma-canvas{width:100%;height:140px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:#fff;touch-action:none;cursor:crosshair;display:block;}
 .firma-canvas.signed{border-color:var(--ok);}
 .firma-btns{display:flex;gap:8px;margin-top:6px;}
 .firma-clear{padding:6px 14px;border:1.5px solid var(--border);border-radius:99px;background:transparent;font-family:var(--font);font-size:12px;color:var(--muted);cursor:pointer;}
-.firma-clear:hover{border-color:var(--bad);color:var(--bad);}
 .cliente-ausente-btn{padding:6px 14px;border:1.5px solid var(--warn);border-radius:99px;background:var(--warn-bg);font-family:var(--font);font-size:12px;color:var(--warn);cursor:pointer;font-weight:600;}
 .cliente-ausente-btn.active{background:var(--warn);color:#fff;}
 .firma-ausente-obs{margin-top:8px;display:none;}
 .firma-ausente-obs.show{display:block;}
-
-/* CORTE AGUA */
 .corte-horas{margin-top:8px;display:none;}
 .corte-horas.show{display:block;}
 .corte-horas input{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;font-family:var(--font);font-size:14px;color:var(--text);outline:none;}
-.corte-horas input:focus{border-color:var(--accent);}
-
-/* SEND */
+.pdf-upload-area{padding:0 14px 12px;}
+.pdf-upload-label{display:flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px dashed var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;}
 .send-btn{width:100%;padding:16px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-family:var(--font);font-size:16px;font-weight:600;cursor:pointer;margin-top:4px;transition:all .15s;}
 .send-btn:hover{background:var(--accent2);}
 .send-btn:active{transform:scale(.98);}
 .send-btn:disabled{background:var(--muted);cursor:not-allowed;}
-
-/* TOAST */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1A1916;color:#fff;padding:12px 22px;border-radius:99px;font-size:14px;font-weight:500;transition:transform .3s;z-index:999;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.3);}
 .toast.show{transform:translateX(-50%) translateY(0);}
 .toast.success{background:var(--ok);}
 .toast.error{background:var(--bad);}
-
-.panel{display:none;} .panel.active{display:block;}
-
-/* HOLDED */
+.panel{display:none;}.panel.active{display:block;}
 .cliente-wrap{position:relative;}
 .holded-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:200;background:var(--surface);border:1.5px solid var(--accent);border-radius:var(--radius-sm);overflow:hidden;box-shadow:0 6px 20px rgba(24,69,149,.15);}
 .holded-item{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .1s;}
@@ -208,7 +164,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
   <button class="nav-btn" id="nav-albaran" onclick="switchApp('albaran')"><span>📋</span> Albarán</button>
 </div>
 
-<!-- ══ CHECKLIST ══ -->
+<!-- CHECKLIST -->
 <div id="app-checklist" class="app-panel active">
 <div class="main">
   <p class="page-title">Checklist Técnico</p>
@@ -240,145 +196,63 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       </div>
     </div>
   </div>
-
   <div class="panel-tabs">
     <button class="ptab-btn active" id="ptab-elec" onclick="switchChecklist('elec')">⚡ Eléctrico</button>
     <button class="ptab-btn" id="ptab-hid" onclick="switchChecklist('hid')">💧 Hidráulico</button>
   </div>
 
-  <!-- PANEL ELÉCTRICO -->
+  <!-- ELÉCTRICO -->
   <div id="panel-elec" class="panel active">
-    <div class="card" id="csec-elec-items">
-      <div class="section-header section-open" onclick="toggleSec('csec-elec-items')"><span class="sec-title">Instalación eléctrica</span><span class="chevron">⌄</span></div>
-      <div class="section-body" style="display:block;" id="elec-items-body"></div>
-    </div>
-    <div class="card" id="csec-elec-obs">
-      <div class="section-header" onclick="toggleSec('csec-elec-obs')"><span class="sec-title">Trabajo realizado</span><span class="chevron">⌄</span></div>
-      <div class="section-body"><div class="obs-section"><textarea class="obs-textarea" id="elec-trabajo" placeholder="Describe el trabajo realizado..."></textarea></div></div>
-    </div>
-    <div class="card" id="csec-elec-herr">
-      <div class="section-header" onclick="toggleSec('csec-elec-herr')"><span class="sec-title">Herramientas utilizadas</span><span class="chevron">⌄</span></div>
-      <div class="section-body"><div class="obs-section"><textarea class="obs-textarea" id="elec-herramientas" placeholder="Herramientas y equipos usados..."></textarea></div></div>
-    </div>
-    <div class="card" id="csec-elec-notas">
-      <div class="section-header section-open" onclick="toggleSec('csec-elec-notas')"><span class="sec-title">Observaciones</span><span class="chevron">⌄</span></div>
-      <div class="section-body" style="display:block;"><div class="obs-section"><textarea class="obs-textarea" id="elec-obs" placeholder="Observaciones generales..."></textarea></div></div>
-    </div>
+    <div class="card" id="csec-elec-items"><div class="section-header section-open" onclick="toggleSec('csec-elec-items')"><span class="sec-title">Instalación eléctrica</span><span class="chevron">⌄</span></div><div class="section-body" style="display:block;" id="elec-items-body"></div></div>
+    <div class="card" id="csec-elec-obs"><div class="section-header" onclick="toggleSec('csec-elec-obs')"><span class="sec-title">Trabajo realizado</span><span class="chevron">⌄</span></div><div class="section-body"><div class="obs-section"><textarea class="obs-textarea" id="elec-trabajo" placeholder="Describe el trabajo realizado..."></textarea></div></div></div>
+    <div class="card" id="csec-elec-herr"><div class="section-header" onclick="toggleSec('csec-elec-herr')"><span class="sec-title">Herramientas utilizadas</span><span class="chevron">⌄</span></div><div class="section-body"><div class="obs-section"><textarea class="obs-textarea" id="elec-herramientas" placeholder="Herramientas y equipos usados..."></textarea></div></div></div>
+    <div class="card" id="csec-elec-notas"><div class="section-header section-open" onclick="toggleSec('csec-elec-notas')"><span class="sec-title">Observaciones</span><span class="chevron">⌄</span></div><div class="section-body" style="display:block;"><div class="obs-section"><textarea class="obs-textarea" id="elec-obs" placeholder="Observaciones generales..."></textarea></div></div></div>
     <div class="card" id="csec-mat-elec">
       <div class="section-header" onclick="toggleSec('csec-mat-elec')"><span class="sec-title">Presupuesto Materiales</span><span class="chevron">⌄</span></div>
       <div class="section-body">
         <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-elec"></tbody></table></div>
         <div id="mat-total-display-elec" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-elec">0.00 €</span></div>
         <button class="add-row-btn" onclick="addMatRowFor('elec')">+ Añadir material</button>
-        <div style="padding:0 14px 12px;">
-          <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">📎 Adjuntar PDF de presupuesto (opcional)</div>
-          <label id="pdf-label-elec" style="display:flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px dashed var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;">
-            <span style="font-size:20px;">📄</span>
-            <span id="pdf-name-elec" style="font-size:13px;color:var(--muted);">Seleccionar PDF...</span>
-            <input type="file" accept="application/pdf" style="display:none;" id="pdf-input-elec" onchange="cargarPdf(this,'elec')">
-          </label>
+        <div class="pdf-upload-area">
+          <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">📎 Adjuntar PDF presupuesto (opcional)</div>
+          <label class="pdf-upload-label" id="pdf-label-elec"><span style="font-size:20px;">📄</span><span id="pdf-name-elec" style="font-size:13px;color:var(--muted);">Seleccionar PDF...</span><input type="file" accept="application/pdf" style="display:none;" id="pdf-input-elec" onchange="cargarPdf(this,'elec')"></label>
           <button id="pdf-clear-elec" onclick="borrarPdf('elec')" style="display:none;margin-top:6px;padding:4px 12px;border:1px solid var(--bad);border-radius:99px;background:var(--bad-bg);color:var(--bad);font-size:12px;cursor:pointer;font-family:var(--font);">✕ Quitar PDF</button>
         </div>
       </div>
     </div>
-    <div class="card" id="csec-fotos-elec">
-      <div class="section-header section-open" onclick="toggleSec('csec-fotos-elec')"><span class="sec-title">📷 Fotos <span style="font-size:11px;color:var(--bad);">(5 obligatorias)</span></span><span><span id="cnt-elec" style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:99px;background:var(--bad-bg);color:var(--bad);border:1px solid var(--bad);">0/5</span> <span class="chevron">⌄</span></span></div>
-      <div class="section-body" style="display:block;"><div class="fotos-section"><div class="fotos-grid" id="fotos-grid-elec"></div><input type="file" accept="image/*" capture="environment" class="foto-input-hidden" id="foto-input-elec"><div class="fotos-aviso" id="fotos-aviso-elec">⚠ Debes adjuntar las 5 fotografías para enviar</div></div></div>
-    </div>
-    <!-- FIRMAS ELEC -->
-    <div class="card">
-      <div class="section-header section-open" onclick="toggleSec('sec-firma-elec')"><span class="sec-title">✍️ Firmas</span><span class="chevron">⌄</span></div>
-      <div class="section-body" id="sec-firma-elec" style="display:block;">
-        <div class="firma-section">
-          <div class="firma-label">Firma del técnico <span style="color:var(--bad);font-size:10px;">*obligatoria</span></div>
-          <canvas class="firma-canvas" id="firma-tecnico-elec"></canvas>
-          <div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('tecnico-elec')">🗑 Borrar</button></div>
-        </div>
-        <div class="firma-section" style="border-top:1px solid var(--border);">
-          <div class="firma-label">Firma del cliente <span style="color:var(--bad);font-size:10px;">*obligatoria</span>
-            <button class="cliente-ausente-btn" id="btn-ausente-elec" onclick="toggleAusente('elec')">Cliente ausente</button>
-          </div>
-          <canvas class="firma-canvas" id="firma-cliente-elec"></canvas>
-          <div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('cliente-elec')">🗑 Borrar</button></div>
-          <div class="firma-ausente-obs" id="ausente-obs-elec">
-            <textarea class="obs-textarea" id="ausente-motivo-elec" placeholder="Motivo por el que el cliente no puede firmar..." style="margin-top:8px;"></textarea>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="card" id="csec-fotos-elec"><div class="section-header section-open" onclick="toggleSec('csec-fotos-elec')"><span class="sec-title">📷 Fotos <span style="font-size:11px;color:var(--bad);">(5 obligatorias)</span></span><span><span id="cnt-elec" style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:99px;background:var(--bad-bg);color:var(--bad);border:1px solid var(--bad);">0/5</span> <span class="chevron">⌄</span></span></div><div class="section-body" style="display:block;"><div class="fotos-section"><div class="fotos-grid" id="fotos-grid-elec"></div><input type="file" accept="image/*" capture="environment" class="foto-input-hidden" id="foto-input-elec"><div class="fotos-aviso" id="fotos-aviso-elec">⚠ Debes adjuntar las 5 fotografías para enviar</div></div></div></div>
+    <div class="card"><div class="section-header section-open" onclick="toggleSec('sec-firma-elec')"><span class="sec-title">✍️ Firmas</span><span class="chevron">⌄</span></div><div class="section-body" id="sec-firma-elec" style="display:block;"><div class="firma-section"><div class="firma-label">Firma del técnico <span style="color:var(--bad);font-size:10px;">*obligatoria</span></div><canvas class="firma-canvas" id="firma-tecnico-elec"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('tecnico-elec')">🗑 Borrar</button></div></div><div class="firma-section" style="border-top:1px solid var(--border);"><div class="firma-label">Firma del cliente <span style="color:var(--bad);font-size:10px;">*obligatoria</span><button class="cliente-ausente-btn" id="btn-ausente-elec" onclick="toggleAusente('elec')">Cliente ausente</button></div><canvas class="firma-canvas" id="firma-cliente-elec"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('cliente-elec')">🗑 Borrar</button></div><div class="firma-ausente-obs" id="ausente-obs-elec"><textarea class="obs-textarea" id="ausente-motivo-elec" placeholder="Motivo por el que el cliente no puede firmar..." style="margin-top:8px;"></textarea></div></div></div></div>
     <button class="send-btn" id="send-elec-btn" onclick="enviarChecklist('elec')">📤 Enviar checklist eléctrico</button>
   </div>
 
-  <!-- PANEL HIDRÁULICO -->
+  <!-- HIDRÁULICO -->
   <div id="panel-hid" class="panel">
-    <div class="card" id="csec-hid-bomb">
-      <div class="section-header section-open" onclick="toggleSec('csec-hid-bomb')"><span class="sec-title">Bombas</span><span class="chevron">⌄</span></div>
-      <div class="section-body" style="display:block;"><div class="hid-table-wrap"><table class="hid-table"><thead><tr><th>Equipo</th><th>Func.</th><th>Ruido</th><th>Fugas</th><th>Estado</th></tr></thead><tbody id="htb-bomb"></tbody></table></div></div>
-    </div>
-    <div class="card" id="csec-hid-dep">
-      <div class="section-header" onclick="toggleSec('csec-hid-dep')"><span class="sec-title">Depósitos</span><span class="chevron">⌄</span></div>
-      <div class="section-body"><div class="hid-table-wrap"><table class="hid-table"><thead><tr><th>Elemento</th><th>Nivel</th><th>Limpieza</th><th>Llenado</th><th>Estado</th></tr></thead><tbody id="htb-dep"></tbody></table></div></div>
-    </div>
-    <div class="card" id="csec-hid-desc">
-      <div class="section-header" onclick="toggleSec('csec-hid-desc')"><span class="sec-title">Descalcificadores</span><span class="chevron">⌄</span></div>
-      <div class="section-body"><div class="hid-table-wrap"><table class="hid-table"><thead><tr><th>Equipo</th><th>Func.</th><th>Ruido</th><th>Fugas</th><th>Estado</th></tr></thead><tbody id="htb-desc"></tbody></table></div></div>
-    </div>
-    <div class="card" id="csec-hid-achique">
-      <div class="section-header" onclick="toggleSec('csec-hid-achique')"><span class="sec-title">Bombas de achique</span><span class="chevron">⌄</span></div>
-      <div class="section-body"><div class="hid-table-wrap"><table class="hid-table"><thead><tr><th>Equipo</th><th>Func.</th><th>Ruido</th><th>Fugas</th><th>Estado</th></tr></thead><tbody id="htb-achique"></tbody></table></div></div>
-    </div>
-    <div class="card" id="csec-hid-obs">
-      <div class="section-header section-open" onclick="toggleSec('csec-hid-obs')"><span class="sec-title">Observaciones</span><span class="chevron">⌄</span></div>
-      <div class="section-body" style="display:block;"><div class="obs-section"><textarea class="obs-textarea" id="hid-obs" placeholder="Observaciones del sistema hidráulico..."></textarea></div></div>
-    </div>
+    <div class="card" id="csec-hid-bomb"><div class="section-header section-open" onclick="toggleSec('csec-hid-bomb')"><span class="sec-title">Bombas</span><span class="chevron">⌄</span></div><div class="section-body" style="display:block;"><div class="hid-table-wrap"><table class="hid-table"><thead><tr><th>Equipo</th><th>Func.</th><th>Ruido</th><th>Fugas</th><th>Estado</th></tr></thead><tbody id="htb-bomb"></tbody></table></div></div></div>
+    <div class="card" id="csec-hid-dep"><div class="section-header" onclick="toggleSec('csec-hid-dep')"><span class="sec-title">Depósitos</span><span class="chevron">⌄</span></div><div class="section-body"><div class="hid-table-wrap"><table class="hid-table"><thead><tr><th>Elemento</th><th>Nivel</th><th>Limpieza</th><th>Llenado</th><th>Estado</th></tr></thead><tbody id="htb-dep"></tbody></table></div></div></div>
+    <div class="card" id="csec-hid-desc"><div class="section-header" onclick="toggleSec('csec-hid-desc')"><span class="sec-title">Descalcificadores</span><span class="chevron">⌄</span></div><div class="section-body"><div class="hid-table-wrap"><table class="hid-table"><thead><tr><th>Equipo</th><th>Func.</th><th>Ruido</th><th>Fugas</th><th>Estado</th></tr></thead><tbody id="htb-desc"></tbody></table></div></div></div>
+    <div class="card" id="csec-hid-achique"><div class="section-header" onclick="toggleSec('csec-hid-achique')"><span class="sec-title">Bombas de achique</span><span class="chevron">⌄</span></div><div class="section-body"><div class="hid-table-wrap"><table class="hid-table"><thead><tr><th>Equipo</th><th>Func.</th><th>Ruido</th><th>Fugas</th><th>Estado</th></tr></thead><tbody id="htb-achique"></tbody></table></div></div></div>
+    <div class="card" id="csec-hid-obs"><div class="section-header section-open" onclick="toggleSec('csec-hid-obs')"><span class="sec-title">Observaciones</span><span class="chevron">⌄</span></div><div class="section-body" style="display:block;"><div class="obs-section"><textarea class="obs-textarea" id="hid-obs" placeholder="Observaciones del sistema hidráulico..."></textarea></div></div></div>
     <div class="card" id="csec-mat-hid">
       <div class="section-header" onclick="toggleSec('csec-mat-hid')"><span class="sec-title">Presupuesto Materiales</span><span class="chevron">⌄</span></div>
       <div class="section-body">
         <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-hid"></tbody></table></div>
         <div id="mat-total-display-hid" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-hid">0.00 €</span></div>
         <button class="add-row-btn" onclick="addMatRowFor('hid')">+ Añadir material</button>
-        <div style="padding:0 14px 12px;">
-          <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">📎 Adjuntar PDF de presupuesto (opcional)</div>
-          <label id="pdf-label-hid" style="display:flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px dashed var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;">
-            <span style="font-size:20px;">📄</span>
-            <span id="pdf-name-hid" style="font-size:13px;color:var(--muted);">Seleccionar PDF...</span>
-            <input type="file" accept="application/pdf" style="display:none;" id="pdf-input-hid" onchange="cargarPdf(this,'hid')">
-          </label>
+        <div class="pdf-upload-area">
+          <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">📎 Adjuntar PDF presupuesto (opcional)</div>
+          <label class="pdf-upload-label" id="pdf-label-hid"><span style="font-size:20px;">📄</span><span id="pdf-name-hid" style="font-size:13px;color:var(--muted);">Seleccionar PDF...</span><input type="file" accept="application/pdf" style="display:none;" id="pdf-input-hid" onchange="cargarPdf(this,'hid')"></label>
           <button id="pdf-clear-hid" onclick="borrarPdf('hid')" style="display:none;margin-top:6px;padding:4px 12px;border:1px solid var(--bad);border-radius:99px;background:var(--bad-bg);color:var(--bad);font-size:12px;cursor:pointer;font-family:var(--font);">✕ Quitar PDF</button>
         </div>
       </div>
     </div>
-    <div class="card" id="csec-fotos-hid">
-      <div class="section-header section-open" onclick="toggleSec('csec-fotos-hid')"><span class="sec-title">📷 Fotos <span style="font-size:11px;color:var(--bad);">(5 obligatorias)</span></span><span><span id="cnt-hid" style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:99px;background:var(--bad-bg);color:var(--bad);border:1px solid var(--bad);">0/5</span> <span class="chevron">⌄</span></span></div>
-      <div class="section-body" style="display:block;"><div class="fotos-section"><div class="fotos-grid" id="fotos-grid-hid"></div><input type="file" accept="image/*" capture="environment" class="foto-input-hidden" id="foto-input-hid"><div class="fotos-aviso" id="fotos-aviso-hid">⚠ Debes adjuntar las 5 fotografías para enviar</div></div></div>
-    </div>
-    <!-- FIRMAS HID -->
-    <div class="card">
-      <div class="section-header section-open" onclick="toggleSec('sec-firma-hid')"><span class="sec-title">✍️ Firmas</span><span class="chevron">⌄</span></div>
-      <div class="section-body" id="sec-firma-hid" style="display:block;">
-        <div class="firma-section">
-          <div class="firma-label">Firma del técnico <span style="color:var(--bad);font-size:10px;">*obligatoria</span></div>
-          <canvas class="firma-canvas" id="firma-tecnico-hid"></canvas>
-          <div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('tecnico-hid')">🗑 Borrar</button></div>
-        </div>
-        <div class="firma-section" style="border-top:1px solid var(--border);">
-          <div class="firma-label">Firma del cliente <span style="color:var(--bad);font-size:10px;">*obligatoria</span>
-            <button class="cliente-ausente-btn" id="btn-ausente-hid" onclick="toggleAusente('hid')">Cliente ausente</button>
-          </div>
-          <canvas class="firma-canvas" id="firma-cliente-hid"></canvas>
-          <div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('cliente-hid')">🗑 Borrar</button></div>
-          <div class="firma-ausente-obs" id="ausente-obs-hid">
-            <textarea class="obs-textarea" id="ausente-motivo-hid" placeholder="Motivo por el que el cliente no puede firmar..." style="margin-top:8px;"></textarea>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="card" id="csec-fotos-hid"><div class="section-header section-open" onclick="toggleSec('csec-fotos-hid')"><span class="sec-title">📷 Fotos <span style="font-size:11px;color:var(--bad);">(5 obligatorias)</span></span><span><span id="cnt-hid" style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:99px;background:var(--bad-bg);color:var(--bad);border:1px solid var(--bad);">0/5</span> <span class="chevron">⌄</span></span></div><div class="section-body" style="display:block;"><div class="fotos-section"><div class="fotos-grid" id="fotos-grid-hid"></div><input type="file" accept="image/*" capture="environment" class="foto-input-hidden" id="foto-input-hid"><div class="fotos-aviso" id="fotos-aviso-hid">⚠ Debes adjuntar las 5 fotografías para enviar</div></div></div></div>
+    <div class="card"><div class="section-header section-open" onclick="toggleSec('sec-firma-hid')"><span class="sec-title">✍️ Firmas</span><span class="chevron">⌄</span></div><div class="section-body" id="sec-firma-hid" style="display:block;"><div class="firma-section"><div class="firma-label">Firma del técnico <span style="color:var(--bad);font-size:10px;">*obligatoria</span></div><canvas class="firma-canvas" id="firma-tecnico-hid"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('tecnico-hid')">🗑 Borrar</button></div></div><div class="firma-section" style="border-top:1px solid var(--border);"><div class="firma-label">Firma del cliente <span style="color:var(--bad);font-size:10px;">*obligatoria</span><button class="cliente-ausente-btn" id="btn-ausente-hid" onclick="toggleAusente('hid')">Cliente ausente</button></div><canvas class="firma-canvas" id="firma-cliente-hid"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('cliente-hid')">🗑 Borrar</button></div><div class="firma-ausente-obs" id="ausente-obs-hid"><textarea class="obs-textarea" id="ausente-motivo-hid" placeholder="Motivo por el que el cliente no puede firmar..." style="margin-top:8px;"></textarea></div></div></div></div>
     <button class="send-btn" id="send-hid-btn" onclick="enviarChecklist('hid')">📤 Enviar checklist hidráulico</button>
   </div>
 </div>
 </div>
 
-<!-- ══ ALBARÁN ══ -->
+<!-- ALBARÁN -->
 <div id="app-albaran" class="app-panel">
 <div class="main">
   <p class="page-title">Parte de Trabajo</p>
@@ -418,21 +292,9 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     </div>
   </div>
 
-  <!-- PANEL MANTENIMIENTO -->
+  <!-- MANTENIMIENTO -->
   <div id="panel-mantenimiento" class="panel">
-    <div class="card" id="sec-ctrl">
-      <div class="section-header section-open" onclick="toggleSec('sec-ctrl')"><span class="sec-title">Control funcional</span><span class="chevron">⌄</span></div>
-      <div class="section-body" style="display:block;">
-        <div class="control-grid">
-          <div class="check-item"><input type="checkbox" id="c0"><label for="c0">Arranque automático correcto</label></div>
-          <div class="check-item"><input type="checkbox" id="c1"><label for="c1">Alternancia de bombas operativa</label></div>
-          <div class="check-item"><input type="checkbox" id="c2"><label for="c2">Paro correcto por presión</label></div>
-          <div class="check-item"><input type="checkbox" id="c3"><label for="c3">Sin golpes de ariete</label></div>
-          <div class="check-item"><input type="checkbox" id="c4"><label for="c4">Presión estable en servicio</label></div>
-          <div class="check-item"><input type="checkbox" id="c5"><label for="c5">Tiempo de respuesta correcto</label></div>
-        </div>
-      </div>
-    </div>
+    <div class="card" id="sec-ctrl"><div class="section-header section-open" onclick="toggleSec('sec-ctrl')"><span class="sec-title">Control funcional</span><span class="chevron">⌄</span></div><div class="section-body" style="display:block;"><div class="control-grid"><div class="check-item"><input type="checkbox" id="c0"><label for="c0">Arranque automático correcto</label></div><div class="check-item"><input type="checkbox" id="c1"><label for="c1">Alternancia de bombas operativa</label></div><div class="check-item"><input type="checkbox" id="c2"><label for="c2">Paro correcto por presión</label></div><div class="check-item"><input type="checkbox" id="c3"><label for="c3">Sin golpes de ariete</label></div><div class="check-item"><input type="checkbox" id="c4"><label for="c4">Presión estable en servicio</label></div><div class="check-item"><input type="checkbox" id="c5"><label for="c5">Tiempo de respuesta correcto</label></div></div></div></div>
     <div class="card" id="sec-dep"><div class="section-header" onclick="toggleSec('sec-dep')"><span class="sec-title">Depósitos</span><span class="chevron">⌄</span></div><div class="section-body"><div class="hid-table-wrap"><table class="hid-table"><thead><tr><th>Elemento</th><th>Nivel</th><th>Limpieza</th><th>Llenado</th><th>Estado</th></tr></thead><tbody id="tb-dep"></tbody></table></div></div></div>
     <div class="card" id="sec-boyas"><div class="section-header" onclick="toggleSec('sec-boyas')"><span class="sec-title">Boyas</span><span class="chevron">⌄</span></div><div class="section-body"><div class="hid-table-wrap"><table class="hid-table"><thead><tr><th>Elemento</th><th>Existencia</th><th>Estado</th></tr></thead><tbody id="tb-boyas"></tbody></table></div></div></div>
     <div class="card" id="sec-bomb"><div class="section-header section-open" onclick="toggleSec('sec-bomb')"><span class="sec-title">Bombas</span><span class="chevron">⌄</span></div><div class="section-body" style="display:block;"><div class="hid-table-wrap"><table class="hid-table"><thead><tr><th>Equipo</th><th>Func.</th><th>Ruido</th><th>Fugas</th><th>Estado</th></tr></thead><tbody id="tb-bomb"></tbody></table></div></div></div>
@@ -447,46 +309,19 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
         <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-mant"></tbody></table></div>
         <div id="mat-total-display-mant" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-mant">0.00 €</span></div>
         <button class="add-row-btn" onclick="addMatRowFor('mant')">+ Añadir material</button>
-        <div style="padding:0 14px 12px;">
-          <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">📎 Adjuntar PDF de presupuesto (opcional)</div>
-          <label id="pdf-label-mant" style="display:flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px dashed var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;">
-            <span style="font-size:20px;">📄</span>
-            <span id="pdf-name-mant" style="font-size:13px;color:var(--muted);">Seleccionar PDF...</span>
-            <input type="file" accept="application/pdf" style="display:none;" id="pdf-input-mant" onchange="cargarPdf(this,'mant')">
-          </label>
+        <div class="pdf-upload-area">
+          <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">📎 Adjuntar PDF presupuesto (opcional)</div>
+          <label class="pdf-upload-label" id="pdf-label-mant"><span style="font-size:20px;">📄</span><span id="pdf-name-mant" style="font-size:13px;color:var(--muted);">Seleccionar PDF...</span><input type="file" accept="application/pdf" style="display:none;" id="pdf-input-mant" onchange="cargarPdf(this,'mant')"></label>
           <button id="pdf-clear-mant" onclick="borrarPdf('mant')" style="display:none;margin-top:6px;padding:4px 12px;border:1px solid var(--bad);border-radius:99px;background:var(--bad-bg);color:var(--bad);font-size:12px;cursor:pointer;font-family:var(--font);">✕ Quitar PDF</button>
         </div>
       </div>
     </div>
-    <div class="card" id="sec-fotos-mant">
-      <div class="section-header section-open" onclick="toggleSec('sec-fotos-mant')"><span class="sec-title">📷 Fotos <span style="font-size:11px;color:var(--bad);">(5 obligatorias)</span></span><span><span id="cnt-fotos-mant" style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:99px;background:var(--bad-bg);color:var(--bad);border:1px solid var(--bad);">0/5</span> <span class="chevron">⌄</span></span></div>
-      <div class="section-body" style="display:block;"><div class="fotos-section"><div class="fotos-grid" id="fotos-grid-mant"></div><input type="file" accept="image/*" capture="environment" class="foto-input-hidden" id="foto-input-mant"><div class="fotos-aviso" id="fotos-aviso-mant">⚠ Debes adjuntar las 5 fotografías para enviar</div></div></div>
-    </div>
-    <!-- FIRMAS MANT -->
-    <div class="card">
-      <div class="section-header section-open" onclick="toggleSec('sec-firma-mant')"><span class="sec-title">✍️ Firmas</span><span class="chevron">⌄</span></div>
-      <div class="section-body" id="sec-firma-mant" style="display:block;">
-        <div class="firma-section">
-          <div class="firma-label">Firma del técnico <span style="color:var(--bad);font-size:10px;">*obligatoria</span></div>
-          <canvas class="firma-canvas" id="firma-tecnico-mant"></canvas>
-          <div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('tecnico-mant')">🗑 Borrar</button></div>
-        </div>
-        <div class="firma-section" style="border-top:1px solid var(--border);">
-          <div class="firma-label">Firma del cliente <span style="color:var(--bad);font-size:10px;">*obligatoria</span>
-            <button class="cliente-ausente-btn" id="btn-ausente-mant" onclick="toggleAusente('mant')">Cliente ausente</button>
-          </div>
-          <canvas class="firma-canvas" id="firma-cliente-mant"></canvas>
-          <div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('cliente-mant')">🗑 Borrar</button></div>
-          <div class="firma-ausente-obs" id="ausente-obs-mant">
-            <textarea class="obs-textarea" id="ausente-motivo-mant" placeholder="Motivo por el que el cliente no puede firmar..." style="margin-top:8px;"></textarea>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="card" id="sec-fotos-mant"><div class="section-header section-open" onclick="toggleSec('sec-fotos-mant')"><span class="sec-title">📷 Fotos <span style="font-size:11px;color:var(--bad);">(5 obligatorias)</span></span><span><span id="cnt-fotos-mant" style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:99px;background:var(--bad-bg);color:var(--bad);border:1px solid var(--bad);">0/5</span> <span class="chevron">⌄</span></span></div><div class="section-body" style="display:block;"><div class="fotos-section"><div class="fotos-grid" id="fotos-grid-mant"></div><input type="file" accept="image/*" capture="environment" class="foto-input-hidden" id="foto-input-mant"><div class="fotos-aviso" id="fotos-aviso-mant">⚠ Debes adjuntar las 5 fotografías para enviar</div></div></div></div>
+    <div class="card"><div class="section-header section-open" onclick="toggleSec('sec-firma-mant')"><span class="sec-title">✍️ Firmas</span><span class="chevron">⌄</span></div><div class="section-body" id="sec-firma-mant" style="display:block;"><div class="firma-section"><div class="firma-label">Firma del técnico <span style="color:var(--bad);font-size:10px;">*obligatoria</span></div><canvas class="firma-canvas" id="firma-tecnico-mant"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('tecnico-mant')">🗑 Borrar</button></div></div><div class="firma-section" style="border-top:1px solid var(--border);"><div class="firma-label">Firma del cliente <span style="color:var(--bad);font-size:10px;">*obligatoria</span><button class="cliente-ausente-btn" id="btn-ausente-mant" onclick="toggleAusente('mant')">Cliente ausente</button></div><canvas class="firma-canvas" id="firma-cliente-mant"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('cliente-mant')">🗑 Borrar</button></div><div class="firma-ausente-obs" id="ausente-obs-mant"><textarea class="obs-textarea" id="ausente-motivo-mant" placeholder="Motivo por el que el cliente no puede firmar..." style="margin-top:8px;"></textarea></div></div></div></div>
     <button class="send-btn" id="send-mant-btn" onclick="enviarAlbaran('mantenimiento')">📤 Enviar albarán de Mantenimiento</button>
   </div>
 
-  <!-- PANEL SIMPLE -->
+  <!-- SIMPLE -->
   <div id="panel-simple" class="panel">
     <div class="card" id="sec-obs-simple"><div class="section-header section-open" onclick="toggleSec('sec-obs-simple')"><span class="sec-title">Observaciones / Descripción</span><span class="chevron">⌄</span></div><div class="section-body" style="display:block;"><div class="obs-section"><textarea class="obs-textarea" id="simple-obs" placeholder="Describe el trabajo realizado..."></textarea></div></div></div>
     <div class="card" id="sec-mat-simple">
@@ -495,42 +330,15 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
         <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-simple"></tbody></table></div>
         <div id="mat-total-display-simple" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-simple">0.00 €</span></div>
         <button class="add-row-btn" onclick="addMatRowFor('simple')">+ Añadir material</button>
-        <div style="padding:0 14px 12px;">
-          <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">📎 Adjuntar PDF de presupuesto (opcional)</div>
-          <label id="pdf-label-simple" style="display:flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px dashed var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;">
-            <span style="font-size:20px;">📄</span>
-            <span id="pdf-name-simple" style="font-size:13px;color:var(--muted);">Seleccionar PDF...</span>
-            <input type="file" accept="application/pdf" style="display:none;" id="pdf-input-simple" onchange="cargarPdf(this,'simple')">
-          </label>
+        <div class="pdf-upload-area">
+          <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">📎 Adjuntar PDF presupuesto (opcional)</div>
+          <label class="pdf-upload-label" id="pdf-label-simple"><span style="font-size:20px;">📄</span><span id="pdf-name-simple" style="font-size:13px;color:var(--muted);">Seleccionar PDF...</span><input type="file" accept="application/pdf" style="display:none;" id="pdf-input-simple" onchange="cargarPdf(this,'simple')"></label>
           <button id="pdf-clear-simple" onclick="borrarPdf('simple')" style="display:none;margin-top:6px;padding:4px 12px;border:1px solid var(--bad);border-radius:99px;background:var(--bad-bg);color:var(--bad);font-size:12px;cursor:pointer;font-family:var(--font);">✕ Quitar PDF</button>
         </div>
       </div>
     </div>
-    <div class="card" id="sec-fotos-simple">
-      <div class="section-header section-open" onclick="toggleSec('sec-fotos-simple')"><span class="sec-title">📷 Fotos <span style="font-size:11px;color:var(--bad);">(5 obligatorias)</span></span><span><span id="cnt-fotos-simple" style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:99px;background:var(--bad-bg);color:var(--bad);border:1px solid var(--bad);">0/5</span> <span class="chevron">⌄</span></span></div>
-      <div class="section-body" style="display:block;"><div class="fotos-section"><div class="fotos-grid" id="fotos-grid-simple"></div><input type="file" accept="image/*" capture="environment" class="foto-input-hidden" id="foto-input-simple"><div class="fotos-aviso" id="fotos-aviso-simple">⚠ Debes adjuntar las 5 fotografías para enviar</div></div></div>
-    </div>
-    <!-- FIRMAS SIMPLE -->
-    <div class="card">
-      <div class="section-header section-open" onclick="toggleSec('sec-firma-simple')"><span class="sec-title">✍️ Firmas</span><span class="chevron">⌄</span></div>
-      <div class="section-body" id="sec-firma-simple" style="display:block;">
-        <div class="firma-section">
-          <div class="firma-label">Firma del técnico <span style="color:var(--bad);font-size:10px;">*obligatoria</span></div>
-          <canvas class="firma-canvas" id="firma-tecnico-simple"></canvas>
-          <div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('tecnico-simple')">🗑 Borrar</button></div>
-        </div>
-        <div class="firma-section" style="border-top:1px solid var(--border);">
-          <div class="firma-label">Firma del cliente <span style="color:var(--bad);font-size:10px;">*obligatoria</span>
-            <button class="cliente-ausente-btn" id="btn-ausente-simple" onclick="toggleAusente('simple')">Cliente ausente</button>
-          </div>
-          <canvas class="firma-canvas" id="firma-cliente-simple"></canvas>
-          <div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('cliente-simple')">🗑 Borrar</button></div>
-          <div class="firma-ausente-obs" id="ausente-obs-simple">
-            <textarea class="obs-textarea" id="ausente-motivo-simple" placeholder="Motivo por el que el cliente no puede firmar..." style="margin-top:8px;"></textarea>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="card" id="sec-fotos-simple"><div class="section-header section-open" onclick="toggleSec('sec-fotos-simple')"><span class="sec-title">📷 Fotos <span style="font-size:11px;color:var(--bad);">(5 obligatorias)</span></span><span><span id="cnt-fotos-simple" style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:99px;background:var(--bad-bg);color:var(--bad);border:1px solid var(--bad);">0/5</span> <span class="chevron">⌄</span></span></div><div class="section-body" style="display:block;"><div class="fotos-section"><div class="fotos-grid" id="fotos-grid-simple"></div><input type="file" accept="image/*" capture="environment" class="foto-input-hidden" id="foto-input-simple"><div class="fotos-aviso" id="fotos-aviso-simple">⚠ Debes adjuntar las 5 fotografías para enviar</div></div></div></div>
+    <div class="card"><div class="section-header section-open" onclick="toggleSec('sec-firma-simple')"><span class="sec-title">✍️ Firmas</span><span class="chevron">⌄</span></div><div class="section-body" id="sec-firma-simple" style="display:block;"><div class="firma-section"><div class="firma-label">Firma del técnico <span style="color:var(--bad);font-size:10px;">*obligatoria</span></div><canvas class="firma-canvas" id="firma-tecnico-simple"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('tecnico-simple')">🗑 Borrar</button></div></div><div class="firma-section" style="border-top:1px solid var(--border);"><div class="firma-label">Firma del cliente <span style="color:var(--bad);font-size:10px;">*obligatoria</span><button class="cliente-ausente-btn" id="btn-ausente-simple" onclick="toggleAusente('simple')">Cliente ausente</button></div><canvas class="firma-canvas" id="firma-cliente-simple"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('cliente-simple')">🗑 Borrar</button></div><div class="firma-ausente-obs" id="ausente-obs-simple"><textarea class="obs-textarea" id="ausente-motivo-simple" placeholder="Motivo por el que el cliente no puede firmar..." style="margin-top:8px;"></textarea></div></div></div></div>
     <button class="send-btn" id="send-simple-btn" onclick="enviarAlbaran('simple')">📤 Enviar albarán</button>
   </div>
 </div>
@@ -539,419 +347,68 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 <div class="toast" id="toast"></div>
 
 <script>
-// ══ CONFIGURACIÓN ══
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbwchvRVv4tgiKJ196l_DzMOt8V2YonhODntHeoF2phXOXiQ8eJqMiDhNPtNC6Oi1NPDUw/exec';
-const HOLDED_PROXY_URL = 'PEGA_AQUI_LA_URL_DEL_PROXY_HOLDED';
-const EMAILS = { marcres:'marcresfacturacion@gmail.com', rivagua:'rivaguafacturacion@gmail.com', elec:'noemoldisfribucionesvial@gmail.com' };
+const GAS_URL='https://script.google.com/macros/s/AKfycbwchvRVv4tgiKJ196l_DzMOt8V2YonhODntHeoF2phXOXiQ8eJqMiDhNPtNC6Oi1NPDUw/exec';
+const HOLDED_PROXY_URL='PEGA_AQUI_LA_URL_DEL_PROXY_HOLDED';
+let empresaChecklist=null,empresaAlbaran=null,tipoAlbaran=null,currentFotoKey=null,currentFotoSlot=null;
+const fotosData={mant:Array(5).fill(null),simple:Array(5).fill(null),elec:Array(5).fill(null),hid:Array(5).fill(null)};
+const ausenteState={elec:false,hid:false,mant:false,simple:false};
+const firmaData={};
+const pdfData={elec:null,hid:null,mant:null,simple:null};
 
-// ══ ESTADO ══
-let empresaChecklist=null, empresaAlbaran=null, tipoAlbaran=null;
-let currentFotoKey=null, currentFotoSlot=null;
-const fotosData = { mant:Array(5).fill(null), simple:Array(5).fill(null), elec:Array(5).fill(null), hid:Array(5).fill(null) };
-const ausenteState = { elec:false, hid:false, mant:false, simple:false };
-const firmaData = {};
+function mostrarPantallaFinal(){const pf=document.getElementById('pantalla-final');pf.classList.add('show');setTimeout(()=>{pf.classList.remove('show');window.location.reload();},3000);}
 
-// ══ PANTALLA FINAL ══
-function mostrarPantallaFinal() {
-  const pf = document.getElementById('pantalla-final');
-  pf.classList.add('show');
-  setTimeout(() => { pf.classList.remove('show'); window.location.reload(); }, 3000);
-}
-
-// ══ HOLDED ══
-let holdedTimer = null;
-function buscarHolded(q, prefix) {
-  const drop = document.getElementById(prefix+'-holded-drop');
-  if(!q||q.length<2){drop.style.display='none';return;}
-  clearTimeout(holdedTimer);
-  drop.style.display='block';
-  drop.innerHTML='<div class="holded-searching">Buscando en Holded...</div>';
-  holdedTimer = setTimeout(async()=>{
-    if(!HOLDED_PROXY_URL||HOLDED_PROXY_URL.includes('PEGA')){
-      drop.innerHTML='<div class="holded-searching">⚠ Configura la URL del proxy Holded</div>';return;
-    }
-    try {
-      const res=await fetch(`${HOLDED_PROXY_URL}?q=${encodeURIComponent(q)}`);
-      const data=await res.json();
-      if(!data.ok||!data.contacts.length){drop.innerHTML='<div class="holded-searching">Sin resultados</div>';return;}
-      drop.innerHTML=data.contacts.map(c=>`<div class="holded-item" onclick="seleccionarCliente('${prefix}',${JSON.stringify(c).replace(/'/g,"&#39;")})"><div class="holded-item-name">${c.name}</div><div class="holded-item-addr">${[c.address,c.city,c.postalCode].filter(Boolean).join(' · ')}</div></div>`).join('');
-    } catch(e){drop.innerHTML='<div class="holded-searching">Error al conectar con Holded</div>';}
-  },350);
-}
-function seleccionarCliente(prefix,c){
-  document.getElementById(prefix+'-cliente').value=c.name;
-  document.getElementById(prefix+'-direccion').value=c.address||'';
-  if(document.getElementById(prefix+'-poblacion')) document.getElementById(prefix+'-poblacion').value=c.city||'';
-  document.getElementById(prefix+'-holded-drop').style.display='none';
-}
-document.addEventListener('click',e=>{
-  ['c','a'].forEach(p=>{
-    const wrap=document.getElementById(p+'-cliente-wrap');
-    const drop=document.getElementById(p+'-holded-drop');
-    if(drop&&wrap&&!wrap.contains(e.target)) drop.style.display='none';
-  });
-});
-
-// ══ NAV ══
-function switchApp(app){
-  document.getElementById('app-checklist').classList.toggle('active',app==='checklist');
-  document.getElementById('app-albaran').classList.toggle('active',app==='albaran');
-  document.getElementById('nav-checklist').classList.toggle('active',app==='checklist');
-  document.getElementById('nav-albaran').classList.toggle('active',app==='albaran');
-}
-function switchChecklist(tab){
-  document.getElementById('panel-elec').classList.toggle('active',tab==='elec');
-  document.getElementById('panel-hid').classList.toggle('active',tab==='hid');
-  document.getElementById('ptab-elec').classList.toggle('active',tab==='elec');
-  document.getElementById('ptab-hid').classList.toggle('active',tab==='hid');
-}
-
-// ══ EMPRESA ══
-function selectEmpresa(e,prefix){
-  if(prefix==='c'){empresaChecklist=e;document.getElementById('c-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('c-btn-marcres').classList.toggle('active',e==='marcres');}
-  else{empresaAlbaran=e;document.getElementById('a-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('a-btn-marcres').classList.toggle('active',e==='marcres');}
-  document.getElementById('header-empresa-label').textContent=e==='rivagua'?'Rivagua':'Marcres';
-}
-
-// ══ TIPO ══
-function selectTipo(t){
-  tipoAlbaran=t;
-  ['mantenimiento','aviso','trabajo','guardia'].forEach(x=>document.getElementById('tipo-'+x).classList.toggle('active',x===t));
-  const esMant=t==='mantenimiento';
-  document.getElementById('panel-mantenimiento').classList.toggle('active',esMant);
-  document.getElementById('panel-simple').classList.toggle('active',!esMant);
-  if(!esMant){const labels={aviso:'Aviso',trabajo:'Trabajo',guardia:'Guardia'};document.getElementById('send-simple-btn').textContent='📤 Enviar albarán de '+labels[t];}
-}
-
-// ══ ACCORDION ══
-function toggleSec(id){
-  const sec=document.getElementById(id);
-  const hdr=sec.querySelector('.section-header');
-  const body=sec.querySelector('.section-body');
-  const open=hdr.classList.contains('section-open');
-  hdr.classList.toggle('section-open',!open);
-  body.style.display=open?'none':'block';
-}
-
-// ══ CORTE DE AGUA ══
-function selectCorte(el,val){
-  el.parentElement.querySelectorAll('.pill').forEach(p=>p.className='pill');
-  if(val==='Si') el.classList.add('p-bad');
-  else if(val==='Parcial') el.classList.add('p-warn');
-  else el.classList.add('p-ok');
-  el.dataset.group='corte';
-  document.getElementById('c-corte-horas').classList.toggle('show',val==='Si'||val==='Parcial');
-}
-
-// ══ PILLS ══
+let holdedTimer=null;
+function buscarHolded(q,prefix){const drop=document.getElementById(prefix+'-holded-drop');if(!q||q.length<2){drop.style.display='none';return;}clearTimeout(holdedTimer);drop.style.display='block';drop.innerHTML='<div class="holded-searching">Buscando en Holded...</div>';holdedTimer=setTimeout(async()=>{if(!HOLDED_PROXY_URL||HOLDED_PROXY_URL.includes('PEGA')){drop.innerHTML='<div class="holded-searching">⚠ Configura el proxy Holded</div>';return;}try{const res=await fetch(`${HOLDED_PROXY_URL}?q=${encodeURIComponent(q)}`);const data=await res.json();if(!data.ok||!data.contacts.length){drop.innerHTML='<div class="holded-searching">Sin resultados</div>';return;}drop.innerHTML=data.contacts.map(c=>`<div class="holded-item" onclick="seleccionarCliente('${prefix}',${JSON.stringify(c).replace(/'/g,"&#39;")})"><div class="holded-item-name">${c.name}</div><div class="holded-item-addr">${[c.address,c.city,c.postalCode].filter(Boolean).join(' · ')}</div></div>`).join('');}catch(e){drop.innerHTML='<div class="holded-searching">Error al conectar</div>';}},350);}
+function seleccionarCliente(prefix,c){document.getElementById(prefix+'-cliente').value=c.name;document.getElementById(prefix+'-direccion').value=c.address||'';if(document.getElementById(prefix+'-poblacion'))document.getElementById(prefix+'-poblacion').value=c.city||'';document.getElementById(prefix+'-holded-drop').style.display='none';}
+document.addEventListener('click',e=>{['c','a'].forEach(p=>{const wrap=document.getElementById(p+'-cliente-wrap');const drop=document.getElementById(p+'-holded-drop');if(drop&&wrap&&!wrap.contains(e.target))drop.style.display='none';});});
+function switchApp(app){document.getElementById('app-checklist').classList.toggle('active',app==='checklist');document.getElementById('app-albaran').classList.toggle('active',app==='albaran');document.getElementById('nav-checklist').classList.toggle('active',app==='checklist');document.getElementById('nav-albaran').classList.toggle('active',app==='albaran');}
+function switchChecklist(tab){document.getElementById('panel-elec').classList.toggle('active',tab==='elec');document.getElementById('panel-hid').classList.toggle('active',tab==='hid');document.getElementById('ptab-elec').classList.toggle('active',tab==='elec');document.getElementById('ptab-hid').classList.toggle('active',tab==='hid');}
+function selectEmpresa(e,prefix){if(prefix==='c'){empresaChecklist=e;document.getElementById('c-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('c-btn-marcres').classList.toggle('active',e==='marcres');}else{empresaAlbaran=e;document.getElementById('a-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('a-btn-marcres').classList.toggle('active',e==='marcres');}document.getElementById('header-empresa-label').textContent=e==='rivagua'?'Rivagua':'Marcres';}
+function selectTipo(t){tipoAlbaran=t;['mantenimiento','aviso','trabajo','guardia'].forEach(x=>document.getElementById('tipo-'+x).classList.toggle('active',x===t));const esMant=t==='mantenimiento';document.getElementById('panel-mantenimiento').classList.toggle('active',esMant);document.getElementById('panel-simple').classList.toggle('active',!esMant);if(!esMant){const labels={aviso:'Aviso',trabajo:'Trabajo',guardia:'Guardia'};document.getElementById('send-simple-btn').textContent='📤 Enviar albarán de '+labels[t];}}
+function toggleSec(id){const sec=document.getElementById(id);const hdr=sec.querySelector('.section-header');const body=sec.querySelector('.section-body');const open=hdr.classList.contains('section-open');hdr.classList.toggle('section-open',!open);body.style.display=open?'none':'block';}
+function selectCorte(el,val){el.parentElement.querySelectorAll('.pill').forEach(p=>p.className='pill');if(val==='Si')el.classList.add('p-bad');else if(val==='Parcial')el.classList.add('p-warn');else el.classList.add('p-ok');el.dataset.group='corte';document.getElementById('c-corte-horas').classList.toggle('show',val==='Si'||val==='Parcial');}
 const OK_VALS=['Bien','OK','Sí','Si hay','Favorable','Sin ruido','Sin fugas'];
 const WARN_VALS=['Regular','Bajo','Sucio','Parcial','Desfavorable','Alta','Con ruido'];
-function selectPillGroup(el,group){
-  el.parentElement.querySelectorAll('.pill').forEach(p=>p.className='pill');
-  const t=el.textContent.trim();
-  if(OK_VALS.includes(t)) el.classList.add('p-ok');
-  else if(WARN_VALS.includes(t)) el.classList.add('p-warn');
-  else el.classList.add('p-bad');
-  if(group) el.dataset.group=group;
-}
-function getPill(g){
-  const el=document.querySelector(`[data-group="${g}"].p-ok,[data-group="${g}"].p-warn,[data-group="${g}"].p-bad`);
-  return el?el.textContent.trim():'—';
-}
+function selectPillGroup(el,group){el.parentElement.querySelectorAll('.pill').forEach(p=>p.className='pill');const t=el.textContent.trim();if(OK_VALS.includes(t))el.classList.add('p-ok');else if(WARN_VALS.includes(t))el.classList.add('p-warn');else el.classList.add('p-bad');if(group)el.dataset.group=group;}
+function getPill(g){const el=document.querySelector(`[data-group="${g}"].p-ok,[data-group="${g}"].p-warn,[data-group="${g}"].p-bad`);return el?el.textContent.trim():'—';}
 function mkPills(opts,gid){return `<div class="pill-group">${opts.map(o=>`<span class="pill" onclick="selectPillGroup(this,'${gid}')">${o}</span>`).join('')}</div>`;}
 function mkTd(opts,gid){return `<td>${mkPills(opts,gid)}</td>`;}
 function estadoTd(gid){return mkTd(['Bien','Regular','Mal'],gid);}
-// MEJORA 5: NO primero en funciones, ruido y fugas
 function funcTd(gid){return mkTd(['OK','Fallo'],gid);}
 function ruidoTd(gid){return mkTd(['No','Con ruido'],gid);}
 function fugasTd(gid){return mkTd(['No','Con fugas'],gid);}
 function siNoTd(gid){return mkTd(['SI','NO'],gid);}
-
-// ══ TABLAS ══
-function buildAlbaranTables(){
-  const trDep=document.createElement('tr');
-  trDep.innerHTML=`<td class="row-name">Depósito</td>${mkTd(['OK','Bajo'],'dep-niv')}${mkTd(['OK','Sucio'],'dep-lim')}${mkTd(['OK','Fallo'],'dep-lle')}${estadoTd('dep-est')}`;
-  document.getElementById('tb-dep').appendChild(trDep);
-  [['Boya Mínimo','boy-min'],['Boya Máximo','boy-max']].forEach(([n,g])=>{
-    const r=document.createElement('tr');
-    r.innerHTML=`<td class="row-name">${n}</td>${mkTd(['Si hay','No hay'],g+'-ex')}${mkTd(['Bien','Mal'],g+'-est')}`;
-    document.getElementById('tb-boyas').appendChild(r);
-  });
-  for(let i=1;i<=4;i++){const r=document.createElement('tr');r.innerHTML=`<td class="row-name">Bomba ${i}</td>${siNoTd('b'+i+'f')}${siNoTd('b'+i+'r')}${siNoTd('b'+i+'g')}${estadoTd('b'+i+'e')}`;document.getElementById('tb-bomb').appendChild(r);}
-  for(let i=1;i<=2;i++){const r=document.createElement('tr');r.innerHTML=`<td class="row-name">Descalcif. ${i}</td>${siNoTd('d'+i+'f')}${siNoTd('d'+i+'r')}${siNoTd('d'+i+'g')}${estadoTd('d'+i+'e')}`;document.getElementById('tb-desc').appendChild(r);}
-  for(let i=1;i<=4;i++){const r=document.createElement('tr');r.innerHTML=`<td class="row-name">Achique ${i}</td>${siNoTd('a'+i+'f')}${siNoTd('a'+i+'r')}${siNoTd('a'+i+'g')}${estadoTd('a'+i+'e')}`;document.getElementById('tb-achique').appendChild(r);}
-  for(let i=1;i<=4;i++){const r=document.createElement('tr');r.innerHTML=`<td class="row-name">Residual ${i}</td>${siNoTd('res'+i+'f')}${siNoTd('res'+i+'r')}${siNoTd('res'+i+'g')}${estadoTd('res'+i+'e')}`;document.getElementById('tb-resid').appendChild(r);}
-}
-
-function buildChecklistTables(){
-  // MEJORA 5: No primero en ruido y fugas
-  for(let i=1;i<=4;i++){const r=document.createElement('tr');r.innerHTML=`<td class="row-name">Bomba ${i}</td>${funcTd('hb'+i+'f')}${ruidoTd('hb'+i+'r')}${fugasTd('hb'+i+'g')}${estadoTd('hb'+i+'e')}`;document.getElementById('htb-bomb').appendChild(r);}
-  const trDep=document.createElement('tr');trDep.innerHTML=`<td class="row-name">Depósito</td>${mkTd(['OK','Bajo'],'hdep-niv')}${mkTd(['OK','Sucio'],'hdep-lim')}${mkTd(['OK','Fallo'],'hdep-lle')}${estadoTd('hdep-est')}`;document.getElementById('htb-dep').appendChild(trDep);
-  for(let i=1;i<=2;i++){const r=document.createElement('tr');r.innerHTML=`<td class="row-name">Descalcif. ${i}</td>${funcTd('hd'+i+'f')}${ruidoTd('hd'+i+'r')}${fugasTd('hd'+i+'g')}${estadoTd('hd'+i+'e')}`;document.getElementById('htb-desc').appendChild(r);}
-  for(let i=1;i<=4;i++){const r=document.createElement('tr');r.innerHTML=`<td class="row-name">Achique ${i}</td>${funcTd('ha'+i+'f')}${ruidoTd('ha'+i+'r')}${fugasTd('ha'+i+'g')}${estadoTd('ha'+i+'e')}`;document.getElementById('htb-achique').appendChild(r);}
-}
-
+function buildAlbaranTables(){const trDep=document.createElement('tr');trDep.innerHTML=`<td class="row-name">Depósito</td>${mkTd(['OK','Bajo'],'dep-niv')}${mkTd(['OK','Sucio'],'dep-lim')}${mkTd(['OK','Fallo'],'dep-lle')}${estadoTd('dep-est')}`;document.getElementById('tb-dep').appendChild(trDep);[['Boya Mínimo','boy-min'],['Boya Máximo','boy-max']].forEach(([n,g])=>{const r=document.createElement('tr');r.innerHTML=`<td class="row-name">${n}</td>${mkTd(['Si hay','No hay'],g+'-ex')}${mkTd(['Bien','Mal'],g+'-est')}`;document.getElementById('tb-boyas').appendChild(r);});for(let i=1;i<=4;i++){const r=document.createElement('tr');r.innerHTML=`<td class="row-name">Bomba ${i}</td>${siNoTd('b'+i+'f')}${siNoTd('b'+i+'r')}${siNoTd('b'+i+'g')}${estadoTd('b'+i+'e')}`;document.getElementById('tb-bomb').appendChild(r);}for(let i=1;i<=2;i++){const r=document.createElement('tr');r.innerHTML=`<td class="row-name">Descalcif. ${i}</td>${siNoTd('d'+i+'f')}${siNoTd('d'+i+'r')}${siNoTd('d'+i+'g')}${estadoTd('d'+i+'e')}`;document.getElementById('tb-desc').appendChild(r);}for(let i=1;i<=4;i++){const r=document.createElement('tr');r.innerHTML=`<td class="row-name">Achique ${i}</td>${siNoTd('a'+i+'f')}${siNoTd('a'+i+'r')}${siNoTd('a'+i+'g')}${estadoTd('a'+i+'e')}`;document.getElementById('tb-achique').appendChild(r);}for(let i=1;i<=4;i++){const r=document.createElement('tr');r.innerHTML=`<td class="row-name">Residual ${i}</td>${siNoTd('res'+i+'f')}${siNoTd('res'+i+'r')}${siNoTd('res'+i+'g')}${estadoTd('res'+i+'e')}`;document.getElementById('tb-resid').appendChild(r);}}
+function buildChecklistTables(){for(let i=1;i<=4;i++){const r=document.createElement('tr');r.innerHTML=`<td class="row-name">Bomba ${i}</td>${funcTd('hb'+i+'f')}${ruidoTd('hb'+i+'r')}${fugasTd('hb'+i+'g')}${estadoTd('hb'+i+'e')}`;document.getElementById('htb-bomb').appendChild(r);}const trDep=document.createElement('tr');trDep.innerHTML=`<td class="row-name">Depósito</td>${mkTd(['OK','Bajo'],'hdep-niv')}${mkTd(['OK','Sucio'],'hdep-lim')}${mkTd(['OK','Fallo'],'hdep-lle')}${estadoTd('hdep-est')}`;document.getElementById('htb-dep').appendChild(trDep);for(let i=1;i<=2;i++){const r=document.createElement('tr');r.innerHTML=`<td class="row-name">Descalcif. ${i}</td>${funcTd('hd'+i+'f')}${ruidoTd('hd'+i+'r')}${fugasTd('hd'+i+'g')}${estadoTd('hd'+i+'e')}`;document.getElementById('htb-desc').appendChild(r);}for(let i=1;i<=4;i++){const r=document.createElement('tr');r.innerHTML=`<td class="row-name">Achique ${i}</td>${funcTd('ha'+i+'f')}${ruidoTd('ha'+i+'r')}${fugasTd('ha'+i+'g')}${estadoTd('ha'+i+'e')}`;document.getElementById('htb-achique').appendChild(r);}}
 const elecItems=['Equipos de protección sobreconsumo (Magnetotérmicos)','Equipos de protección contra derivaciones (Diferenciales)','Fallos por falta de derivaciones a tierra','Estado de los conductores (Tipo y estado)','Protección de bombas (Guardamotores y relés térmicos)','Iluminación en salida de emergencia / cuarto de máquinas'];
-function buildElec(){
-  document.getElementById('elec-items-body').innerHTML=elecItems.map((item,i)=>`<div class="elec-item"><div class="elec-item-label">${i+1}. ${item}</div>${mkPills(['Favorable','Desfavorable','No existe'],'elec-'+i)}</div>`).join('');
-}
-
-// ══ MATERIALES ══
+function buildElec(){document.getElementById('elec-items-body').innerHTML=elecItems.map((item,i)=>`<div class="elec-item"><div class="elec-item-label">${i+1}. ${item}</div>${mkPills(['Favorable','Desfavorable','No existe'],'elec-'+i)}</div>`).join('');}
 const matIdxMap={};
-function addMatRowFor(key){
-  if(matIdxMap[key]===undefined) matIdxMap[key]=0;
-  const i=matIdxMap[key]++, uid=key+'-'+i;
-  const tr=document.createElement('tr');
-  tr.id='mat-row-'+uid;
-  tr.innerHTML=`<td><input class="mat-input" placeholder="Descripción" id="mat-desc-${uid}"></td><td><input class="mat-input" type="number" min="0" placeholder="1" id="mat-cant-${uid}" oninput="calcTotalFor('${uid}','${key}')" style="width:48px;"></td><td><input class="mat-input" type="number" min="0" step="0.01" placeholder="0.00" id="mat-precio-${uid}" oninput="calcTotalFor('${uid}','${key}')" style="width:72px;"></td><td><span id="mat-total-${uid}" style="font-size:12px;color:var(--accent);font-weight:600;">—</span></td><td><button class="del-row-btn" onclick="document.getElementById('mat-row-${uid}').remove();recalcTotal('${key}')">×</button></td>`;
-  document.getElementById('mat-tbody-'+key).appendChild(tr);
-}
-function calcTotalFor(uid,key){
-  const c=parseFloat(document.getElementById('mat-cant-'+uid)?.value)||0;
-  const p=parseFloat(document.getElementById('mat-precio-'+uid)?.value)||0;
-  const el=document.getElementById('mat-total-'+uid);
-  if(el) el.textContent=c&&p?(c*p).toFixed(2)+' €':'—';
-  recalcTotal(key);
-}
-function recalcTotal(key){
-  const tbody=document.getElementById('mat-tbody-'+key);
-  if(!tbody) return;
-  let total=0, hay=false;
-  tbody.querySelectorAll('[id^="mat-cant-"]').forEach(el=>{
-    const uid=el.id.replace('mat-cant-','');
-    const c=parseFloat(el.value)||0;
-    const p=parseFloat(document.getElementById('mat-precio-'+uid)?.value)||0;
-    if(c&&p){total+=c*p;hay=true;}
-  });
-  const display=document.getElementById('mat-total-display-'+key);
-  const sum=document.getElementById('mat-total-sum-'+key);
-  if(display&&sum){display.style.display=hay?'block':'none';sum.textContent=total.toFixed(2)+' €';}
-}
-function getMaterilesFor(key){
-  const filas=[],tbody=document.getElementById('mat-tbody-'+key);
-  if(!tbody) return '—';
-  tbody.querySelectorAll('[id^="mat-desc-"]').forEach(el=>{
-    const uid=el.id.replace('mat-desc-',''),desc=el.value.trim();
-    if(!desc) return;
-    filas.push(`${desc} | Cant: ${document.getElementById('mat-cant-'+uid)?.value||''} | P.u.: ${document.getElementById('mat-precio-'+uid)?.value||''}€ | Total: ${document.getElementById('mat-total-'+uid)?.textContent||''}`);
-  });
-  return filas.length?filas.join('\n'):'—';
-}
-
-// ══ FOTOS ══
-function buildFotoGrid(key){
-  const grid=document.getElementById('fotos-grid-'+key);
-  grid.innerHTML='';
-  for(let i=0;i<5;i++){
-    const slot=document.createElement('div');
-    slot.className='foto-slot'+(fotosData[key][i]?' filled':'');
-    if(fotosData[key][i]){
-      slot.innerHTML=`<img src="${fotosData[key][i]}" alt="Foto ${i+1}"><button class="remove-btn" onclick="removePhoto('${key}',${i},event)">✕</button>`;
-    } else {
-      slot.innerHTML=`<span class="slot-icon">📷</span><span class="slot-num">${i+1}</span>`;
-      slot.onclick=()=>openCamera(key,i);
-    }
-    grid.appendChild(slot);
-  }
-  updateFotoCounter(key);
-}
+function addMatRowFor(key){if(matIdxMap[key]===undefined)matIdxMap[key]=0;const i=matIdxMap[key]++,uid=key+'-'+i;const tr=document.createElement('tr');tr.id='mat-row-'+uid;tr.innerHTML=`<td><input class="mat-input" placeholder="Descripción" id="mat-desc-${uid}"></td><td><input class="mat-input" type="number" min="0" placeholder="1" id="mat-cant-${uid}" oninput="calcTotalFor('${uid}','${key}')" style="width:48px;"></td><td><input class="mat-input" type="number" min="0" step="0.01" placeholder="0.00" id="mat-precio-${uid}" oninput="calcTotalFor('${uid}','${key}')" style="width:72px;"></td><td><span id="mat-total-${uid}" style="font-size:12px;color:var(--accent);font-weight:600;">—</span></td><td><button class="del-row-btn" onclick="document.getElementById('mat-row-${uid}').remove();recalcTotal('${key}')">×</button></td>`;document.getElementById('mat-tbody-'+key).appendChild(tr);}
+function calcTotalFor(uid,key){const c=parseFloat(document.getElementById('mat-cant-'+uid)?.value)||0;const p=parseFloat(document.getElementById('mat-precio-'+uid)?.value)||0;const el=document.getElementById('mat-total-'+uid);if(el)el.textContent=c&&p?(c*p).toFixed(2)+' €':'—';recalcTotal(key);}
+function recalcTotal(key){const tbody=document.getElementById('mat-tbody-'+key);if(!tbody)return;let total=0,hay=false;tbody.querySelectorAll('[id^="mat-cant-"]').forEach(el=>{const uid=el.id.replace('mat-cant-','');const c=parseFloat(el.value)||0;const p=parseFloat(document.getElementById('mat-precio-'+uid)?.value)||0;if(c&&p){total+=c*p;hay=true;}});const display=document.getElementById('mat-total-display-'+key);const sum=document.getElementById('mat-total-sum-'+key);if(display&&sum){display.style.display=hay?'block':'none';sum.textContent=total.toFixed(2)+' €';}}
+function getMaterilesFor(key){const filas=[],tbody=document.getElementById('mat-tbody-'+key);if(!tbody)return'—';tbody.querySelectorAll('[id^="mat-desc-"]').forEach(el=>{const uid=el.id.replace('mat-desc-',''),desc=el.value.trim();if(!desc)return;filas.push(`${desc} | Cant: ${document.getElementById('mat-cant-'+uid)?.value||''} | P.u.: ${document.getElementById('mat-precio-'+uid)?.value||''}€ | Total: ${document.getElementById('mat-total-'+uid)?.textContent||''}`);});return filas.length?filas.join('\n'):'—';}
+function cargarPdf(input,key){const file=input.files[0];if(!file)return;if(file.size>5*1024*1024){showToast('⚠ El PDF no puede superar 5 MB','error');input.value='';return;}const reader=new FileReader();reader.onload=e=>{pdfData[key]={base64:e.target.result.split(',')[1],nombre:file.name};document.getElementById('pdf-name-'+key).textContent='✅ '+file.name;document.getElementById('pdf-name-'+key).style.color='var(--ok)';document.getElementById('pdf-label-'+key).style.borderColor='var(--ok)';document.getElementById('pdf-clear-'+key).style.display='inline-block';};reader.readAsDataURL(file);}
+function borrarPdf(key){pdfData[key]=null;document.getElementById('pdf-input-'+key).value='';document.getElementById('pdf-name-'+key).textContent='Seleccionar PDF...';document.getElementById('pdf-name-'+key).style.color='var(--muted)';document.getElementById('pdf-label-'+key).style.borderColor='var(--border)';document.getElementById('pdf-clear-'+key).style.display='none';}
+function buildFotoGrid(key){const grid=document.getElementById('fotos-grid-'+key);grid.innerHTML='';for(let i=0;i<5;i++){const slot=document.createElement('div');slot.className='foto-slot'+(fotosData[key][i]?' filled':'');if(fotosData[key][i]){slot.innerHTML=`<img src="${fotosData[key][i]}" alt="Foto ${i+1}"><button class="remove-btn" onclick="removePhoto('${key}',${i},event)">✕</button>`;}else{slot.innerHTML=`<span class="slot-icon">📷</span><span class="slot-num">${i+1}</span>`;slot.onclick=()=>openCamera(key,i);}grid.appendChild(slot);}updateFotoCounter(key);}
 function openCamera(key,slot){currentFotoKey=key;currentFotoSlot=slot;const inp=document.getElementById('foto-input-'+key);if(inp){inp.value='';inp.click();}}
 function removePhoto(key,slot,e){e.stopPropagation();fotosData[key][slot]=null;buildFotoGrid(key);}
-function updateFotoCounter(key){
-  const cnt=fotosData[key].filter(Boolean).length;
-  const el=document.getElementById('cnt-fotos-'+key)||document.getElementById('cnt-'+key);
-  if(!el) return;
-  el.textContent=cnt+'/5';
-  el.style.background=cnt===5?'var(--ok-bg)':'var(--bad-bg)';
-  el.style.color=cnt===5?'var(--ok)':'var(--bad)';
-  el.style.borderColor=cnt===5?'var(--ok)':'var(--bad)';
-}
-function initFotos(){
-  ['mant','simple','elec','hid'].forEach(key=>{
-    const inp=document.getElementById('foto-input-'+key);
-    if(!inp) return;
-    inp.addEventListener('change',function(){
-      const file=this.files[0];if(!file) return;
-      const reader=new FileReader();
-      reader.onload=e=>{
-        const img=new Image();
-        img.onload=()=>{
-          const canvas=document.createElement('canvas'),MAX=800;
-          let w=img.width,h=img.height;
-          if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
-          if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}
-          canvas.width=w;canvas.height=h;
-          canvas.getContext('2d').drawImage(img,0,0,w,h);
-          fotosData[currentFotoKey][currentFotoSlot]=canvas.toDataURL('image/jpeg',0.75);
-          buildFotoGrid(currentFotoKey);
-        };
-        img.src=e.target.result;
-      };
-      reader.readAsDataURL(file);
-    });
-    buildFotoGrid(key);
-  });
-}
-
-// ══ FIRMAS ══
-function initFirmas(){
-  document.querySelectorAll('.firma-canvas').forEach(canvas=>{
-    const id=canvas.id;
-    firmaData[id]={signed:false};
-    let drawing=false,lx=0,ly=0;
-    const ctx=canvas.getContext('2d');
-    ctx.strokeStyle='#184595';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';
-
-    function getPos(e){
-      const r=canvas.getBoundingClientRect();
-      const src=e.touches?e.touches[0]:e;
-      return{x:(src.clientX-r.left)*(canvas.width/r.width),y:(src.clientY-r.top)*(canvas.height/r.height)};
-    }
-    function start(e){e.preventDefault();drawing=true;const p=getPos(e);lx=p.x;ly=p.y;ctx.beginPath();ctx.arc(lx,ly,1,0,Math.PI*2);ctx.fill();}
-    function move(e){e.preventDefault();if(!drawing) return;const p=getPos(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p.x,p.y);ctx.stroke();lx=p.x;ly=p.y;firmaData[id].signed=true;canvas.classList.add('signed');}
-    function end(){drawing=false;}
-
-    canvas.width=canvas.offsetWidth||300;
-    canvas.height=140;
-    canvas.addEventListener('mousedown',start);
-    canvas.addEventListener('mousemove',move);
-    canvas.addEventListener('mouseup',end);
-    canvas.addEventListener('touchstart',start,{passive:false});
-    canvas.addEventListener('touchmove',move,{passive:false});
-    canvas.addEventListener('touchend',end);
-  });
-}
-function limpiarFirma(id){
-  const canvas=document.getElementById('firma-'+id);
-  if(!canvas) return;
-  const ctx=canvas.getContext('2d');
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  firmaData['firma-'+id]={signed:false};
-  canvas.classList.remove('signed');
-}
-function getFirmaBase64(id){
-  const canvas=document.getElementById('firma-'+id);
-  if(!canvas||!firmaData['firma-'+id]?.signed) return null;
-  return canvas.toDataURL('image/png');
-}
-
-// ══ CLIENTE AUSENTE ══
-function toggleAusente(panel){
-  ausenteState[panel]=!ausenteState[panel];
-  const btn=document.getElementById('btn-ausente-'+panel);
-  const obs=document.getElementById('ausente-obs-'+panel);
-  const canvas=document.getElementById('firma-cliente-'+panel);
-  btn.classList.toggle('active',ausenteState[panel]);
-  obs.classList.toggle('show',ausenteState[panel]);
-  if(canvas) canvas.style.opacity=ausenteState[panel]?'0.3':'1';
-  if(canvas) canvas.style.pointerEvents=ausenteState[panel]?'none':'auto';
-}
-
-// ══ VALIDACIONES ══
-function validarFotos(key){
-  const cnt=fotosData[key].filter(Boolean).length;
-  const aviso=document.getElementById('fotos-aviso-'+key);
-  if(cnt<5){if(aviso) aviso.classList.add('show');return false;}
-  if(aviso) aviso.classList.remove('show');
-  return true;
-}
-function validarFirmas(panelKey){
-  const tecnico=getFirmaBase64('tecnico-'+panelKey);
-  if(!tecnico){showToast('⚠ La firma del técnico es obligatoria','error');return false;}
-  if(!ausenteState[panelKey]){
-    const cliente=getFirmaBase64('cliente-'+panelKey);
-    if(!cliente){showToast('⚠ La firma del cliente es obligatoria o indica que está ausente','error');return false;}
-  } else {
-    const motivo=document.getElementById('ausente-motivo-'+panelKey)?.value.trim();
-    if(!motivo){showToast('⚠ Indica el motivo por el que el cliente no puede firmar','error');return false;}
-  }
-  return true;
-}
-
-// ══ RESÚMENES ══
-function buildResumenChecklist(tipo){
-  if(tipo==='elec'){
-    let r='CHECKLIST ELÉCTRICO\n';
-    elecItems.forEach((item,i)=>r+=`  ${i+1}. ${item}: ${getPill('elec-'+i)}\n`);
-    const trabajo=document.getElementById('elec-trabajo')?.value.trim();
-    const herr=document.getElementById('elec-herramientas')?.value.trim();
-    if(trabajo) r+=`\nTRABAJO REALIZADO\n  ${trabajo}\n`;
-    if(herr) r+=`\nHERRAMIENTAS\n  ${herr}\n`;
-    return r;
-  } else {
-    let r='CHECKLIST HIDRÁULICO\n';
-    r+='\nBOMBAS\n';
-    for(let i=1;i<=4;i++) r+=`  Bomba ${i} → Func: ${getPill('hb'+i+'f')} | Ruido: ${getPill('hb'+i+'r')} | Fugas: ${getPill('hb'+i+'g')} | Estado: ${getPill('hb'+i+'e')}\n`;
-    r+='\nDEPÓSITO\n';
-    r+=`  Nivel: ${getPill('hdep-niv')} | Limpieza: ${getPill('hdep-lim')} | Llenado: ${getPill('hdep-lle')} | Estado: ${getPill('hdep-est')}\n`;
-    return r;
-  }
-}
-function buildResumenMant(){
-  const items=['Arranque automático correcto','Alternancia de bombas operativa','Paro correcto por presión','Sin golpes de ariete','Presión estable en servicio','Tiempo de respuesta correcto'];
-  let r='CONTROL FUNCIONAL\n';
-  items.forEach((item,i)=>r+=`  ${document.getElementById('c'+i)?.checked?'✓':'✗'} ${item}\n`);
-  r+='\nDEPÓSITOS\n';
-  r+=`  Depósito → Nivel: ${getPill('dep-niv')} | Limpieza: ${getPill('dep-lim')} | Llenado: ${getPill('dep-lle')} | Estado: ${getPill('dep-est')}\n`;
-  r+='\nBOMBAS\n';
-  for(let i=1;i<=4;i++) r+=`  Bomba ${i} → Func: ${getPill('b'+i+'f')} | Ruido: ${getPill('b'+i+'r')} | Fugas: ${getPill('b'+i+'g')} | Estado: ${getPill('b'+i+'e')}\n`;
-  return r;
-}
-
-// ══ HELPERS ══
+function updateFotoCounter(key){const cnt=fotosData[key].filter(Boolean).length;const el=document.getElementById('cnt-fotos-'+key)||document.getElementById('cnt-'+key);if(!el)return;el.textContent=cnt+'/5';el.style.background=cnt===5?'var(--ok-bg)':'var(--bad-bg)';el.style.color=cnt===5?'var(--ok)':'var(--bad)';el.style.borderColor=cnt===5?'var(--ok)':'var(--bad)';}
+function initFotos(){['mant','simple','elec','hid'].forEach(key=>{const inp=document.getElementById('foto-input-'+key);if(!inp)return;inp.addEventListener('change',function(){const file=this.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{const img=new Image();img.onload=()=>{const canvas=document.createElement('canvas'),MAX=800;let w=img.width,h=img.height;if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);fotosData[currentFotoKey][currentFotoSlot]=canvas.toDataURL('image/jpeg',0.75);buildFotoGrid(currentFotoKey);};img.src=e.target.result;};reader.readAsDataURL(file);});buildFotoGrid(key);});}
+function initFirmas(){document.querySelectorAll('.firma-canvas').forEach(canvas=>{const id=canvas.id;firmaData[id]={signed:false};let drawing=false,lx=0,ly=0;const ctx=canvas.getContext('2d');ctx.strokeStyle='#184595';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';function getPos(e){const r=canvas.getBoundingClientRect();const src=e.touches?e.touches[0]:e;return{x:(src.clientX-r.left)*(canvas.width/r.width),y:(src.clientY-r.top)*(canvas.height/r.height)};}function start(e){e.preventDefault();drawing=true;const p=getPos(e);lx=p.x;ly=p.y;ctx.beginPath();ctx.arc(lx,ly,1,0,Math.PI*2);ctx.fill();}function move(e){e.preventDefault();if(!drawing)return;const p=getPos(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p.x,p.y);ctx.stroke();lx=p.x;ly=p.y;firmaData[id].signed=true;canvas.classList.add('signed');}function end(){drawing=false;}canvas.width=canvas.offsetWidth||300;canvas.height=140;canvas.addEventListener('mousedown',start);canvas.addEventListener('mousemove',move);canvas.addEventListener('mouseup',end);canvas.addEventListener('touchstart',start,{passive:false});canvas.addEventListener('touchmove',move,{passive:false});canvas.addEventListener('touchend',end);});}
+function limpiarFirma(id){const canvas=document.getElementById('firma-'+id);if(!canvas)return;canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);firmaData['firma-'+id]={signed:false};canvas.classList.remove('signed');}
+function getFirmaBase64(id){const canvas=document.getElementById('firma-'+id);if(!canvas||!firmaData['firma-'+id]?.signed)return null;return canvas.toDataURL('image/png');}
+function toggleAusente(panel){ausenteState[panel]=!ausenteState[panel];const btn=document.getElementById('btn-ausente-'+panel);const obs=document.getElementById('ausente-obs-'+panel);const canvas=document.getElementById('firma-cliente-'+panel);btn.classList.toggle('active',ausenteState[panel]);obs.classList.toggle('show',ausenteState[panel]);if(canvas){canvas.style.opacity=ausenteState[panel]?'0.3':'1';canvas.style.pointerEvents=ausenteState[panel]?'none':'auto';}}
+function validarFotos(key){const cnt=fotosData[key].filter(Boolean).length;const aviso=document.getElementById('fotos-aviso-'+key);if(cnt<5){if(aviso)aviso.classList.add('show');showToast('⚠ Debes adjuntar las 5 fotografías','error');return false;}if(aviso)aviso.classList.remove('show');return true;}
+function validarFirmas(panelKey){const tecnico=getFirmaBase64('tecnico-'+panelKey);if(!tecnico){showToast('⚠ La firma del técnico es obligatoria','error');return false;}if(!ausenteState[panelKey]){const cliente=getFirmaBase64('cliente-'+panelKey);if(!cliente){showToast('⚠ La firma del cliente es obligatoria o indica que está ausente','error');return false;}}else{const motivo=document.getElementById('ausente-motivo-'+panelKey)?.value.trim();if(!motivo){showToast('⚠ Indica el motivo por el que el cliente no puede firmar','error');return false;}}return true;}
+function buildResumenChecklist(tipo){if(tipo==='elec'){let r='CHECKLIST ELÉCTRICO\n';elecItems.forEach((item,i)=>r+=`  ${i+1}. ${item}: ${getPill('elec-'+i)}\n`);const trabajo=document.getElementById('elec-trabajo')?.value.trim();const herr=document.getElementById('elec-herramientas')?.value.trim();if(trabajo)r+=`\nTRABAJO REALIZADO\n  ${trabajo}\n`;if(herr)r+=`\nHERRAMIENTAS\n  ${herr}\n`;return r;}else{let r='CHECKLIST HIDRÁULICO\n';r+='\nBOMBAS\n';for(let i=1;i<=4;i++)r+=`  Bomba ${i} → Func: ${getPill('hb'+i+'f')} | Ruido: ${getPill('hb'+i+'r')} | Fugas: ${getPill('hb'+i+'g')} | Estado: ${getPill('hb'+i+'e')}\n`;r+='\nDEPÓSITO\n';r+=`  Nivel: ${getPill('hdep-niv')} | Limpieza: ${getPill('hdep-lim')} | Llenado: ${getPill('hdep-lle')} | Estado: ${getPill('hdep-est')}\n`;return r;}}
+function buildResumenMant(){const items=['Arranque automático correcto','Alternancia de bombas operativa','Paro correcto por presión','Sin golpes de ariete','Presión estable en servicio','Tiempo de respuesta correcto'];let r='CONTROL FUNCIONAL\n';items.forEach((item,i)=>r+=`  ${document.getElementById('c'+i)?.checked?'✓':'✗'} ${item}\n`);r+='\nDEPÓSITOS\n';r+=`  Depósito → Nivel: ${getPill('dep-niv')} | Limpieza: ${getPill('dep-lim')} | Llenado: ${getPill('dep-lle')} | Estado: ${getPill('dep-est')}\n`;r+='\nBOMBAS\n';for(let i=1;i<=4;i++)r+=`  Bomba ${i} → Func: ${getPill('b'+i+'f')} | Ruido: ${getPill('b'+i+'r')} | Fugas: ${getPill('b'+i+'g')} | Estado: ${getPill('b'+i+'e')}\n`;return r;}
 function calcHoraFin(){const n=new Date();return String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
-function calcDuracion(){if(!window._horaInicio) return '—';const diff=Math.round((new Date()-window._horaInicio)/60000);return diff>=60?`${Math.floor(diff/60)}h ${diff%60}min`:`${diff}min`;}
-function genNumDoc(){const n=new Date();return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}${String(n.getDate()).padStart(2,'0')}-${String(Math.floor(Math.random()*900)+100)}`;}
+function calcDuracion(){if(!window._horaInicio)return'—';const diff=Math.round((new Date()-window._horaInicio)/60000);return diff>=60?`${Math.floor(diff/60)}h ${diff%60}min`:`${diff}min`;}
+function genNumDoc(){const n=new Date();return`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}${String(n.getDate()).padStart(2,'0')}-${String(Math.floor(Math.random()*900)+100)}`;}
 function fechaFmt(val){return new Date(val+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'});}
+function obtenerUbicacion(){return new Promise(resolve=>{if(!navigator.geolocation){resolve(null);return;}navigator.geolocation.getCurrentPosition(pos=>resolve({lat:pos.coords.latitude.toFixed(6),lng:pos.coords.longitude.toFixed(6),precision:Math.round(pos.coords.accuracy)}),()=>resolve(null),{timeout:8000,enableHighAccuracy:true});});}
+function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type;setTimeout(()=>t.classList.add('show'),10);setTimeout(()=>t.classList.remove('show'),4000);}
 
-// ══ PDFs PRESUPUESTO ══
-const pdfData = { elec: null, hid: null, mant: null, simple: null };
-
-function cargarPdf(input, key) {
-  const file = input.files[0];
-  if (!file) return;
-  if (file.size > 5 * 1024 * 1024) {
-    showToast('⚠ El PDF no puede superar 5 MB', 'error');
-    input.value = '';
-    return;
-  }
-  const reader = new FileReader();
-  reader.onload = e => {
-    pdfData[key] = { base64: e.target.result.split(',')[1], nombre: file.name, size: file.size };
-    document.getElementById('pdf-name-' + key).textContent = '✅ ' + file.name;
-    document.getElementById('pdf-name-' + key).style.color = 'var(--ok)';
-    document.getElementById('pdf-label-' + key).style.borderColor = 'var(--ok)';
-    document.getElementById('pdf-clear-' + key).style.display = 'inline-block';
-  };
-  reader.readAsDataURL(file);
-}
-
-function borrarPdf(key) {
-  pdfData[key] = null;
-  document.getElementById('pdf-input-' + key).value = '';
-  document.getElementById('pdf-name-' + key).textContent = 'Seleccionar PDF...';
-  document.getElementById('pdf-name-' + key).style.color = 'var(--muted)';
-  document.getElementById('pdf-label-' + key).style.borderColor = 'var(--border)';
-  document.getElementById('pdf-clear-' + key).style.display = 'none';
-}
-
-// ══ UBICACIÓN ══
-function obtenerUbicacion() {
-  return new Promise((resolve) => {
-    if (!navigator.geolocation) { resolve(null); return; }
-    navigator.geolocation.getCurrentPosition(
-      pos => resolve({
-        lat: pos.coords.latitude.toFixed(6),
-        lng: pos.coords.longitude.toFixed(6),
-        precision: Math.round(pos.coords.accuracy)
-      }),
-      () => resolve(null),
-      { timeout: 8000, enableHighAccuracy: true }
-    );
-  });
-}
-
-// ══ ENVIAR CHECKLIST ══
 async function enviarChecklist(tipo){
   if(!empresaChecklist){showToast('⚠ Selecciona Rivagua o Marcres','error');return;}
   const cliente=document.getElementById('c-cliente').value.trim();
@@ -960,56 +417,18 @@ async function enviarChecklist(tipo){
   if(!fecha){showToast('⚠ La fecha es obligatoria','error');return;}
   if(!cliente){showToast('⚠ El cliente es obligatorio','error');return;}
   if(!tecnico){showToast('⚠ El técnico es obligatorio','error');return;}
-  if(!validarFotos(tipo)) return;
-  if(!validarFirmas(tipo)) return;
-
+  if(!validarFotos(tipo))return;
+  if(!validarFirmas(tipo))return;
   const tipoNombre=tipo==='elec'?'Checklist Eléctrico':'Checklist Hidráulico';
-  const horaFin=calcHoraFin(), totalHoras=calcDuracion();
-  const corteHoras=document.getElementById('c-corte-horas-val')?.value.trim()||'';
-
-  const payload=JSON.stringify({
-    empresa:empresaChecklist, tipo:tipoNombre, fecha:fechaFmt(fecha),
-    horaInicio:document.getElementById('c-hora-inicio').value,
-    horaFin, totalHoras, cliente,
-    direccion:document.getElementById('c-direccion').value.trim(),
-    poblacion:'', tecnico,
-    corte:getPill('corte'), corteHoras,
-    resumen:buildResumenChecklist(tipo),
-    observaciones:tipo==='elec'?document.getElementById('elec-obs').value.trim():document.getElementById('hid-obs').value.trim(),
-    materiales:getMaterilesFor(tipo),
-    estadoGeneral:null, numDoc:genNumDoc(),
-    fotos:fotosData[tipo].filter(Boolean),
-    firmaTecnico:getFirmaBase64('tecnico-'+tipo),
-    firmaCliente:ausenteState[tipo]?null:getFirmaBase64('cliente-'+tipo),
-    clienteAusente:ausenteState[tipo],
-    motivoAusencia:document.getElementById('ausente-motivo-'+tipo)?.value.trim()||'',
-    presupuestoPdf: pdfData[tipo] || null
-  });
-
   const btnId=tipo==='elec'?'send-elec-btn':'send-hid-btn';
   const btn=document.getElementById(btnId);
   btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
-
-  const ubicacion = await obtenerUbicacion();
-
+  const ubicacion=await obtenerUbicacion();
   btn.textContent='⏳ Enviando...';
-
-  const payloadObj = JSON.parse(payload);
-  payloadObj.ubicacion = ubicacion;
-  payloadObj.horaEnvio = calcHoraFin();
-
-  try{
-    const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payloadObj),headers:{'Content-Type':'text/plain;charset=utf-8'}});
-    const data=await res.json();
-    if(data.ok) mostrarPantallaFinal();
-    else throw new Error(data.error||'Error desconocido');
-  }catch(err){
-    showToast('❌ Error: '+(err.message||'sin conexión'),'error');
-    btn.disabled=false;btn.textContent=`📤 Enviar ${tipoNombre.toLowerCase()}`;
-  }
+  const payload={empresa:empresaChecklist,tipo:tipoNombre,fecha:fechaFmt(fecha),horaInicio:document.getElementById('c-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),cliente,direccion:document.getElementById('c-direccion').value.trim(),poblacion:'',tecnico,corte:getPill('corte'),corteHoras:document.getElementById('c-corte-horas-val')?.value.trim()||'',resumen:buildResumenChecklist(tipo),observaciones:tipo==='elec'?document.getElementById('elec-obs').value.trim():document.getElementById('hid-obs').value.trim(),materiales:getMaterilesFor(tipo),estadoGeneral:null,numDoc:genNumDoc(),fotos:fotosData[tipo].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+tipo),firmaCliente:ausenteState[tipo]?null:getFirmaBase64('cliente-'+tipo),clienteAusente:ausenteState[tipo],motivoAusencia:document.getElementById('ausente-motivo-'+tipo)?.value.trim()||'',presupuestoPdf:pdfData[tipo]||null,ubicacion,horaEnvio:calcHoraFin()};
+  try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal();else throw new Error(data.error||'Error desconocido');}catch(err){showToast('❌ Error: '+(err.message||'sin conexión'),'error');btn.disabled=false;btn.textContent=`📤 Enviar ${tipoNombre.toLowerCase()}`;}
 }
 
-// ══ ENVIAR ALBARÁN ══
 async function enviarAlbaran(panel){
   if(!empresaAlbaran){showToast('⚠ Selecciona Rivagua o Marcres','error');return;}
   if(!tipoAlbaran){showToast('⚠ Selecciona el tipo de albarán','error');return;}
@@ -1019,79 +438,25 @@ async function enviarAlbaran(panel){
   if(!fecha){showToast('⚠ La fecha es obligatoria','error');return;}
   if(!cliente){showToast('⚠ El cliente es obligatorio','error');return;}
   if(!tecnico){showToast('⚠ El técnico es obligatorio','error');return;}
-
   const fotoKey=panel==='mantenimiento'?'mant':'simple';
-  if(!validarFotos(fotoKey)) return;
-  if(!validarFirmas(panel==='mantenimiento'?'mant':'simple')) return;
-
+  if(!validarFotos(fotoKey))return;
+  if(!validarFirmas(panel==='mantenimiento'?'mant':'simple'))return;
   const isMant=panel==='mantenimiento';
   const tipoLabel={mantenimiento:'Albarán Mantenimiento',aviso:'Albarán Aviso',trabajo:'Albarán Trabajo',guardia:'Albarán Guardia'}[tipoAlbaran];
-  const horaFin=calcHoraFin(), totalHoras=calcDuracion();
   const pKey=isMant?'mant':'simple';
-
-  const payload=JSON.stringify({
-    empresa:empresaAlbaran, tipo:tipoLabel, fecha:fechaFmt(fecha),
-    horaInicio:document.getElementById('a-hora-inicio').value,
-    horaFin, totalHoras, cliente,
-    direccion:document.getElementById('a-direccion').value.trim(),
-    poblacion:document.getElementById('a-poblacion').value.trim(),
-    tecnico, estadoGeneral:getPill('estado-general'),
-    resumen:isMant?buildResumenMant():'',
-    observaciones:isMant?document.getElementById('mant-obs').value.trim():document.getElementById('simple-obs').value.trim(),
-    incidencia:isMant?document.getElementById('mant-incidencia').value.trim():'',
-    materiales:getMaterilesFor(pKey),
-    numDoc:genNumDoc(),
-    fotos:fotosData[fotoKey].filter(Boolean),
-    firmaTecnico:getFirmaBase64('tecnico-'+pKey),
-    firmaCliente:ausenteState[pKey]?null:getFirmaBase64('cliente-'+pKey),
-    clienteAusente:ausenteState[pKey],
-    motivoAusencia:document.getElementById('ausente-motivo-'+pKey)?.value.trim()||'',
-    presupuestoPdf: pdfData[pKey] || null
-  });
-
   const btnId=isMant?'send-mant-btn':'send-simple-btn';
   const btn=document.getElementById(btnId);
   btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
-
-  const ubicacion = await obtenerUbicacion();
-
+  const ubicacion=await obtenerUbicacion();
   btn.textContent='⏳ Generando PDF...';
-
-  const payloadObj = JSON.parse(payload);
-  payloadObj.ubicacion = ubicacion;
-  payloadObj.horaEnvio = calcHoraFin();
-
-  try{
-    const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payloadObj),headers:{'Content-Type':'text/plain;charset=utf-8'}});
-    const data=await res.json();
-    if(data.ok) mostrarPantallaFinal();
-    else throw new Error(data.error||'Error desconocido');
-  }catch(err){
-    showToast('❌ Error: '+(err.message||'sin conexión'),'error');
-    btn.disabled=false;btn.textContent='📤 Enviar '+tipoLabel;
-  }
+  const payload={empresa:empresaAlbaran,tipo:tipoLabel,fecha:fechaFmt(fecha),horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),tecnico,estadoGeneral:getPill('estado-general'),resumen:isMant?buildResumenMant():'',observaciones:isMant?document.getElementById('mant-obs').value.trim():document.getElementById('simple-obs').value.trim(),incidencia:isMant?document.getElementById('mant-incidencia').value.trim():'',materiales:getMaterilesFor(pKey),numDoc:genNumDoc(),fotos:fotosData[fotoKey].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+pKey),firmaCliente:ausenteState[pKey]?null:getFirmaBase64('cliente-'+pKey),clienteAusente:ausenteState[pKey],motivoAusencia:document.getElementById('ausente-motivo-'+pKey)?.value.trim()||'',presupuestoPdf:pdfData[pKey]||null,ubicacion,horaEnvio:calcHoraFin()};
+  try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal();else throw new Error(data.error||'Error desconocido');}catch(err){showToast('❌ Error: '+(err.message||'sin conexión'),'error');btn.disabled=false;btn.textContent='📤 Enviar '+tipoLabel;}
 }
 
-// ══ TOAST ══
-function showToast(msg,type=''){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.className='toast '+type;
-  setTimeout(()=>t.classList.add('show'),10);
-  setTimeout(()=>t.classList.remove('show'),4000);
-}
-
-// ══ RELOJ ══
 function tickClock(){const n=new Date();document.getElementById('hora-display').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
 tickClock();setInterval(tickClock,30000);
-
-// ══ INIT ══
-buildAlbaranTables();
-buildChecklistTables();
-buildElec();
-initFotos();
-initFirmas();
+buildAlbaranTables();buildChecklistTables();buildElec();initFotos();initFirmas();
 addMatRowFor('simple');addMatRowFor('mant');addMatRowFor('elec');addMatRowFor('hid');
-
 const nowInit=new Date();
 const horaStr=String(nowInit.getHours()).padStart(2,'0')+':'+String(nowInit.getMinutes()).padStart(2,'0');
 document.getElementById('c-fecha').valueAsDate=new Date();
