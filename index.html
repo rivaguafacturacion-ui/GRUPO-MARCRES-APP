@@ -470,8 +470,47 @@ function validarFotos(key){const cnt=fotosData[key].filter(Boolean).length;const
 function validarFirmas(panelKey){const tecnico=getFirmaBase64('tecnico-'+panelKey);if(!tecnico){showToast('⚠ La firma del técnico es obligatoria','error');return false;}if(!ausenteState[panelKey]){const cliente=getFirmaBase64('cliente-'+panelKey);if(!cliente){showToast('⚠ La firma del cliente es obligatoria o indica que está ausente','error');return false;}}else{const motivo=document.getElementById('ausente-motivo-'+panelKey)?.value.trim();if(!motivo){showToast('⚠ Indica el motivo por el que el cliente no puede firmar','error');return false;}}return true;}
 
 // RESÚMENES
-function buildResumenChecklist(tipo){if(tipo==='elec'){let r='CHECKLIST ELÉCTRICO\n';elecItems.forEach((item,i)=>r+=`  ${i+1}. ${item}: ${getPill('elec-'+i)}\n`);const trabajo=document.getElementById('elec-trabajo')?.value.trim();const herr=document.getElementById('elec-herramientas')?.value.trim();if(trabajo)r+=`\nTRABAJO REALIZADO\n  ${trabajo}\n`;if(herr)r+=`\nHERRAMIENTAS\n  ${herr}\n`;return r;}else{let r='CHECKLIST HIDRÁULICO\n\nBOMBAS\n';for(let i=1;i<=4;i++)r+=`  Bomba ${i} → Func: ${getPill('hb'+i+'f')} | Ruido: ${getPill('hb'+i+'r')} | Fugas: ${getPill('hb'+i+'g')} | Estado: ${getPill('hb'+i+'e')}\n`;r+='\nDEPÓSITO\n';r+=`  Nivel: ${getPill('hdep-niv')} | Limpieza: ${getPill('hdep-lim')} | Llenado: ${getPill('hdep-lle')} | Estado: ${getPill('hdep-est')}\n`;return r;}}
-function buildResumenMant(){const items=['Arranque automático correcto','Alternancia de bombas operativa','Paro correcto por presión','Sin golpes de ariete','Presión estable en servicio','Tiempo de respuesta correcto'];let r='CONTROL FUNCIONAL\n';items.forEach((item,i)=>r+=`  ${document.getElementById('c'+i)?.checked?'✓':'✗'} ${item}\n`);r+='\nBOMBAS\n';for(let i=1;i<=4;i++)r+=`  Bomba ${i} → Func: ${getPill('b'+i+'f')} | Ruido: ${getPill('b'+i+'r')} | Fugas: ${getPill('b'+i+'g')} | Estado: ${getPill('b'+i+'e')}\n`;return r;}
+function buildResumenMant(){
+  const items=['Arranque automático correcto','Alternancia de bombas operativa','Paro correcto por presión','Sin golpes de ariete','Presión estable en servicio','Tiempo de respuesta correcto'];
+  let r='CONTROL FUNCIONAL\n';
+  items.forEach((item,i)=>r+=`  ${document.getElementById('c'+i)?.checked?'✓':'✗'} ${item}\n`);
+  r+='\nDEPÓSITOS\n';
+  r+=`  Depósito → Nivel: ${getPill('dep-niv')} | Limpieza: ${getPill('dep-lim')} | Llenado: ${getPill('dep-lle')} | Estado: ${getPill('dep-est')}\n`;
+  r+='\nBOYAS\n';
+  r+=`  Boya Mínimo → Existencia: ${getPill('boy-min-ex')} | Estado: ${getPill('boy-min-est')}\n`;
+  r+=`  Boya Máximo → Existencia: ${getPill('boy-max-ex')} | Estado: ${getPill('boy-max-est')}\n`;
+  r+='\nBOMBAS\n';
+  for(let i=1;i<=4;i++)r+=`  Bomba ${i} → Func: ${getPill('b'+i+'f')} | Ruido: ${getPill('b'+i+'r')} | Fugas: ${getPill('b'+i+'g')} | Estado: ${getPill('b'+i+'e')}\n`;
+  r+='\nDESCALCIFICADORES\n';
+  for(let i=1;i<=2;i++)r+=`  Descalcif. ${i} → Func: ${getPill('d'+i+'f')} | Ruido: ${getPill('d'+i+'r')} | Fugas: ${getPill('d'+i+'g')} | Estado: ${getPill('d'+i+'e')}\n`;
+  r+='\nBOMBAS DE ACHIQUE\n';
+  for(let i=1;i<=4;i++)r+=`  Achique ${i} → Func: ${getPill('a'+i+'f')} | Ruido: ${getPill('a'+i+'r')} | Fugas: ${getPill('a'+i+'g')} | Estado: ${getPill('a'+i+'e')}\n`;
+  r+='\nBOMBEO RESIDUALES\n';
+  for(let i=1;i<=4;i++)r+=`  Residual ${i} → Func: ${getPill('res'+i+'f')} | Ruido: ${getPill('res'+i+'r')} | Fugas: ${getPill('res'+i+'g')} | Estado: ${getPill('res'+i+'e')}\n`;
+  return r;
+}
+
+function buildResumenChecklist(tipo){
+  if(tipo==='elec'){
+    let r='CHECKLIST ELÉCTRICO\n';
+    elecItems.forEach((item,i)=>r+=`  ${i+1}. ${item}: ${getPill('elec-'+i)}\n`);
+    const trabajo=document.getElementById('elec-trabajo')?.value.trim();
+    const herr=document.getElementById('elec-herramientas')?.value.trim();
+    if(trabajo)r+=`\nTRABAJO REALIZADO\n  ${trabajo}\n`;
+    if(herr)r+=`\nHERRAMIENTAS\n  ${herr}\n`;
+    return r;
+  } else {
+    let r='CHECKLIST HIDRÁULICO\n\nBOMBAS\n';
+    for(let i=1;i<=4;i++)r+=`  Bomba ${i} → Func: ${getPill('hb'+i+'f')} | Ruido: ${getPill('hb'+i+'r')} | Fugas: ${getPill('hb'+i+'g')} | Estado: ${getPill('hb'+i+'e')}\n`;
+    r+='\nDEPÓSITO\n';
+    r+=`  Nivel: ${getPill('hdep-niv')} | Limpieza: ${getPill('hdep-lim')} | Llenado: ${getPill('hdep-lle')} | Estado: ${getPill('hdep-est')}\n`;
+    r+='\nDESCALCIFICADORES\n';
+    for(let i=1;i<=2;i++)r+=`  Descalcif. ${i} → Func: ${getPill('hd'+i+'f')} | Ruido: ${getPill('hd'+i+'r')} | Fugas: ${getPill('hd'+i+'g')} | Estado: ${getPill('hd'+i+'e')}\n`;
+    r+='\nBOMBAS DE ACHIQUE\n';
+    for(let i=1;i<=4;i++)r+=`  Achique ${i} → Func: ${getPill('ha'+i+'f')} | Ruido: ${getPill('ha'+i+'r')} | Fugas: ${getPill('ha'+i+'g')} | Estado: ${getPill('ha'+i+'e')}\n`;
+    return r;
+  }
+}
 
 // HELPERS
 function calcHoraFin(){const n=new Date();return String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
