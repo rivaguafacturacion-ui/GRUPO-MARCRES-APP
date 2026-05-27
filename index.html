@@ -356,7 +356,8 @@ function buscarHolded(q,prefix){
     try{
       const url=`${GAS_URL}?action=holded&empresa=${empresa}&q=${encodeURIComponent(q)}`;
       const res=await fetch(url);
-      const data=await res.json();
+      const text=await res.text();
+      const data=JSON.parse(text);
       if(!data.ok||!data.contacts||!data.contacts.length){drop.innerHTML='<div class="holded-searching">Sin resultados</div>';return;}
       const q_lower=q.toLowerCase();
       data.contacts.forEach(c=>{holdedContactos[c.id]=c;});
