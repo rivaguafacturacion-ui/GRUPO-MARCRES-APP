@@ -391,14 +391,20 @@ function buscarHolded(q,prefix){
       const res=await fetch(url);
       const data=await res.json();
       if(!data.ok||!data.contacts||!data.contacts.length){drop.innerHTML='<div class="holded-searching">Sin resultados</div>';return;}
-      const q_lower = q.toLowerCase();
       drop.innerHTML=data.contacts.map(c=>{
         const nombre = c.name;
         const idx = nombre.toLowerCase().indexOf(q_lower);
         const nombreHtml = idx>=0
           ? nombre.substring(0,idx)+'<strong style="color:var(--accent);">'+nombre.substring(idx,idx+q.length)+'</strong>'+nombre.substring(idx+q.length)
           : nombre;
-        return `<div class="holded-item" onclick="seleccionarCliente('${prefix}',${JSON.stringify(c).replace(/'/g,"&#39;")})"><div class="holded-item-name">${nombreHtml}</div><div class="holded-item-addr">${[c.address,c.city,c.postalCode].filter(Boolean).join(' · ')}</div></div>`;
+        const cStr = JSON.stringify(c).replace(/'/g,"&#39;").replace(/"/g,'&quot;');
+        return `<div class="holded-item" 
+          ontouchstart="event.preventDefault();seleccionarCliente('${prefix}',JSON.parse(this.dataset.c))" 
+          onclick="seleccionarCliente('${prefix}',JSON.parse(this.dataset.c))"
+          data-c="${cStr}">
+          <div class="holded-item-name">${nombreHtml}</div>
+          <div class="holded-item-addr">${[c.address,c.city,c.postalCode].filter(Boolean).join(' · ')}</div>
+        </div>`;
       }).join('');
     }catch(e){drop.innerHTML='<div class="holded-searching">Error al conectar con Holded</div>';}
   },350);
