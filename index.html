@@ -372,6 +372,7 @@ const ausenteState={elec:false,hid:false,mant:false,simple:false};
 const firmaData={};
 const pdfData={elec:null,hid:null,mant:null,simple:null};
 let fechaISO='', fechaTexto='';
+const holdedContactos={};
 
 function mostrarPantallaFinal(){const pf=document.getElementById('pantalla-final');pf.classList.add('show');setTimeout(()=>{pf.classList.remove('show');window.location.reload();},3000);}
 
@@ -391,7 +392,28 @@ function buscarHolded(q,prefix){
       const res=await fetch(url);
       const data=await res.json();
       if(!data.ok||!data.contacts||!data.contacts.length){drop.innerHTML='<div class="holded-searching">Sin resultados</div>';return;}
-      drop.innerHTML=data.contacts.map(c=>`<div class="holded-item" onclick="seleccionarCliente('${prefix}',${JSON.stringify(c).replace(/'/g,"&#39;")})"><div class="holded-item-name">${c.name}</div><div class="holded-item-addr">${[c.address,c.city,c.postalCode].filter(Boolean).join(' · ')}</div></div>`).join('');
+      // Guardamos contactos en memoria para selección táctil
+      data.contacts.forEach(c => { holdedContactos[c.id] = c; });
+
+      drop.innerHTML=data.contacts.map(c=>{
+        const nombre = c.name;
+        const idx = nombre.toLowerCase().indexOf(q_lower);
+        const nombreHtml = idx>=0
+          ? nombre.substring(0,idx)+'<strong style="color:var(--accent);">'+nombre.substring(idx,idx+q.length)+'</strong>'+nombre.substring(idx+q.length)
+          : nombre;
+        const addr = [c.address,c.city,c.postalCode].filter(Boolean).join(' · ');
+        return `<div class="holded-item"
+          data-nombre="${c.name.replace(/"/g,'&quot;')}"
+          data-address="${(c.address||'').replace(/"/g,'&quot;')}"
+          data-city="${(c.city||'').replace(/"/g,'&quot;')}"
+          data-cp="${(c.postalCode||'').replace(/"/g,'&quot;')}"
+          data-prefix="${prefix}"
+          ontouchstart="event.preventDefault();event.stopPropagation();elegirCliente(this)"
+          onclick="elegirCliente(this)">
+          <div class="holded-item-name">${nombreHtml}</div>
+          <div class="holded-item-addr">${addr}</div>
+        </div>`;
+      }).join('');
     }catch(e){drop.innerHTML='<div class="holded-searching">Error al conectar con Holded</div>';}
   },350);
 }
