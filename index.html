@@ -417,6 +417,19 @@ function buscarHolded(q,prefix){
     }catch(e){drop.innerHTML='<div class="holded-searching">Error al conectar con Holded</div>';}
   },350);
 }
+function elegirCliente(el) {
+  const prefix  = el.dataset.prefix;
+  const nombre  = el.dataset.nombre;
+  const address = el.dataset.address;
+  const city    = el.dataset.city;
+  const cp      = el.dataset.cp;
+  document.getElementById(prefix+'-cliente').value   = nombre;
+  document.getElementById(prefix+'-direccion').value  = address;
+  if(document.getElementById(prefix+'-poblacion')) document.getElementById(prefix+'-poblacion').value = city;
+  if(document.getElementById(prefix+'-cp'))        document.getElementById(prefix+'-cp').value        = cp;
+  document.getElementById(prefix+'-holded-drop').style.display='none';
+}
+
 function seleccionarCliente(prefix,c){document.getElementById(prefix+'-cliente').value=c.name;document.getElementById(prefix+'-direccion').value=c.address||'';if(document.getElementById(prefix+'-poblacion'))document.getElementById(prefix+'-poblacion').value=c.city||'';if(document.getElementById(prefix+'-cp'))document.getElementById(prefix+'-cp').value=c.postalCode||'';document.getElementById(prefix+'-holded-drop').style.display='none';}
 document.addEventListener('click',e=>{['c','a'].forEach(p=>{const wrap=document.getElementById(p+'-cliente-wrap');const drop=document.getElementById(p+'-holded-drop');if(drop&&wrap&&!wrap.contains(e.target))drop.style.display='none';});});
 
