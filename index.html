@@ -364,7 +364,8 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 
 <script>
 const GAS_URL='https://script.google.com/macros/s/AKfycbwchvRVv4tgiKJ196l_DzMOt8V2YonhODntHeoF2phXOXiQ8eJqMiDhNPtNC6Oi1NPDUw/exec';
-const HOLDED_PROXY_URL='PEGA_AQUI_LA_URL_DEL_PROXY_HOLDED';
+// Holded usa el mismo GAS_URL con ?action=holded&empresa=X&q=Y
+const HOLDED_PROXY_URL = GAS_URL;
 let empresaChecklist=null,empresaAlbaran=null,tipoAlbaran=null,currentFotoKey=null,currentFotoSlot=null;
 const fotosData={mant:Array(5).fill(null),simple:Array(5).fill(null),elec:Array(5).fill(null),hid:Array(5).fill(null)};
 const ausenteState={elec:false,hid:false,mant:false,simple:false};
@@ -376,7 +377,24 @@ function mostrarPantallaFinal(){const pf=document.getElementById('pantalla-final
 
 // HOLDED
 let holdedTimer=null;
-function buscarHolded(q,prefix){const drop=document.getElementById(prefix+'-holded-drop');if(!q||q.length<2){drop.style.display='none';return;}clearTimeout(holdedTimer);drop.style.display='block';drop.innerHTML='<div class="holded-searching">Buscando en Holded...</div>';holdedTimer=setTimeout(async()=>{if(!HOLDED_PROXY_URL||HOLDED_PROXY_URL.includes('PEGA')){drop.innerHTML='<div class="holded-searching">⚠ Configura el proxy Holded</div>';return;}try{const res=await fetch(`${HOLDED_PROXY_URL}?q=${encodeURIComponent(q)}`);const data=await res.json();if(!data.ok||!data.contacts.length){drop.innerHTML='<div class="holded-searching">Sin resultados</div>';return;}drop.innerHTML=data.contacts.map(c=>`<div class="holded-item" onclick="seleccionarCliente('${prefix}',${JSON.stringify(c).replace(/'/g,"&#39;")})"><div class="holded-item-name">${c.name}</div><div class="holded-item-addr">${[c.address,c.city,c.postalCode].filter(Boolean).join(' · ')}</div></div>`).join('');}catch(e){drop.innerHTML='<div class="holded-searching">Error al conectar</div>';}},350);}
+function buscarHolded(q,prefix){
+  const empresa = prefix==='c' ? empresaChecklist : empresaAlbaran;
+  const drop=document.getElementById(prefix+'-holded-drop');
+  if(!q||q.length<2){drop.style.display='none';return;}
+  if(!empresa){drop.style.display='block';drop.innerHTML='<div class="holded-searching">⚠ Selecciona primero Rivagua o Marcres</div>';return;}
+  clearTimeout(holdedTimer);
+  drop.style.display='block';
+  drop.innerHTML='<div class="holded-searching">Buscando en Holded...</div>';
+  holdedTimer=setTimeout(async()=>{
+    try{
+      const url=`${GAS_URL}?action=holded&empresa=${empresa}&q=${encodeURIComponent(q)}`;
+      const res=await fetch(url);
+      const data=await res.json();
+      if(!data.ok||!data.contacts||!data.contacts.length){drop.innerHTML='<div class="holded-searching">Sin resultados</div>';return;}
+      drop.innerHTML=data.contacts.map(c=>`<div class="holded-item" onclick="seleccionarCliente('${prefix}',${JSON.stringify(c).replace(/'/g,"&#39;")})"><div class="holded-item-name">${c.name}</div><div class="holded-item-addr">${[c.address,c.city,c.postalCode].filter(Boolean).join(' · ')}</div></div>`).join('');
+    }catch(e){drop.innerHTML='<div class="holded-searching">Error al conectar con Holded</div>';}
+  },350);
+}
 function seleccionarCliente(prefix,c){document.getElementById(prefix+'-cliente').value=c.name;document.getElementById(prefix+'-direccion').value=c.address||'';if(document.getElementById(prefix+'-poblacion'))document.getElementById(prefix+'-poblacion').value=c.city||'';if(document.getElementById(prefix+'-cp'))document.getElementById(prefix+'-cp').value=c.postalCode||'';document.getElementById(prefix+'-holded-drop').style.display='none';}
 document.addEventListener('click',e=>{['c','a'].forEach(p=>{const wrap=document.getElementById(p+'-cliente-wrap');const drop=document.getElementById(p+'-holded-drop');if(drop&&wrap&&!wrap.contains(e.target))drop.style.display='none';});});
 
