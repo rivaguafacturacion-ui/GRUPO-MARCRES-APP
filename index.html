@@ -326,8 +326,8 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <div class="card" id="sec-inc"><div class="section-header" onclick="toggleSec('sec-inc')"><span class="sec-title">Incidencia</span><span class="chevron">⌄</span></div><div class="section-body"><div class="obs-section"><textarea class="obs-textarea" id="mant-incidencia" placeholder="Describe la incidencia detectada..."></textarea></div></div></div>
     <div class="card" id="sec-obs-mant"><div class="section-header section-open" onclick="toggleSec('sec-obs-mant')"><span class="sec-title">Observaciones</span><span class="chevron">⌄</span></div><div class="section-body" style="display:block;"><div class="obs-section"><textarea class="obs-textarea" id="mant-obs" placeholder="Observaciones generales..."></textarea></div></div></div>
     <div class="card" id="sec-mat-mant">
-      <div class="section-header" onclick="toggleSec('sec-mat-mant')"><span class="sec-title">Presupuesto Materiales</span><span class="chevron">⌄</span></div>
-      <div class="section-body">
+      <div class="section-header section-open" onclick="toggleSec('sec-mat-mant')"><span class="sec-title">Presupuesto Materiales</span><span class="chevron">⌄</span></div>
+      <div class="section-body" style="display:block;">
         <div class="field-group"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-mant" placeholder="Ej: 2h, 1h 30min..." inputmode="decimal"></div>
         <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-mant"></tbody></table></div>
         <div id="mat-total-display-mant" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-mant">0.00 €</span></div>
@@ -343,8 +343,8 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
   <div id="panel-simple" class="panel">
     <div class="card" id="sec-obs-simple"><div class="section-header section-open" onclick="toggleSec('sec-obs-simple')"><span class="sec-title">Observaciones / Descripción</span><span class="chevron">⌄</span></div><div class="section-body" style="display:block;"><div class="obs-section"><textarea class="obs-textarea" id="simple-obs" placeholder="Describe el trabajo realizado..."></textarea></div></div></div>
     <div class="card" id="sec-mat-simple">
-      <div class="section-header" onclick="toggleSec('sec-mat-simple')"><span class="sec-title">Presupuesto Materiales</span><span class="chevron">⌄</span></div>
-      <div class="section-body">
+      <div class="section-header section-open" onclick="toggleSec('sec-mat-simple')"><span class="sec-title">Presupuesto Materiales</span><span class="chevron">⌄</span></div>
+      <div class="section-body" style="display:block;">
         <div class="field-group"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-simple" placeholder="Ej: 2h, 1h 30min..." inputmode="decimal"></div>
         <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-simple"></tbody></table></div>
         <div id="mat-total-display-simple" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-simple">0.00 €</span></div>
@@ -576,6 +576,7 @@ async function enviarAlbaran(panel){
   const btn=document.getElementById(btnId);
   // Validar foto taller si material=No
   if(tallerEstado==='No'&&!tallerFotoData){showToast('⚠ Adjunta la foto del material a taller','error');return;}
+  // Si no se seleccionó nada en taller, se envía como no indicado
   btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
   const ubicacion=await obtenerUbicacion();
   btn.textContent='⏳ Generando PDF...';
