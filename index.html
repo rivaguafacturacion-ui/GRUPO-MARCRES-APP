@@ -109,6 +109,12 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 .corte-horas{margin-top:8px;display:none;}
 .corte-horas.show{display:block;}
 .corte-horas input{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;font-family:var(--font);font-size:14px;color:var(--text);outline:none;}
+.taller-foto-wrap{margin-top:8px;display:none;}
+.taller-foto-wrap.show{display:block;}
+.taller-foto-slot{width:100%;height:120px;border-radius:8px;border:1.5px dashed var(--border);background:var(--surface2);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;}
+.taller-foto-slot.filled{border-style:solid;border-color:var(--ok);}
+.taller-foto-slot img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+.taller-foto-slot .remove-btn{position:absolute;top:5px;right:5px;width:22px;height:22px;background:rgba(0,0,0,.6);color:#fff;border-radius:99px;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;border:none;}
 .send-btn{width:100%;padding:16px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-family:var(--font);font-size:16px;font-weight:600;cursor:pointer;margin-top:4px;transition:all .15s;}
 .send-btn:hover{background:var(--accent2);}
 .send-btn:active{transform:scale(.98);}
@@ -171,7 +177,10 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     </div>
     <div class="field-group cliente-wrap" id="c-cliente-wrap">
       <label class="field-label">Cliente <span style="color:var(--bad)">*</span> <span class="holded-badge">Holded</span></label>
-      <input type="text" class="field-input" id="c-cliente" placeholder="Escribe para buscar cliente..." autocomplete="off" oninput="buscarHolded(this.value,'c')" onfocus="buscarHolded(this.value,'c')">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <input type="text" class="field-input" id="c-cliente" placeholder="Escribe para buscar cliente..." autocomplete="off" oninput="buscarHolded(this.value,'c')" onfocus="buscarHolded(this.value,'c')" style="flex:1;">
+        <button onclick="resetCliente('c')" title="Borrar cliente" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);flex-shrink:0;">✕</button>
+      </div>
       <div class="holded-dropdown" id="c-holded-drop" style="display:none;"></div>
     </div>
     <div class="field-group"><label class="field-label">Dirección</label><input type="text" class="field-input" id="c-direccion" placeholder="Dirección del servicio"></div>
@@ -202,6 +211,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <div class="card" id="csec-mat-elec">
       <div class="section-header" onclick="toggleSec('csec-mat-elec')"><span class="sec-title">Presupuesto Materiales</span><span class="chevron">⌄</span></div>
       <div class="section-body">
+        <div class="field-group"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-elec" placeholder="Ej: 2h, 1h 30min..." inputmode="decimal"></div>
         <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-elec"></tbody></table></div>
         <div id="mat-total-display-elec" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-elec">0.00 €</span></div>
         <button class="add-row-btn" onclick="addMatRowFor('elec')">+ Añadir material</button>
@@ -222,6 +232,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <div class="card" id="csec-mat-hid">
       <div class="section-header" onclick="toggleSec('csec-mat-hid')"><span class="sec-title">Presupuesto Materiales</span><span class="chevron">⌄</span></div>
       <div class="section-body">
+        <div class="field-group"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-hid" placeholder="Ej: 2h, 1h 30min..." inputmode="decimal"></div>
         <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-hid"></tbody></table></div>
         <div id="mat-total-display-hid" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-hid">0.00 €</span></div>
         <button class="add-row-btn" onclick="addMatRowFor('hid')">+ Añadir material</button>
@@ -250,7 +261,10 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     </div>
     <div class="field-group cliente-wrap" id="a-cliente-wrap">
       <label class="field-label">Cliente <span style="color:var(--bad)">*</span> <span class="holded-badge">Holded</span></label>
-      <input type="text" class="field-input" id="a-cliente" placeholder="Escribe para buscar cliente..." autocomplete="off" oninput="buscarHolded(this.value,'a')" onfocus="buscarHolded(this.value,'a')">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <input type="text" class="field-input" id="a-cliente" placeholder="Escribe para buscar cliente..." autocomplete="off" oninput="buscarHolded(this.value,'a')" onfocus="buscarHolded(this.value,'a')" style="flex:1;">
+        <button onclick="resetCliente('a')" title="Borrar cliente" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);flex-shrink:0;">✕</button>
+      </div>
       <div class="holded-dropdown" id="a-holded-drop" style="display:none;"></div>
     </div>
     <div class="field-group"><label class="field-label">Dirección</label><input type="text" class="field-input" id="a-direccion" placeholder="Dirección del servicio"></div>
@@ -266,6 +280,21 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
         <span class="pill" onclick="selectCorte(this,'a','No')">No</span>
       </div>
       <div class="corte-horas" id="a-corte-horas"><input type="text" placeholder="Número de horas del corte (ej: 2h)" id="a-corte-horas-val"></div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Material sustituido a taller</label>
+      <div class="pill-group">
+        <span class="pill" onclick="selectTaller(this,'Si')">Sí</span>
+        <span class="pill" onclick="selectTaller(this,'No')">No</span>
+      </div>
+      <div class="taller-foto-wrap" id="taller-foto-wrap">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">📷 Foto del material (obligatoria)</div>
+        <div class="taller-foto-slot" id="taller-foto-slot" onclick="abrirFotoTaller()">
+          <span style="font-size:24px;">📷</span>
+          <span style="font-size:11px;color:var(--muted);margin-top:4px;">Toca para fotografiar</span>
+        </div>
+        <input type="file" accept="image/*" capture="environment" id="taller-foto-input" style="display:none;" onchange="cargarFotoTaller(this)">
+      </div>
     </div>
   </div>
   <div class="card" style="padding:14px;">
@@ -299,6 +328,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <div class="card" id="sec-mat-mant">
       <div class="section-header" onclick="toggleSec('sec-mat-mant')"><span class="sec-title">Presupuesto Materiales</span><span class="chevron">⌄</span></div>
       <div class="section-body">
+        <div class="field-group"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-mant" placeholder="Ej: 2h, 1h 30min..." inputmode="decimal"></div>
         <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-mant"></tbody></table></div>
         <div id="mat-total-display-mant" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-mant">0.00 €</span></div>
         <button class="add-row-btn" onclick="addMatRowFor('mant')">+ Añadir material</button>
@@ -315,6 +345,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <div class="card" id="sec-mat-simple">
       <div class="section-header" onclick="toggleSec('sec-mat-simple')"><span class="sec-title">Presupuesto Materiales</span><span class="chevron">⌄</span></div>
       <div class="section-body">
+        <div class="field-group"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-simple" placeholder="Ej: 2h, 1h 30min..." inputmode="decimal"></div>
         <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-simple"></tbody></table></div>
         <div id="mat-total-display-simple" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-simple">0.00 €</span></div>
         <button class="add-row-btn" onclick="addMatRowFor('simple')">+ Añadir material</button>
@@ -345,6 +376,7 @@ function mostrarPantallaFinal(){const pf=document.getElementById('pantalla-final
 
 // HOLDED — versión estable con fetch + selección por botón modal
 function buscarHolded(q,prefix){
+  if(clienteElegido[prefix])return;
   const empresa=prefix==='c'?empresaChecklist:empresaAlbaran;
   const drop=document.getElementById(prefix+'-holded-drop');
   if(!q||q.length<2){drop.style.display='none';return;}
@@ -380,6 +412,7 @@ function buscarHolded(q,prefix){
   },350);
 }
 
+const clienteElegido={c:false,a:false};
 function elegirClienteId(id,prefix){
   const c=holdedContactos[id];
   if(!c) return;
@@ -388,6 +421,19 @@ function elegirClienteId(id,prefix){
   if(document.getElementById(prefix+'-poblacion')) document.getElementById(prefix+'-poblacion').value=c.city||'';
   if(document.getElementById(prefix+'-cp')) document.getElementById(prefix+'-cp').value=c.postalCode||'';
   document.getElementById(prefix+'-holded-drop').style.display='none';
+  clienteElegido[prefix]=true;
+  const inp=document.getElementById(prefix+'-cliente');
+  inp.style.color='var(--ok)';
+  inp.style.fontWeight='600';
+}
+function resetCliente(prefix){
+  clienteElegido[prefix]=false;
+  const inp=document.getElementById(prefix+'-cliente');
+  inp.style.color='';inp.style.fontWeight='';
+  inp.value='';
+  document.getElementById(prefix+'-direccion').value='';
+  if(document.getElementById(prefix+'-poblacion'))document.getElementById(prefix+'-poblacion').value='';
+  if(document.getElementById(prefix+'-cp'))document.getElementById(prefix+'-cp').value='';
 }
 
 function seleccionarCliente(prefix,c){
@@ -508,7 +554,7 @@ async function enviarChecklist(tipo){
   btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
   const ubicacion=await obtenerUbicacion();
   btn.textContent='⏳ Enviando...';
-  const payload={empresa:empresaChecklist,tipo:tipoNombre,fecha:fechaTexto,horaInicio:document.getElementById('c-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),cliente,direccion:document.getElementById('c-direccion').value.trim(),poblacion:document.getElementById('c-poblacion').value.trim(),cp:document.getElementById('c-cp').value.trim(),tecnico,corte:getPill('c-corte'),corteHoras:document.getElementById('c-corte-horas-val')?.value.trim()||'',resumen:buildResumenChecklist(tipo),observaciones:tipo==='elec'?document.getElementById('elec-obs').value.trim():document.getElementById('hid-obs').value.trim(),materiales:getMaterilesFor(tipo),estadoGeneral:null,numDoc:genNumDoc(),fotos:fotosData[tipo].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+tipo),firmaCliente:ausenteState[tipo]?null:getFirmaBase64('cliente-'+tipo),clienteAusente:ausenteState[tipo],motivoAusencia:document.getElementById('ausente-motivo-'+tipo)?.value.trim()||'',presupuestoPdf:pdfData[tipo]||null,ubicacion,horaEnvio:calcHoraFin()};
+  const payload={empresa:empresaChecklist,tipo:tipoNombre,fecha:fechaTexto,horaInicio:document.getElementById('c-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),cliente,direccion:document.getElementById('c-direccion').value.trim(),poblacion:document.getElementById('c-poblacion').value.trim(),cp:document.getElementById('c-cp').value.trim(),tecnico,corte:getPill('c-corte'),corteHoras:document.getElementById('c-corte-horas-val')?.value.trim()||'',resumen:buildResumenChecklist(tipo),observaciones:tipo==='elec'?document.getElementById('elec-obs').value.trim():document.getElementById('hid-obs').value.trim(),horasPresupuestadas:document.getElementById('horas-pres-'+tipo)?.value.trim()||'',materiales:getMaterilesFor(tipo),estadoGeneral:null,numDoc:genNumDoc(),fotos:fotosData[tipo].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+tipo),firmaCliente:ausenteState[tipo]?null:getFirmaBase64('cliente-'+tipo),clienteAusente:ausenteState[tipo],motivoAusencia:document.getElementById('ausente-motivo-'+tipo)?.value.trim()||'',presupuestoPdf:pdfData[tipo]||null,ubicacion,horaEnvio:calcHoraFin()};
   try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal();else throw new Error(data.error||'Error desconocido');}
   catch(err){showToast('❌ Error: '+(err.message||'sin conexión'),'error');btn.disabled=false;btn.textContent=`📤 Enviar ${tipoNombre.toLowerCase()}`;}
 }
@@ -528,12 +574,50 @@ async function enviarAlbaran(panel){
   const pKey=isMant?'mant':'simple';
   const btnId=isMant?'send-mant-btn':'send-simple-btn';
   const btn=document.getElementById(btnId);
+  // Validar foto taller si material=No
+  if(tallerEstado==='No'&&!tallerFotoData){showToast('⚠ Adjunta la foto del material a taller','error');return;}
   btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
   const ubicacion=await obtenerUbicacion();
   btn.textContent='⏳ Generando PDF...';
-  const payload={empresa:empresaAlbaran,tipo:tipoLabel,fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,corte:getPill('a-corte'),corteHoras:document.getElementById('a-corte-horas-val')?.value.trim()||'',estadoGeneral:getPill('estado-general'),resumen:isMant?buildResumenMant():'',observaciones:isMant?document.getElementById('mant-obs').value.trim():document.getElementById('simple-obs').value.trim(),incidencia:isMant?document.getElementById('mant-incidencia').value.trim():'',materiales:getMaterilesFor(pKey),numDoc:genNumDoc(),fotos:fotosData[fotoKey].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+pKey),firmaCliente:ausenteState[pKey]?null:getFirmaBase64('cliente-'+pKey),clienteAusente:ausenteState[pKey],motivoAusencia:document.getElementById('ausente-motivo-'+pKey)?.value.trim()||'',presupuestoPdf:pdfData[pKey]||null,ubicacion,horaEnvio:calcHoraFin()};
+  const payload={empresa:empresaAlbaran,tipo:tipoLabel,fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,corte:getPill('a-corte'),corteHoras:document.getElementById('a-corte-horas-val')?.value.trim()||'',materialTaller:tallerEstado||'—',fotoTaller:tallerFotoData||null,estadoGeneral:getPill('estado-general'),resumen:isMant?buildResumenMant():'',observaciones:isMant?document.getElementById('mant-obs').value.trim():document.getElementById('simple-obs').value.trim(),incidencia:isMant?document.getElementById('mant-incidencia').value.trim():'',horasPresupuestadas:document.getElementById('horas-pres-'+pKey)?.value.trim()||'',materiales:getMaterilesFor(pKey),numDoc:genNumDoc(),fotos:fotosData[fotoKey].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+pKey),firmaCliente:ausenteState[pKey]?null:getFirmaBase64('cliente-'+pKey),clienteAusente:ausenteState[pKey],motivoAusencia:document.getElementById('ausente-motivo-'+pKey)?.value.trim()||'',presupuestoPdf:pdfData[pKey]||null,ubicacion,horaEnvio:calcHoraFin()};
   try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal();else throw new Error(data.error||'Error desconocido');}
   catch(err){showToast('❌ Error: '+(err.message||'sin conexión'),'error');btn.disabled=false;btn.textContent='📤 Enviar '+tipoLabel;}
+}
+
+// MATERIAL TALLER
+let tallerEstado=null;
+let tallerFotoData=null;
+function selectTaller(el,val){
+  el.parentElement.querySelectorAll('.pill').forEach(p=>p.className='pill');
+  const wrap=document.getElementById('taller-foto-wrap');
+  if(val==='Si'){el.classList.add('p-ok');tallerEstado='Si';wrap.classList.remove('show');}
+  else{el.classList.add('p-bad');tallerEstado='No';wrap.classList.add('show');}
+}
+function abrirFotoTaller(){document.getElementById('taller-foto-input').click();}
+function cargarFotoTaller(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const canvas=document.createElement('canvas'),MAX=800;
+      let w=img.width,h=img.height;
+      if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
+      if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      tallerFotoData=canvas.toDataURL('image/jpeg',0.75);
+      const slot=document.getElementById('taller-foto-slot');
+      slot.innerHTML=`<img src="${tallerFotoData}" alt="Foto taller"><button class="remove-btn" onclick="borrarFotoTaller(event)">✕</button>`;
+      slot.classList.add('filled');
+    };img.src=e.target.result;
+  };reader.readAsDataURL(file);
+}
+function borrarFotoTaller(e){
+  e.stopPropagation();tallerFotoData=null;
+  const slot=document.getElementById('taller-foto-slot');
+  slot.innerHTML='<span style="font-size:24px;">📷</span><span style="font-size:11px;color:var(--muted);margin-top:4px;">Toca para fotografiar</span>';
+  slot.classList.remove('filled');
 }
 
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type;setTimeout(()=>t.classList.add('show'),10);setTimeout(()=>t.classList.remove('show'),4000);}
