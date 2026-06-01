@@ -26,6 +26,52 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .header-sub{color:rgba(255,255,255,.65);font-size:11px;}
 .header-hora{color:#fff;font-family:var(--mono);font-size:13px;font-weight:500;background:rgba(255,255,255,.13);padding:4px 10px;border-radius:20px;}
 .app-nav{display:grid;grid-template-columns:1fr 1fr;background:var(--surface2);border-bottom:1px solid var(--border);position:sticky;top:58px;z-index:90;}
+/* ── TAREAS ── */
+.tareas-login{padding:20px 14px;}
+.tareas-login-title{font-size:16px;font-weight:700;color:var(--accent);text-align:center;margin-bottom:16px;}
+.operario-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.operario-btn{padding:14px 8px;border-radius:var(--radius);border:2px solid var(--border);background:var(--surface);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;text-align:center;color:var(--muted);transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.operario-btn .op-icon{font-size:26px;}
+.operario-btn.selected{border-color:var(--accent);background:var(--accent);color:#fff;}
+.tarea-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);margin-bottom:8px;overflow:hidden;transition:all .15s;}
+.tarea-card.completada{opacity:.55;border-color:var(--ok);background:#f4fff8;}
+.tarea-header{display:flex;align-items:center;gap:10px;padding:12px 14px;}
+.tarea-check-btn{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:var(--surface);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;font-size:14px;}
+.tarea-check-btn.done{background:var(--ok);border-color:var(--ok);color:#fff;}
+.tarea-info{flex:1;min-width:0;}
+.tarea-titulo{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tarea-titulo.done{text-decoration:line-through;color:var(--muted);}
+.tarea-sub{font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tarea-badge{flex-shrink:0;font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px;text-transform:uppercase;letter-spacing:.3px;}
+.tarea-badge.mant{background:#D8F3DC;color:#2D6A4F;}
+.tarea-badge.aviso{background:#FFF3CD;color:#8B5A00;}
+.tarea-badge.inst{background:#E3E8F5;color:#184595;}
+.tarea-badge.urg{background:#FFE0E0;color:#8B1A1A;}
+.tarea-badge.guardia{background:#EDE0FF;color:#5C3D9C;}
+.tarea-detalle{display:none;padding:0 14px 12px;border-top:1px solid var(--border);margin-top:0;}
+.tarea-detalle.open{display:block;}
+.tarea-detalle-row{display:flex;gap:6px;font-size:12px;color:var(--muted);margin-top:8px;align-items:flex-start;}
+.tarea-detalle-row b{color:var(--text);font-weight:600;flex-shrink:0;}
+.tarea-hora-badge{font-size:11px;font-weight:700;font-family:var(--mono);color:var(--accent);background:#E3E8F5;padding:3px 9px;border-radius:99px;flex-shrink:0;}
+.tarea-accion-row{display:flex;gap:8px;margin-top:10px;}
+.tarea-accion-btn{flex:1;padding:9px;border-radius:var(--radius-sm);border:1.5px solid var(--accent);background:transparent;font-family:var(--font);font-size:12px;font-weight:600;color:var(--accent);cursor:pointer;transition:all .15s;text-align:center;}
+.tarea-accion-btn.primary{background:var(--accent);color:#fff;}
+.tarea-accion-btn:hover{opacity:.85;}
+.tareas-barra-prog{height:6px;background:var(--border);border-radius:99px;margin:4px 0 14px;overflow:hidden;}
+.tareas-barra-fill{height:100%;background:var(--ok);border-radius:99px;transition:width .4s;}
+.tareas-resumen{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.tareas-resumen-txt{font-size:13px;color:var(--muted);}
+.tareas-resumen-num{font-size:16px;font-weight:700;color:var(--accent);font-family:var(--mono);}
+.tareas-empty{text-align:center;padding:40px 20px;color:var(--muted);}
+.tareas-empty .empty-icon{font-size:44px;margin-bottom:10px;}
+.tareas-empty p{font-size:14px;}
+.tareas-loading{text-align:center;padding:30px;color:var(--muted);font-size:14px;}
+.btn-cerrar-sesion{width:100%;padding:11px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:transparent;font-family:var(--font);font-size:13px;color:var(--muted);cursor:pointer;margin-top:4px;}
+.btn-recargar{width:100%;padding:11px;border:1.5px solid var(--accent);border-radius:var(--radius-sm);background:transparent;font-family:var(--font);font-size:13px;font-weight:600;color:var(--accent);cursor:pointer;margin-bottom:8px;}
+.filtro-tabs{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px;}
+.filtro-tab{padding:5px 12px;border-radius:99px;border:1.5px solid var(--border);font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;background:var(--surface);color:var(--muted);transition:all .12s;}
+.filtro-tab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.notif-dot{width:7px;height:7px;background:#E63946;border-radius:50%;display:inline-block;margin-left:4px;vertical-align:middle;}
 .nav-btn{padding:12px 8px;border:none;background:transparent;font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer;color:var(--muted);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;border-bottom:2px solid transparent;}
 .nav-btn.active{color:var(--accent);font-weight:700;background:var(--surface);border-bottom-color:var(--accent);}
 .main{padding:14px;max-width:600px;margin:0 auto;}
@@ -140,6 +186,18 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 .holded-searching{padding:10px 14px;font-size:13px;color:var(--muted);font-style:italic;}
 .holded-badge{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--celeste);margin-left:6px;vertical-align:middle;}
 .fecha-display{font-size:15px;color:var(--muted);font-weight:500;pointer-events:none;user-select:none;}
+
+.tarea-albaran-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.tarea-albaran-item:last-child{border-bottom:none;}
+.tarea-albaran-item:active{background:var(--surface2);}
+.tarea-albaran-radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.tarea-albaran-radio.sel{background:var(--accent);border-color:var(--accent);}
+.tarea-albaran-radio.sel::after{content:'';width:8px;height:8px;background:#fff;border-radius:50%;}
+.tarea-albaran-info{flex:1;min-width:0;}
+.tarea-albaran-titulo{font-size:13px;font-weight:600;color:var(--text);}
+.tarea-albaran-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.tarea-albaran-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;white-space:nowrap;flex-shrink:0;}
+.tareas-cargando-alb{font-size:13px;color:var(--muted);padding:8px 0;font-style:italic;}
 </style>
 </head>
 <body>
@@ -182,6 +240,15 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       <div><label class="field-label">Fecha</label><div class="fecha-display" id="c-fecha-display">--</div></div>
       <div><label class="field-label">Hora inicio</label><input type="text" class="field-input" id="c-hora-inicio" readonly style="color:var(--accent);font-weight:600;"></div>
     </div>
+    <div class="field-group"><label class="field-label">Técnico <span style="color:var(--bad)">*</span> <span class="holded-badge">Holded</span></label>
+      <div style="position:relative;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <input type="text" class="field-input" id="c-tecnico" placeholder="Escribe para buscar técnico..." autocomplete="off" oninput="buscarEmpleado(this.value,'c')" onfocus="buscarEmpleado(this.value,'c')" style="flex:1;">
+          <button onclick="resetTecnico('c')" title="Borrar técnico" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);flex-shrink:0;">✕</button>
+        </div>
+        <div class="holded-dropdown" id="c-tecnico-drop" style="display:none;"></div>
+      </div>
+    </div>
     <div class="field-group cliente-wrap" id="c-cliente-wrap">
       <label class="field-label">Cliente <span style="color:var(--bad)">*</span> <span class="holded-badge">Holded</span></label>
       <div style="display:flex;align-items:center;gap:6px;">
@@ -194,15 +261,6 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <div class="field-group field-row">
       <div><label class="field-label">Población</label><input type="text" class="field-input" id="c-poblacion" placeholder="Población"></div>
       <div><label class="field-label">C.P.</label><input type="text" class="field-input" id="c-cp" placeholder="Código postal" inputmode="numeric"></div>
-    </div>
-    <div class="field-group"><label class="field-label">Técnico <span style="color:var(--bad)">*</span> <span class="holded-badge">Holded</span></label>
-      <div style="position:relative;">
-        <div style="display:flex;align-items:center;gap:6px;">
-          <input type="text" class="field-input" id="c-tecnico" placeholder="Escribe para buscar técnico..." autocomplete="off" oninput="buscarEmpleado(this.value,'c')" onfocus="buscarEmpleado(this.value,'c')" style="flex:1;">
-          <button onclick="resetTecnico('c')" title="Borrar técnico" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);flex-shrink:0;">✕</button>
-        </div>
-        <div class="holded-dropdown" id="c-tecnico-drop" style="display:none;"></div>
-      </div>
     </div>
     <div class="field-group">
       <label class="field-label">Corte de agua</label>
@@ -279,6 +337,28 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       <div><label class="field-label">Fecha</label><div class="fecha-display" id="a-fecha-display">--</div></div>
       <div><label class="field-label">Hora inicio</label><input type="text" class="field-input" id="a-hora-inicio" readonly style="color:var(--accent);font-weight:600;"></div>
     </div>
+    <div class="field-group"><label class="field-label">Técnico <span style="color:var(--bad)">*</span> <span class="holded-badge">Holded</span></label>
+      <div style="position:relative;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <input type="text" class="field-input" id="a-tecnico" placeholder="Escribe para buscar técnico..." autocomplete="off" oninput="buscarEmpleadoAlbaran(this.value)" onfocus="buscarEmpleadoAlbaran(this.value)" style="flex:1;">
+          <button onclick="resetTecnicoAlbaran()" title="Borrar técnico" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);flex-shrink:0;">✕</button>
+        </div>
+        <div class="holded-dropdown" id="a-tecnico-drop" style="display:none;"></div>
+      </div>
+    </div>
+    <div class="field-group" id="a-tareas-wrap" style="display:none;">
+      <label class="field-label">Tarea asignada <span style="color:var(--muted);font-weight:400;font-size:10px;">— selecciona para rellenar cliente</span></label>
+      <div id="a-tareas-lista" style="margin-top:6px;"></div>
+      <div id="a-tarea-seleccionada" style="display:none;margin-top:8px;padding:8px 10px;background:var(--ok-bg);border:1px solid var(--ok);border-radius:var(--radius-sm);">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--ok);" id="a-tarea-sel-titulo">—</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px;" id="a-tarea-sel-cliente">—</div>
+          </div>
+          <button onclick="resetTareaSeleccionada()" style="background:none;border:none;cursor:pointer;font-size:15px;color:var(--muted);">✕</button>
+        </div>
+      </div>
+    </div>
     <div class="field-group cliente-wrap" id="a-cliente-wrap">
       <label class="field-label">Cliente <span style="color:var(--bad)">*</span> <span class="holded-badge">Holded</span></label>
       <div style="display:flex;align-items:center;gap:6px;">
@@ -291,15 +371,6 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <div class="field-group field-row">
       <div><label class="field-label">Población</label><input type="text" class="field-input" id="a-poblacion" placeholder="Población"></div>
       <div><label class="field-label">C.P.</label><input type="text" class="field-input" id="a-cp" placeholder="Código postal" inputmode="numeric"></div>
-    </div>
-    <div class="field-group"><label class="field-label">Técnico <span style="color:var(--bad)">*</span> <span class="holded-badge">Holded</span></label>
-      <div style="position:relative;">
-        <div style="display:flex;align-items:center;gap:6px;">
-          <input type="text" class="field-input" id="a-tecnico" placeholder="Escribe para buscar técnico..." autocomplete="off" oninput="buscarEmpleado(this.value,'a')" onfocus="buscarEmpleado(this.value,'a')" style="flex:1;">
-          <button onclick="resetTecnico('a')" title="Borrar técnico" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);flex-shrink:0;">✕</button>
-        </div>
-        <div class="holded-dropdown" id="a-tecnico-drop" style="display:none;"></div>
-      </div>
     </div>
     <div class="field-group">
       <label class="field-label">Corte de agua</label>
@@ -406,6 +477,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 </div><!-- fin contenido-parte-a -->
 </div>
 
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -499,7 +571,12 @@ document.addEventListener('click',e=>{
   });
 });
 
-function switchApp(app){document.getElementById('app-checklist').classList.toggle('active',app==='checklist');document.getElementById('app-albaran').classList.toggle('active',app==='albaran');document.getElementById('nav-checklist').classList.toggle('active',app==='checklist');document.getElementById('nav-albaran').classList.toggle('active',app==='albaran');}
+function switchApp(app){
+  document.getElementById('app-checklist').classList.toggle('active',app==='checklist');
+  document.getElementById('app-albaran').classList.toggle('active',app==='albaran');
+  document.getElementById('nav-checklist').classList.toggle('active',app==='checklist');
+  document.getElementById('nav-albaran').classList.toggle('active',app==='albaran');
+}
 function switchChecklist(tab){document.getElementById('panel-elec').classList.toggle('active',tab==='elec');document.getElementById('panel-hid').classList.toggle('active',tab==='hid');document.getElementById('ptab-elec').classList.toggle('active',tab==='elec');document.getElementById('ptab-hid').classList.toggle('active',tab==='hid');}
 function selectEmpresa(e,prefix){if(prefix==='c'){empresaChecklist=e;document.getElementById('c-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('c-btn-marcres').classList.toggle('active',e==='marcres');}else{empresaAlbaran=e;document.getElementById('a-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('a-btn-marcres').classList.toggle('active',e==='marcres');}document.getElementById('header-empresa-label').textContent=e==='rivagua'?'Rivagua':'Marcres';}
 function selectTipo(t){tipoAlbaran=t;['mantenimiento','aviso','trabajo','guardia'].forEach(x=>document.getElementById('tipo-'+x).classList.toggle('active',x===t));const esMant=t==='mantenimiento';document.getElementById('panel-mantenimiento').classList.toggle('active',esMant);document.getElementById('panel-simple').classList.toggle('active',!esMant);if(!esMant){const labels={aviso:'Aviso',trabajo:'Trabajo',guardia:'Guardia'};document.getElementById('send-simple-btn').textContent='📤 Enviar albarán de '+labels[t];}}
@@ -786,6 +863,344 @@ function getTiempoTranscurrido() {
   if(h > 0) return h + 'h ' + m + 'min ' + s + 's';
   if(m > 0) return m + 'min ' + s + 's';
   return s + 's';
+}
+
+
+// ══════════════════════════════════════════════
+// SECCIÓN TAREAS
+// ══════════════════════════════════════════════
+let operarioSeleccionado = null;
+let tareasData = [];
+let filtroActivo = 'todas';
+let tareasCompletadasLocal = {};
+
+const ICONOS_OP = ['👷','🔧','⚡','💧','🛠️','👨‍🔧','👩‍🔧','🪛'];
+
+async function iniciarPantallasTareas() {
+  // Reutilizar caché de empleados si existe
+  const grid = document.getElementById('operarios-grid');
+  try {
+    if (!empleadosCache) {
+      const res = await fetch(GAS_URL + '?action=empleados&q=');
+      const data = await res.json();
+      empleadosCache = data.ok ? data.empleados : [];
+    }
+    if (!empleadosCache.length) {
+      grid.innerHTML = '<div class="tareas-empty"><div class="empty-icon">⚠️</div><p>No se encontraron técnicos en Holded</p></div>';
+      return;
+    }
+    grid.innerHTML = '';
+    empleadosCache.forEach((emp, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'operario-btn';
+      btn.id = 'opbtn-' + emp.id;
+      btn.innerHTML = '<span class="op-icon">' + ICONOS_OP[idx % ICONOS_OP.length] + '</span><span>' + emp.name + '</span>';
+      btn.onclick = () => seleccionarOperario(emp, idx);
+      grid.appendChild(btn);
+    });
+    document.getElementById('btn-entrar-tareas').style.display = 'block';
+  } catch(e) {
+    grid.innerHTML = '<div class="tareas-empty"><div class="empty-icon">❌</div><p>Error cargando técnicos</p></div>';
+  }
+}
+
+function seleccionarOperario(emp, idx) {
+  operarioSeleccionado = emp;
+  document.querySelectorAll('.operario-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('opbtn-' + emp.id).classList.add('selected');
+}
+
+function entrarTareas() {
+  if (!operarioSeleccionado) { showToast('⚠ Selecciona tu nombre primero', 'error'); return; }
+  document.getElementById('tareas-login-screen').style.display = 'none';
+  document.getElementById('tareas-panel').style.display = 'block';
+  document.getElementById('tareas-titulo-op').textContent = '📌 ' + operarioSeleccionado.name.split(' ')[0];
+  cargarTareasHolded();
+}
+
+function cerrarSesionTareas() {
+  operarioSeleccionado = null;
+  tareasData = [];
+  document.getElementById('tareas-login-screen').style.display = 'block';
+  document.getElementById('tareas-panel').style.display = 'none';
+  document.querySelectorAll('.operario-btn').forEach(b => b.classList.remove('selected'));
+}
+
+async function cargarTareasHolded() {
+  const lista = document.getElementById('tareas-lista');
+  lista.innerHTML = '<div class="tareas-loading">⏳ Cargando tareas de Holded...</div>';
+  document.getElementById('tareas-resumen-txt').textContent = 'Cargando...';
+  document.getElementById('tareas-resumen-num').textContent = '—';
+
+  try {
+    const url = GAS_URL + '?action=tareas&empleadoId=' + encodeURIComponent(operarioSeleccionado.id);
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!data.ok) throw new Error(data.error || 'Error');
+    tareasData = data.tareas || [];
+
+    // Marcar completadas guardadas localmente
+    tareasData.forEach(t => {
+      if (tareasCompletadasLocal[t.id]) t._completada = true;
+    });
+
+    renderizarTareas();
+  } catch(e) {
+    lista.innerHTML = '<div class="tareas-empty"><div class="empty-icon">⚠️</div><p>No se pudieron cargar las tareas.<br>Comprueba la conexión.</p></div>';
+    document.getElementById('tareas-resumen-txt').textContent = 'Sin conexión';
+  }
+}
+
+function renderizarTareas() {
+  const lista = document.getElementById('tareas-lista');
+  const total = tareasData.length;
+  const completadas = tareasData.filter(t => t._completada).length;
+  const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+
+  document.getElementById('tareas-resumen-txt').textContent = completadas + ' de ' + total + ' completadas';
+  document.getElementById('tareas-resumen-num').textContent = pct + '%';
+  document.getElementById('tareas-barra-fill').style.width = pct + '%';
+
+  // Notif dot en nav si hay pendientes
+  const notif = document.getElementById('notif-tareas');
+  if (notif) notif.style.display = (completadas < total && total > 0) ? 'inline-block' : 'none';
+
+  let filtradas = tareasData;
+  if (filtroActivo === 'pendientes') filtradas = tareasData.filter(t => !t._completada);
+  if (filtroActivo === 'completadas') filtradas = tareasData.filter(t => t._completada);
+
+  // Ordenar: pendientes primero, luego por hora
+  filtradas = [...filtradas].sort((a, b) => {
+    if (a._completada !== b._completada) return a._completada ? 1 : -1;
+    return (a.hora || '').localeCompare(b.hora || '');
+  });
+
+  if (!filtradas.length) {
+    lista.innerHTML = '<div class="tareas-empty"><div class="empty-icon">' +
+      (filtroActivo === 'completadas' ? '🎉' : '✅') + '</div><p>' +
+      (filtroActivo === 'pendientes' ? 'Sin tareas pendientes. ¡Buen trabajo!' :
+       filtroActivo === 'completadas' ? 'Ninguna completada aún' :
+       'No hay tareas para hoy') + '</p></div>';
+    return;
+  }
+
+  lista.innerHTML = filtradas.map(t => buildTareaCard(t)).join('');
+}
+
+function getBadgeClass(tipo) {
+  if (!tipo) return '';
+  const t = tipo.toLowerCase();
+  if (t.includes('mant')) return 'mant';
+  if (t.includes('aviso') || t.includes('urgen')) return 'urg';
+  if (t.includes('inst')) return 'inst';
+  if (t.includes('guard')) return 'guardia';
+  return 'aviso';
+}
+
+function buildTareaCard(t) {
+  const done = t._completada;
+  const badgeClass = getBadgeClass(t.tipo);
+  const badgeLabel = t.tipo || 'Tarea';
+  const horaHtml = t.hora ? '<span class="tarea-hora-badge">' + t.hora + '</span>' : '';
+  const detCliente = t.cliente ? '<div class="tarea-detalle-row"><b>Cliente</b> ' + t.cliente + '</div>' : '';
+  const detDir = t.direccion ? '<div class="tarea-detalle-row"><b>Direccion</b> ' + t.direccion + '</div>' : '';
+  const detDesc = t.descripcion ? '<div class="tarea-detalle-row"><b>Descripcion</b> ' + t.descripcion + '</div>' : '';
+  const detPrio = t.prioridad ? '<div class="tarea-detalle-row"><b>Prioridad</b> ' + t.prioridad + '</div>' : '';
+  const titulo = t.titulo || t.nombre || 'Sin titulo';
+  const sub = (t.cliente || '') + (t.direccion ? ' · ' + t.direccion : '');
+  return '<div class="tarea-card ' + (done ? 'completada' : '') + '" id="tarea-card-' + t.id + '">' +
+    '<div class="tarea-header" onclick="toggleTareaDetalle(\'' + t.id + '\')">' +
+      '<button class="tarea-check-btn ' + (done ? 'done' : '') + '" onclick="toggleTareaCheck(event,\'' + t.id + '\')">' + (done ? '✓' : '') + '</button>' +
+      '<div class="tarea-info">' +
+        '<div class="tarea-titulo ' + (done ? 'done' : '') + '">' + titulo + '</div>' +
+        '<div class="tarea-sub">' + sub + '</div>' +
+      '</div>' +
+      horaHtml +
+      '<span class="tarea-badge ' + badgeClass + '">' + badgeLabel + '</span>' +
+    '</div>' +
+    '<div class="tarea-detalle" id="tarea-det-' + t.id + '">' +
+      detCliente + detDir + detDesc + detPrio +
+      '<div class="tarea-accion-row">' +
+        '<button class="tarea-accion-btn ' + (done ? '' : 'primary') + '" onclick="toggleTareaCheck(event,\'' + t.id + '\')">' +
+          (done ? '↩ Desmarcar' : '✓ Marcar completada') +
+        '</button>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function toggleTareaDetalle(id) {
+  const det = document.getElementById('tarea-det-' + id);
+  if (det) det.classList.toggle('open');
+}
+
+function toggleTareaCheck(e, id) {
+  e.stopPropagation();
+  const tarea = tareasData.find(t => t.id === id);
+  if (!tarea) return;
+  tarea._completada = !tarea._completada;
+  if (tarea._completada) tareasCompletadasLocal[id] = true;
+  else delete tareasCompletadasLocal[id];
+
+  // Feedback visual inmediato
+  const card = document.getElementById('tarea-card-' + id);
+  if (card) {
+    if (tarea._completada) {
+      showToast('✅ Tarea completada', 'success');
+    } else {
+      showToast('↩ Tarea desmarcada');
+    }
+  }
+  renderizarTareas();
+}
+
+function filtrarTareas(filtro) {
+  filtroActivo = filtro;
+  ['todas', 'pendientes', 'completadas'].forEach(f => {
+    document.getElementById('ftab-' + f).classList.toggle('active', f === filtro);
+  });
+  renderizarTareas();
+}
+
+
+// ══ TÉCNICO ALBARÁN CON TAREAS ══
+let tecnicoAlbaranElegido = false;
+let tecnicoAlbaranId = null;
+let tareaAlbaranSeleccionada = null;
+
+async function buscarEmpleadoAlbaran(q) {
+  if (tecnicoAlbaranElegido) return;
+  const drop = document.getElementById('a-tecnico-drop');
+  drop.style.display = 'block';
+  drop.innerHTML = '<div class="holded-searching">Cargando técnicos...</div>';
+  try {
+    if (!empleadosCache) {
+      const res = await fetch(GAS_URL + '?action=empleados&q=');
+      const data = await res.json();
+      empleadosCache = data.ok ? data.empleados : [];
+    }
+    const filtrados = q.length > 0
+      ? empleadosCache.filter(e => e.name.toLowerCase().includes(q.toLowerCase()))
+      : empleadosCache;
+    if (!filtrados.length) { drop.innerHTML = '<div class="holded-searching">Sin resultados</div>'; return; }
+    // Guardar empleados filtrados en array global para evitar comillas en onclick
+    window._empleadosAlbaran = filtrados.slice(0, 50);
+    drop.innerHTML = window._empleadosAlbaran.map(function(e, i) {
+      return '<div class="holded-item" onclick="elegirTecnicoAlbaran(' + i + ')">' +
+        '<div class="holded-item-name">' + e.name + '</div>' +
+      '</div>';
+    }).join('');
+  } catch(err) { drop.innerHTML = '<div class="holded-searching">Error al buscar</div>'; }
+}
+
+async function elegirTecnicoAlbaran(idxOId, nombre) {
+  // Puede recibir un índice numérico (desde dropdown) o id+nombre (legacy)
+  var id, nomFinal;
+  if (typeof idxOId === 'number' || (typeof idxOId === 'string' && !isNaN(idxOId) && idxOId < 1000)) {
+    var emp = (window._empleadosAlbaran || [])[parseInt(idxOId)];
+    if (!emp) return;
+    id = emp.id; nomFinal = emp.name;
+  } else {
+    id = idxOId; nomFinal = nombre || idxOId;
+  }
+  const inp = document.getElementById('a-tecnico');
+  inp.value = nomFinal;
+  inp.style.color = 'var(--ok)';
+  inp.style.fontWeight = '600';
+  document.getElementById('a-tecnico-drop').style.display = 'none';
+  tecnicoAlbaranElegido = true;
+  tecnicoAlbaranId = id;
+  tecnicoElegido['a'] = true;
+
+  const wrap = document.getElementById('a-tareas-wrap');
+  wrap.style.display = 'block';
+  const lista = document.getElementById('a-tareas-lista');
+  lista.innerHTML = '<div class="tareas-cargando-alb">⏳ Cargando tareas asignadas...</div>';
+
+  try {
+    const url = GAS_URL + '?action=tareas&empleadoId=' + encodeURIComponent(id);
+    const res = await fetch(url);
+    const data = await res.json();
+    const tareas = (data.ok && data.tareas && data.tareas.length) ? data.tareas : [];
+
+    if (!tareas.length) {
+      lista.innerHTML = '<div class="tareas-cargando-alb" style="color:var(--muted);">Sin tareas asignadas hoy para este técnico.</div>';
+      return;
+    }
+
+    // Guardar en array global — el onclick solo pasa el índice, sin JSON en el HTML
+    window._tareasAlbaran = tareas;
+
+    lista.innerHTML = tareas.map(function(t, i) {
+      var sub = [t.cliente, t.direccion].filter(Boolean).join(' · ');
+      var hora = t.hora ? ' <span style="font-family:var(--mono);font-size:10px;color:var(--accent);">' + t.hora + '</span>' : '';
+      var tipo = t.tipo || '';
+      var badgeCls = tipo.toLowerCase().indexOf('mant') >= 0 ? 'mant' :
+                     tipo.toLowerCase().indexOf('urge') >= 0 ? 'urg' :
+                     tipo.toLowerCase().indexOf('inst') >= 0 ? 'inst' : 'aviso';
+      var html = '<div class="tarea-albaran-item" id="talb-' + i + '" onclick="seleccionarTareaAlbaran(' + i + ')">';
+      html += '<div class="tarea-albaran-radio" id="talb-radio-' + i + '"></div>';
+      html += '<div class="tarea-albaran-info">';
+      html += '<div class="tarea-albaran-titulo">' + (t.titulo || t.nombre || 'Sin título') + hora + '</div>';
+      if (sub) html += '<div class="tarea-albaran-sub">' + sub + '</div>';
+      html += '</div>';
+      if (tipo) html += '<span class="tarea-albaran-badge tarea-badge ' + badgeCls + '">' + tipo + '</span>';
+      html += '</div>';
+      return html;
+    }).join('');
+
+  } catch(e) {
+    lista.innerHTML = '<div class="tareas-cargando-alb" style="color:var(--bad);">Error cargando tareas. Puedes rellenar el cliente manualmente.</div>';
+  }
+}
+
+function seleccionarTareaAlbaran(idx) {
+  var tareas = window._tareasAlbaran || [];
+  var t = tareas[idx];
+  if (!t) return;
+
+  document.querySelectorAll('.tarea-albaran-radio').forEach(function(r) { r.classList.remove('sel'); });
+  document.getElementById('talb-radio-' + idx).classList.add('sel');
+  tareaAlbaranSeleccionada = t;
+
+  var cInp = document.getElementById('a-cliente');
+  cInp.value = t.cliente || '';
+  cInp.style.color = 'var(--ok)';
+  cInp.style.fontWeight = '600';
+  clienteElegido['a'] = true;
+
+  if (document.getElementById('a-direccion')) document.getElementById('a-direccion').value = t.direccion || '';
+  if (document.getElementById('a-poblacion')) document.getElementById('a-poblacion').value = t.poblacion || t.city || '';
+  if (document.getElementById('a-cp')) document.getElementById('a-cp').value = t.cp || t.postalCode || '';
+
+  document.getElementById('a-tarea-sel-titulo').textContent = t.titulo || t.nombre || '—';
+  document.getElementById('a-tarea-sel-cliente').textContent = t.cliente || '—';
+  document.getElementById('a-tarea-seleccionada').style.display = 'block';
+
+  showToast('✅ Cliente rellenado desde la tarea', 'success');
+}
+
+function resetTareaSeleccionada() {
+  tareaAlbaranSeleccionada = null;
+  document.querySelectorAll('.tarea-albaran-radio').forEach(r => r.classList.remove('sel'));
+  document.getElementById('a-tarea-seleccionada').style.display = 'none';
+  // Limpiar campos cliente
+  resetCliente('a');
+}
+
+function resetTecnicoAlbaran() {
+  tecnicoAlbaranElegido = false;
+  tecnicoAlbaranId = null;
+  tareaAlbaranSeleccionada = null;
+  tecnicoElegido['a'] = false;
+  const inp = document.getElementById('a-tecnico');
+  inp.value = ''; inp.style.color = ''; inp.style.fontWeight = '';
+  document.getElementById('a-tecnico-drop').style.display = 'none';
+  document.getElementById('a-tareas-wrap').style.display = 'none';
+  document.getElementById('a-tareas-lista').innerHTML = '';
+  document.getElementById('a-tarea-seleccionada').style.display = 'none';
+  resetCliente('a');
 }
 
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type;setTimeout(()=>t.classList.add('show'),10);setTimeout(()=>t.classList.remove('show'),4000);}
