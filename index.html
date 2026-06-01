@@ -112,6 +112,8 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 .taller-foto-wrap{margin-top:8px;display:none;}
 .taller-foto-wrap.show{display:block;}
 .btn-inicio-wrap{margin-top:12px;}
+.contenido-parte{display:none;}
+.contenido-parte.visible{display:block;}
 .btn-inicio{width:100%;padding:14px;border:none;border-radius:var(--radius);font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;background:var(--ok);color:#fff;letter-spacing:.5px;transition:all .2s;}
 .btn-inicio.activo{background:var(--azul);cursor:default;display:flex;align-items:center;justify-content:center;gap:10px;}
 .timer-display{font-size:22px;font-weight:900;font-family:monospace;color:#fff;}
@@ -193,7 +195,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       <div><label class="field-label">Población</label><input type="text" class="field-input" id="c-poblacion" placeholder="Población"></div>
       <div><label class="field-label">C.P.</label><input type="text" class="field-input" id="c-cp" placeholder="Código postal" inputmode="numeric"></div>
     </div>
-    <div class="field-group"><label class="field-label">Técnico <span style="color:var(--bad)">*</span></label>
+    <div class="field-group"><label class="field-label">Técnico <span style="color:var(--bad)">*</span> <span class="holded-badge">Holded</span></label>
       <div style="position:relative;">
         <div style="display:flex;align-items:center;gap:6px;">
           <input type="text" class="field-input" id="c-tecnico" placeholder="Escribe para buscar técnico..." autocomplete="off" oninput="buscarEmpleado(this.value,'c')" onfocus="buscarEmpleado(this.value,'c')" style="flex:1;">
@@ -202,7 +204,6 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
         <div class="holded-dropdown" id="c-tecnico-drop" style="display:none;"></div>
       </div>
     </div>
-    <div class="field-group">
       <label class="field-label">Corte de agua</label>
       <div class="pill-group">
         <span class="pill" onclick="selectCorte(this,'c','Si')">Sí</span>
@@ -214,6 +215,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       </div>
     </div>
   </div>
+  <div class="contenido-parte" id="contenido-parte-c">
   <div class="panel-tabs">
     <button class="ptab-btn active" id="ptab-elec" onclick="switchChecklist('elec')">⚡ Eléctrico</button>
     <button class="ptab-btn" id="ptab-hid" onclick="switchChecklist('hid')">💧 Hidráulico</button>
@@ -260,6 +262,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <button class="send-btn" id="send-hid-btn" onclick="enviarChecklist('hid')">📤 Enviar checklist hidráulico</button>
   </div>
 </div>
+</div><!-- fin contenido-parte-c -->
 </div>
 
 <!-- ALBARÁN -->
@@ -288,7 +291,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       <div><label class="field-label">Población</label><input type="text" class="field-input" id="a-poblacion" placeholder="Población"></div>
       <div><label class="field-label">C.P.</label><input type="text" class="field-input" id="a-cp" placeholder="Código postal" inputmode="numeric"></div>
     </div>
-    <div class="field-group"><label class="field-label">Técnico <span style="color:var(--bad)">*</span></label>
+    <div class="field-group"><label class="field-label">Técnico <span style="color:var(--bad)">*</span> <span class="holded-badge">Holded</span></label>
       <div style="position:relative;">
         <div style="display:flex;align-items:center;gap:6px;">
           <input type="text" class="field-input" id="a-tecnico" placeholder="Escribe para buscar técnico..." autocomplete="off" oninput="buscarEmpleado(this.value,'a')" onfocus="buscarEmpleado(this.value,'a')" style="flex:1;">
@@ -309,6 +312,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       <button class="btn-inicio" id="btn-inicio-a" onclick="iniciarParte('a')">▶ INICIO</button>
     </div>
   </div>
+  <div class="contenido-parte" id="contenido-parte-a">
   <div class="card" style="padding:14px;">
     <label class="field-label" style="margin-bottom:10px;display:block;">Albarán de</label>
     <div class="tipo-grid">
@@ -398,6 +402,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <button class="send-btn" id="send-simple-btn" onclick="enviarAlbaran('simple')">📤 Enviar albarán</button>
   </div>
 </div>
+</div><!-- fin contenido-parte-a -->
 </div>
 
 <div class="toast" id="toast"></div>
@@ -633,19 +638,19 @@ let empleadosCache=null;
 async function buscarEmpleado(q,prefix){
   if(tecnicoElegido[prefix])return;
   const drop=document.getElementById(prefix+'-tecnico-drop');
-  if(!q||q.length<1){drop.style.display='none';return;}
   drop.style.display='block';
-  drop.innerHTML='<div class="holded-searching">Buscando técnicos...</div>';
+  drop.innerHTML='<div class="holded-searching">Cargando técnicos...</div>';
   try{
-    // Cargar caché si no existe
     if(!empleadosCache){
       const res=await fetch(GAS_URL+'?action=empleados&q=');
       const data=await res.json();
       empleadosCache=data.ok?data.empleados:[];
     }
-    const filtrados=empleadosCache.filter(e=>e.name.toLowerCase().includes(q.toLowerCase()));
+    const filtrados=q.length>0
+      ?empleadosCache.filter(e=>e.name.toLowerCase().includes(q.toLowerCase()))
+      :empleadosCache;
     if(!filtrados.length){drop.innerHTML='<div class="holded-searching">Sin resultados</div>';return;}
-    drop.innerHTML=filtrados.map(e=>
+    drop.innerHTML=filtrados.slice(0,50).map(e=>
       `<div class="holded-item" onclick="elegirTecnico('${e.id}','${e.name.replace(/'/g,"\\'")}','${prefix}')">
         <div class="holded-item-name">${e.name}</div>
       </div>`
@@ -724,6 +729,10 @@ function iniciarParte(prefix) {
   timerStart = Date.now();
   parteEnCurso = true;
   timerPrefix = prefix;
+
+  // Mostrar contenido debajo del botón
+  const contenido = document.getElementById('contenido-parte-' + prefix);
+  if(contenido) contenido.classList.add('visible');
 
   // Bloquear refresco/cierre
   window.onbeforeunload = function(e) {
