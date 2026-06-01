@@ -852,11 +852,35 @@ let timerPrefix = null;
 
 function iniciarParte(prefix) {
   if(parteEnCurso) return;
+
+  // Validar técnico obligatorio
+  const tecnicoId = prefix === 'c' ? 'c-tecnico' : 'a-tecnico';
+  const tecnico = document.getElementById(tecnicoId);
+  if(!tecnico || !tecnico.value.trim()) {
+    showToast('⚠ El técnico es obligatorio para iniciar', 'error');
+    tecnico.style.border = '2px solid var(--bad)';
+    tecnico.focus();
+    setTimeout(()=>{ tecnico.style.border = ''; }, 3000);
+    return;
+  }
+
+  // Validar cliente obligatorio
+  const clienteId = prefix === 'c' ? 'c-cliente' : 'a-cliente';
+  const cliente = document.getElementById(clienteId);
+  if(!cliente || !cliente.value.trim()) {
+    showToast('⚠ El cliente es obligatorio para iniciar', 'error');
+    cliente.style.border = '2px solid var(--bad)';
+    cliente.focus();
+    setTimeout(()=>{ cliente.style.border = ''; }, 3000);
+    return;
+  }
+
   // Si la ubicación no está permitida, pedir permiso primero
   if(!ubicacionPermitida) {
     pedirPermisoUbicacion();
     return;
   }
+
   _arrancarParte(prefix);
 }
 
