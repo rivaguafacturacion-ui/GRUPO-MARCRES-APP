@@ -198,6 +198,14 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 .tarea-albaran-sub{font-size:11px;color:var(--muted);margin-top:2px;}
 .tarea-albaran-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;white-space:nowrap;flex-shrink:0;}
 .tareas-cargando-alb{font-size:13px;color:var(--muted);padding:8px 0;font-style:italic;}
+
+.ubic-aviso{display:none;margin-top:10px;padding:12px 14px;background:#FFF3CD;border:1.5px solid #8B5A00;border-radius:var(--radius-sm);}
+.ubic-aviso.show{display:block;}
+.ubic-aviso-titulo{font-size:13px;font-weight:700;color:#8B5A00;margin-bottom:4px;}
+.ubic-aviso-txt{font-size:12px;color:#8B5A00;line-height:1.5;}
+.btn-inicio.esperando{background:var(--muted);cursor:not-allowed;}
+.btn-inicio.esperando-ubic{background:#8B5A00;animation:pulseUbic 1.5s ease-in-out infinite;}
+@keyframes pulseUbic{0%,100%{opacity:1}50%{opacity:.7}}
 </style>
 </head>
 <body>
@@ -271,6 +279,14 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       <div class="corte-horas" id="c-corte-horas"><input type="text" placeholder="Número de horas del corte (ej: 2h)" id="c-corte-horas-val"></div>
       <div class="btn-inicio-wrap">
         <button class="btn-inicio" id="btn-inicio-c" onclick="iniciarParte('c')">▶ INICIO</button>
+        <div class="ubic-aviso" id="ubic-aviso-c">
+          <div class="ubic-aviso-titulo">📍 Ubicación bloqueada</div>
+          <div class="ubic-aviso-txt">Para continuar necesitas activar la ubicación:<br><br>
+            <b>iPhone:</b> Ajustes → Safari → Ubicación → Permitir<br>
+            <b>Android:</b> Ajustes → Aplicaciones → Chrome → Permisos → Ubicación → Permitir<br><br>
+            Después recarga la página y pulsa INICIO de nuevo.
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -381,6 +397,14 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       <div class="corte-horas" id="a-corte-horas"><input type="text" placeholder="Número de horas del corte (ej: 2h)" id="a-corte-horas-val"></div>
       <div class="btn-inicio-wrap" style="margin-top:14px;">
         <button class="btn-inicio" id="btn-inicio-a" onclick="iniciarParte('a')">▶ INICIO</button>
+        <div class="ubic-aviso" id="ubic-aviso-a">
+          <div class="ubic-aviso-titulo">📍 Ubicación bloqueada</div>
+          <div class="ubic-aviso-txt">Para continuar necesitas activar la ubicación:<br><br>
+            <b>iPhone:</b> Ajustes → Safari → Ubicación → Permitir<br>
+            <b>Android:</b> Ajustes → Aplicaciones → Chrome → Permisos → Ubicación → Permitir<br><br>
+            Después recarga la página y pulsa INICIO de nuevo.
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -662,7 +686,18 @@ function buildResumenChecklist(tipo){
 function calcHoraFin(){const n=new Date();return String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
 function calcDuracion(){if(!window._horaInicio)return'—';const diff=Math.round((new Date()-window._horaInicio)/60000);return diff>=60?`${Math.floor(diff/60)}h ${diff%60}min`:`${diff}min`;}
 function genNumDoc(){return '';}
-function obtenerUbicacion(){return new Promise(resolve=>{if(!navigator.geolocation){resolve(null);return;}navigator.geolocation.getCurrentPosition(pos=>resolve({lat:pos.coords.latitude.toFixed(6),lng:pos.coords.longitude.toFixed(6),precision:Math.round(pos.coords.accuracy)}),()=>resolve(null),{timeout:8000,enableHighAccuracy:true});});}
+function obtenerUbicacion(){
+  // Si ya tenemos la ubicación del INICIO, la reutilizamos
+  if(window._ubicacionInicio) return Promise.resolve(window._ubicacionInicio);
+  return new Promise(resolve=>{
+    if(!navigator.geolocation){resolve(null);return;}
+    navigator.geolocation.getCurrentPosition(
+      pos=>resolve({lat:pos.coords.latitude.toFixed(6),lng:pos.coords.longitude.toFixed(6),precision:Math.round(pos.coords.accuracy)}),
+      ()=>resolve(null),
+      {timeout:10000,enableHighAccuracy:true}
+    );
+  });
+}
 
 async function enviarChecklist(tipo){
   if(!empresaChecklist){showToast('⚠ Selecciona Rivagua o Marcres','error');return;}
@@ -804,6 +839,44 @@ let timerPrefix = null;
 
 function iniciarParte(prefix) {
   if(parteEnCurso) return;
+  const btn = document.getElementById('btn-inicio-' + prefix);
+  const aviso = document.getElementById('ubic-aviso-' + prefix);
+
+  // Pedir ubicación antes de arrancar — si falla, bloquear
+  if(!navigator.geolocation) {
+    if(aviso) aviso.classList.add('show');
+    showToast('❌ Este dispositivo no soporta ubicación', 'error');
+    return;
+  }
+
+  btn.classList.add('esperando-ubic');
+  btn.textContent = '📍 Obteniendo ubicación...';
+  btn.onclick = null;
+
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      // Ubicación obtenida — guardar y arrancar
+      window._ubicacionInicio = {
+        lat: pos.coords.latitude.toFixed(6),
+        lng: pos.coords.longitude.toFixed(6),
+        precision: Math.round(pos.coords.accuracy)
+      };
+      if(aviso) aviso.classList.remove('show');
+      _arrancarParte(prefix);
+    },
+    function(err) {
+      // Denegado o error — bloquear y mostrar instrucciones
+      btn.classList.remove('esperando-ubic');
+      btn.textContent = '▶ INICIO';
+      btn.onclick = function(){ iniciarParte(prefix); };
+      if(aviso) aviso.classList.add('show');
+      showToast('❌ Activa la ubicación para continuar', 'error');
+    },
+    { timeout: 12000, enableHighAccuracy: true, maximumAge: 0 }
+  );
+}
+
+function _arrancarParte(prefix) {
   timerStart = Date.now();
   parteEnCurso = true;
   timerPrefix = prefix;
@@ -822,6 +895,7 @@ function iniciarParte(prefix) {
 
   // Cambiar botón a modo activo con timer
   const btn = document.getElementById('btn-inicio-' + prefix);
+  btn.classList.remove('esperando-ubic');
   btn.classList.add('activo');
   btn.onclick = null;
   btn.innerHTML = '<div style="text-align:center;width:100%;"><div class="timer-label">⏱ Parte en curso</div><div class="timer-display" id="timer-display-' + prefix + '">00:00:00</div></div>';
