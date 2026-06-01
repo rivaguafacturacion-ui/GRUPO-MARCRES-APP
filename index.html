@@ -206,6 +206,12 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 .btn-inicio.esperando{background:var(--muted);cursor:not-allowed;}
 .btn-inicio.esperando-ubic{background:#8B5A00;animation:pulseUbic 1.5s ease-in-out infinite;}
 @keyframes pulseUbic{0%,100%{opacity:1}50%{opacity:.7}}
+
+.ubic-banner{display:none;position:sticky;top:58px;z-index:95;background:#8B5A00;color:#fff;padding:10px 16px;font-size:13px;font-weight:600;text-align:center;cursor:pointer;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;}
+.ubic-banner.show{display:flex;}
+.ubic-banner.ok{background:var(--ok);cursor:default;}
+.ubic-banner-sub{font-size:11px;font-weight:400;opacity:.85;display:block;margin-top:2px;}
+.btn-inicio.bloqueado{background:var(--muted) !important;cursor:not-allowed !important;opacity:.6;}
 </style>
 </head>
 <body>
@@ -233,6 +239,13 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 <div class="app-nav">
   <button class="nav-btn active" id="nav-checklist" onclick="switchApp('checklist')"><span>✅</span> Checklist</button>
   <button class="nav-btn" id="nav-albaran" onclick="switchApp('albaran')"><span>📋</span> Albarán</button>
+</div>
+
+
+<!-- BANNER PERMISO UBICACIÓN -->
+<div class="ubic-banner" id="ubic-banner" onclick="pedirPermisoUbicacion()">
+  <span>📍 Toca aquí para activar la ubicación</span>
+  <span class="ubic-banner-sub">Necesaria para registrar dónde se realizó el trabajo</span>
 </div>
 
 <!-- CHECKLIST -->
@@ -839,41 +852,12 @@ let timerPrefix = null;
 
 function iniciarParte(prefix) {
   if(parteEnCurso) return;
-  const btn = document.getElementById('btn-inicio-' + prefix);
-  const aviso = document.getElementById('ubic-aviso-' + prefix);
-
-  // Pedir ubicación antes de arrancar — si falla, bloquear
-  if(!navigator.geolocation) {
-    if(aviso) aviso.classList.add('show');
-    showToast('❌ Este dispositivo no soporta ubicación', 'error');
+  // Si la ubicación no está permitida, pedir permiso primero
+  if(!ubicacionPermitida) {
+    pedirPermisoUbicacion();
     return;
   }
-
-  btn.classList.add('esperando-ubic');
-  btn.textContent = '📍 Obteniendo ubicación...';
-  btn.onclick = null;
-
-  navigator.geolocation.getCurrentPosition(
-    function(pos) {
-      // Ubicación obtenida — guardar y arrancar
-      window._ubicacionInicio = {
-        lat: pos.coords.latitude.toFixed(6),
-        lng: pos.coords.longitude.toFixed(6),
-        precision: Math.round(pos.coords.accuracy)
-      };
-      if(aviso) aviso.classList.remove('show');
-      _arrancarParte(prefix);
-    },
-    function(err) {
-      // Denegado o error — bloquear y mostrar instrucciones
-      btn.classList.remove('esperando-ubic');
-      btn.textContent = '▶ INICIO';
-      btn.onclick = function(){ iniciarParte(prefix); };
-      if(aviso) aviso.classList.add('show');
-      showToast('❌ Activa la ubicación para continuar', 'error');
-    },
-    { timeout: 12000, enableHighAccuracy: true, maximumAge: 0 }
-  );
+  _arrancarParte(prefix);
 }
 
 function _arrancarParte(prefix) {
@@ -1281,7 +1265,118 @@ function showToast(msg,type=''){const t=document.getElementById('toast');t.textC
 function tickClock(){const n=new Date();document.getElementById('hora-display').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
 tickClock();setInterval(tickClock,30000);
 
-buildAlbaranTables();buildChecklistTables();buildElec();initFotos();initFirmas();
+
+// ══ PERMISO UBICACIÓN AL ARRANCAR ══
+let ubicacionPermitida = false;
+
+function pedirPermisoUbicacion() {
+  const banner = document.getElementById('ubic-banner');
+  if(ubicacionPermitida) return;
+
+  banner.innerHTML = '<span>📍 Obteniendo ubicación...</span>';
+
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      // Permiso concedido
+      ubicacionPermitida = true;
+      window._ubicacionInicio = {
+        lat: pos.coords.latitude.toFixed(6),
+        lng: pos.coords.longitude.toFixed(6),
+        precision: Math.round(pos.coords.accuracy)
+      };
+      banner.classList.remove('show');
+      banner.classList.add('ok');
+      banner.innerHTML = '<span>✅ Ubicación activa</span>';
+      setTimeout(()=>{ banner.classList.remove('show','ok'); }, 2500);
+      desbloquearBotonesInicio();
+    },
+    function(err) {
+      // Denegado
+      ubicacionPermitida = false;
+      banner.innerHTML =
+        '<div style="text-align:center;">' +
+          '<div>⚠️ Ubicación bloqueada — toca aquí para ver cómo activarla</div>' +
+          '<div style="font-size:11px;font-weight:400;margin-top:6px;opacity:.9;">' +
+            'iPhone: Ajustes → Safari → Ubicación → Permitir &nbsp;|&nbsp; ' +
+            'Android: Ajustes → Chrome → Permisos → Ubicación → Permitir' +
+          '</div>' +
+        '</div>';
+      bloquearBotonesInicio();
+    },
+    { timeout: 12000, enableHighAccuracy: true, maximumAge: 0 }
+  );
+}
+
+function bloquearBotonesInicio() {
+  ['btn-inicio-c','btn-inicio-a'].forEach(function(id) {
+    var btn = document.getElementById(id);
+    if(btn && !btn.classList.contains('activo')) {
+      btn.classList.add('bloqueado');
+      btn.onclick = function(){ pedirPermisoUbicacion(); };
+    }
+  });
+}
+
+function desbloquearBotonesInicio() {
+  ['btn-inicio-c','btn-inicio-a'].forEach(function(id) {
+    var btn = document.getElementById(id);
+    if(btn) {
+      btn.classList.remove('bloqueado');
+      var prefix = id.replace('btn-inicio-','');
+      btn.onclick = function(){ iniciarParte(prefix); };
+    }
+  });
+}
+
+function comprobarPermisoUbicacion() {
+  if(!navigator.geolocation) {
+    // Dispositivo sin GPS — mostrar aviso pero no bloquear
+    return;
+  }
+  // Comprobar estado del permiso sin pedirlo todavía (API Permissions)
+  if(navigator.permissions) {
+    navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
+      if(result.state === 'granted') {
+        // Ya estaba concedido — obtener posición silenciosamente
+        navigator.geolocation.getCurrentPosition(function(pos) {
+          ubicacionPermitida = true;
+          window._ubicacionInicio = {
+            lat: pos.coords.latitude.toFixed(6),
+            lng: pos.coords.longitude.toFixed(6),
+            precision: Math.round(pos.coords.accuracy)
+          };
+        }, function(){}, { timeout: 8000, enableHighAccuracy: true });
+      } else if(result.state === 'denied') {
+        // Ya estaba denegado — mostrar banner bloqueado directamente
+        var banner = document.getElementById('ubic-banner');
+        banner.classList.add('show');
+        banner.innerHTML =
+          '<div style="text-align:center;">' +
+            '<div>⚠️ Ubicación bloqueada — toca aquí para ver cómo activarla</div>' +
+            '<div style="font-size:11px;font-weight:400;margin-top:6px;opacity:.9;">' +
+              'iPhone: Ajustes → Safari → Ubicación → Permitir &nbsp;|&nbsp; ' +
+              'Android: Ajustes → Chrome → Permisos → Ubicación → Permitir' +
+            '</div>' +
+          '</div>';
+        bloquearBotonesInicio();
+      } else {
+        // 'prompt' — mostrar banner para que el técnico lo active
+        var banner = document.getElementById('ubic-banner');
+        banner.classList.add('show');
+        bloquearBotonesInicio();
+      }
+      result.onchange = function() { comprobarPermisoUbicacion(); };
+    });
+  } else {
+    // Navegador sin API Permissions (iOS Safari antiguo) — mostrar banner directamente
+    var banner = document.getElementById('ubic-banner');
+    banner.classList.add('show');
+    bloquearBotonesInicio();
+  }
+}
+
+buildAlbaranTables();buildChecklistTables();
+comprobarPermisoUbicacion();buildElec();initFotos();initFirmas();
 addMatRowFor('simple');addMatRowFor('mant');addMatRowFor('elec');addMatRowFor('hid');
 const nowInit=new Date();
 const horaStr=String(nowInit.getHours()).padStart(2,'0')+':'+String(nowInit.getMinutes()).padStart(2,'0');
