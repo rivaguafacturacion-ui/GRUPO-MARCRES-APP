@@ -204,6 +204,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
         <div class="holded-dropdown" id="c-tecnico-drop" style="display:none;"></div>
       </div>
     </div>
+    <div class="field-group">
       <label class="field-label">Corte de agua</label>
       <div class="pill-group">
         <span class="pill" onclick="selectCorte(this,'c','Si')">Sí</span>
@@ -307,9 +308,9 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
         <span class="pill" onclick="selectCorte(this,'a','No')">No</span>
       </div>
       <div class="corte-horas" id="a-corte-horas"><input type="text" placeholder="Número de horas del corte (ej: 2h)" id="a-corte-horas-val"></div>
-    </div>
-    <div class="btn-inicio-wrap" style="padding:0 0 4px;">
-      <button class="btn-inicio" id="btn-inicio-a" onclick="iniciarParte('a')">▶ INICIO</button>
+      <div class="btn-inicio-wrap" style="margin-top:14px;">
+        <button class="btn-inicio" id="btn-inicio-a" onclick="iniciarParte('a')">▶ INICIO</button>
+      </div>
     </div>
   </div>
   <div class="contenido-parte" id="contenido-parte-a">
