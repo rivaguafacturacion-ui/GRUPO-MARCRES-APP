@@ -193,7 +193,15 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       <div><label class="field-label">Población</label><input type="text" class="field-input" id="c-poblacion" placeholder="Población"></div>
       <div><label class="field-label">C.P.</label><input type="text" class="field-input" id="c-cp" placeholder="Código postal" inputmode="numeric"></div>
     </div>
-    <div class="field-group"><label class="field-label">Técnico <span style="color:var(--bad)">*</span></label><input type="text" class="field-input" id="c-tecnico" placeholder="Nombre del técnico"></div>
+    <div class="field-group"><label class="field-label">Técnico <span style="color:var(--bad)">*</span></label>
+      <div style="position:relative;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <input type="text" class="field-input" id="c-tecnico" placeholder="Escribe para buscar técnico..." autocomplete="off" oninput="buscarEmpleado(this.value,'c')" onfocus="buscarEmpleado(this.value,'c')" style="flex:1;">
+          <button onclick="resetTecnico('c')" title="Borrar técnico" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);flex-shrink:0;">✕</button>
+        </div>
+        <div class="holded-dropdown" id="c-tecnico-drop" style="display:none;"></div>
+      </div>
+    </div>
     <div class="field-group">
       <label class="field-label">Corte de agua</label>
       <div class="pill-group">
@@ -280,7 +288,15 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       <div><label class="field-label">Población</label><input type="text" class="field-input" id="a-poblacion" placeholder="Población"></div>
       <div><label class="field-label">C.P.</label><input type="text" class="field-input" id="a-cp" placeholder="Código postal" inputmode="numeric"></div>
     </div>
-    <div class="field-group"><label class="field-label">Técnico <span style="color:var(--bad)">*</span></label><input type="text" class="field-input" id="a-tecnico" placeholder="Nombre del técnico"></div>
+    <div class="field-group"><label class="field-label">Técnico <span style="color:var(--bad)">*</span></label>
+      <div style="position:relative;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <input type="text" class="field-input" id="a-tecnico" placeholder="Escribe para buscar técnico..." autocomplete="off" oninput="buscarEmpleado(this.value,'a')" onfocus="buscarEmpleado(this.value,'a')" style="flex:1;">
+          <button onclick="resetTecnico('a')" title="Borrar técnico" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);flex-shrink:0;">✕</button>
+        </div>
+        <div class="holded-dropdown" id="a-tecnico-drop" style="display:none;"></div>
+      </div>
+    </div>
     <div class="field-group">
       <label class="field-label">Corte de agua</label>
       <div class="pill-group">
@@ -608,6 +624,49 @@ async function enviarAlbaran(panel){
   const payload={empresa:empresaAlbaran,tipo:tipoLabel,fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,corte:getPill('a-corte'),corteHoras:document.getElementById('a-corte-horas-val')?.value.trim()||'',materialTaller:tallerEstado||'—',fotoTaller:tallerFotoData||null,estadoGeneral:getPill('estado-general'),resumen:isMant?buildResumenMant():'',observaciones:isMant?document.getElementById('mant-obs').value.trim():document.getElementById('simple-obs').value.trim(),incidencia:isMant?document.getElementById('mant-incidencia').value.trim():'',horasPresupuestadas:document.getElementById('horas-pres-'+pKey)?.value.trim()||'',materiales:getMaterilesFor(pKey),numDoc:genNumDoc(),fotos:fotosData[fotoKey].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+pKey),firmaCliente:ausenteState[pKey]?null:getFirmaBase64('cliente-'+pKey),clienteAusente:ausenteState[pKey],motivoAusencia:document.getElementById('ausente-motivo-'+pKey)?.value.trim()||'',presupuestoPdf:pdfData[pKey]||null,ubicacion,horaEnvio:calcHoraFin()};
   try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal();else throw new Error(data.error||'Error desconocido');}
   catch(err){showToast('❌ Error: '+(err.message||'sin conexión'),'error');btn.disabled=false;btn.textContent='📤 Enviar '+tipoLabel;}
+}
+
+// EMPLEADOS HOLDED
+let tecnicoElegido={c:false,a:false};
+let empleadosCache=null;
+
+async function buscarEmpleado(q,prefix){
+  if(tecnicoElegido[prefix])return;
+  const drop=document.getElementById(prefix+'-tecnico-drop');
+  if(!q||q.length<1){drop.style.display='none';return;}
+  drop.style.display='block';
+  drop.innerHTML='<div class="holded-searching">Buscando técnicos...</div>';
+  try{
+    // Cargar caché si no existe
+    if(!empleadosCache){
+      const res=await fetch(GAS_URL+'?action=empleados&q=');
+      const data=await res.json();
+      empleadosCache=data.ok?data.empleados:[];
+    }
+    const filtrados=empleadosCache.filter(e=>e.name.toLowerCase().includes(q.toLowerCase()));
+    if(!filtrados.length){drop.innerHTML='<div class="holded-searching">Sin resultados</div>';return;}
+    drop.innerHTML=filtrados.map(e=>
+      `<div class="holded-item" onclick="elegirTecnico('${e.id}','${e.name.replace(/'/g,"\\'")}','${prefix}')">
+        <div class="holded-item-name">${e.name}</div>
+      </div>`
+    ).join('');
+  }catch(err){drop.innerHTML='<div class="holded-searching">Error al buscar</div>';}
+}
+
+function elegirTecnico(id,nombre,prefix){
+  const inp=document.getElementById(prefix+'-tecnico');
+  inp.value=nombre;
+  inp.style.color='var(--ok)';
+  inp.style.fontWeight='600';
+  document.getElementById(prefix+'-tecnico-drop').style.display='none';
+  tecnicoElegido[prefix]=true;
+}
+
+function resetTecnico(prefix){
+  tecnicoElegido[prefix]=false;
+  const inp=document.getElementById(prefix+'-tecnico');
+  inp.value='';inp.style.color='';inp.style.fontWeight='';
+  document.getElementById(prefix+'-tecnico-drop').style.display='none';
 }
 
 // MATERIAL TALLER
