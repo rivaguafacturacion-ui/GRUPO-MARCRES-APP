@@ -111,6 +111,11 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 .corte-horas input{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;font-family:var(--font);font-size:14px;color:var(--text);outline:none;}
 .taller-foto-wrap{margin-top:8px;display:none;}
 .taller-foto-wrap.show{display:block;}
+.btn-inicio-wrap{margin-top:12px;}
+.btn-inicio{width:100%;padding:14px;border:none;border-radius:var(--radius);font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;background:var(--ok);color:#fff;letter-spacing:.5px;transition:all .2s;}
+.btn-inicio.activo{background:var(--azul);cursor:default;display:flex;align-items:center;justify-content:center;gap:10px;}
+.timer-display{font-size:22px;font-weight:900;font-family:monospace;color:#fff;}
+.timer-label{font-size:11px;color:rgba(255,255,255,.7);text-transform:uppercase;}
 .taller-foto-slot{width:100%;height:120px;border-radius:8px;border:1.5px dashed var(--border);background:var(--surface2);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;}
 .taller-foto-slot.filled{border-style:solid;border-color:var(--ok);}
 .taller-foto-slot img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
@@ -196,6 +201,9 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
         <span class="pill" onclick="selectCorte(this,'c','No')">No</span>
       </div>
       <div class="corte-horas" id="c-corte-horas"><input type="text" placeholder="Número de horas del corte (ej: 2h)" id="c-corte-horas-val"></div>
+      <div class="btn-inicio-wrap">
+        <button class="btn-inicio" id="btn-inicio-c" onclick="iniciarParte('c')">▶ INICIO</button>
+      </div>
     </div>
   </div>
   <div class="panel-tabs">
@@ -295,6 +303,9 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
         </div>
         <input type="file" accept="image/*" capture="environment" id="taller-foto-input" style="display:none;" onchange="cargarFotoTaller(this)">
       </div>
+      <div class="btn-inicio-wrap">
+        <button class="btn-inicio" id="btn-inicio-a" onclick="iniciarParte('a')">▶ INICIO</button>
+      </div>
     </div>
   </div>
   <div class="card" style="padding:14px;">
@@ -372,7 +383,7 @@ const holdedContactos={};
 let fechaTexto='';
 let holdedTimer=null;
 
-function mostrarPantallaFinal(){const pf=document.getElementById('pantalla-final');pf.classList.add('show');setTimeout(()=>{pf.classList.remove('show');window.location.reload();},3000);}
+function mostrarPantallaFinal(){detenerTimer();const pf=document.getElementById('pantalla-final');pf.classList.add('show');setTimeout(()=>{pf.classList.remove('show');window.location.reload();},3000);}
 
 // HOLDED — versión estable con fetch + selección por botón modal
 function buscarHolded(q,prefix){
@@ -554,7 +565,7 @@ async function enviarChecklist(tipo){
   btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
   const ubicacion=await obtenerUbicacion();
   btn.textContent='⏳ Enviando...';
-  const payload={empresa:empresaChecklist,tipo:tipoNombre,fecha:fechaTexto,horaInicio:document.getElementById('c-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),cliente,direccion:document.getElementById('c-direccion').value.trim(),poblacion:document.getElementById('c-poblacion').value.trim(),cp:document.getElementById('c-cp').value.trim(),tecnico,corte:getPill('c-corte'),corteHoras:document.getElementById('c-corte-horas-val')?.value.trim()||'',resumen:buildResumenChecklist(tipo),observaciones:tipo==='elec'?document.getElementById('elec-obs').value.trim():document.getElementById('hid-obs').value.trim(),horasPresupuestadas:document.getElementById('horas-pres-'+tipo)?.value.trim()||'',materiales:getMaterilesFor(tipo),estadoGeneral:null,numDoc:genNumDoc(),fotos:fotosData[tipo].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+tipo),firmaCliente:ausenteState[tipo]?null:getFirmaBase64('cliente-'+tipo),clienteAusente:ausenteState[tipo],motivoAusencia:document.getElementById('ausente-motivo-'+tipo)?.value.trim()||'',presupuestoPdf:pdfData[tipo]||null,ubicacion,horaEnvio:calcHoraFin()};
+  const payload={empresa:empresaChecklist,tipo:tipoNombre,fecha:fechaTexto,horaInicio:document.getElementById('c-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('c-direccion').value.trim(),poblacion:document.getElementById('c-poblacion').value.trim(),cp:document.getElementById('c-cp').value.trim(),tecnico,corte:getPill('c-corte'),corteHoras:document.getElementById('c-corte-horas-val')?.value.trim()||'',resumen:buildResumenChecklist(tipo),observaciones:tipo==='elec'?document.getElementById('elec-obs').value.trim():document.getElementById('hid-obs').value.trim(),horasPresupuestadas:document.getElementById('horas-pres-'+tipo)?.value.trim()||'',materiales:getMaterilesFor(tipo),estadoGeneral:null,numDoc:genNumDoc(),fotos:fotosData[tipo].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+tipo),firmaCliente:ausenteState[tipo]?null:getFirmaBase64('cliente-'+tipo),clienteAusente:ausenteState[tipo],motivoAusencia:document.getElementById('ausente-motivo-'+tipo)?.value.trim()||'',presupuestoPdf:pdfData[tipo]||null,ubicacion,horaEnvio:calcHoraFin()};
   try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal();else throw new Error(data.error||'Error desconocido');}
   catch(err){showToast('❌ Error: '+(err.message||'sin conexión'),'error');btn.disabled=false;btn.textContent=`📤 Enviar ${tipoNombre.toLowerCase()}`;}
 }
@@ -580,7 +591,7 @@ async function enviarAlbaran(panel){
   btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
   const ubicacion=await obtenerUbicacion();
   btn.textContent='⏳ Generando PDF...';
-  const payload={empresa:empresaAlbaran,tipo:tipoLabel,fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,corte:getPill('a-corte'),corteHoras:document.getElementById('a-corte-horas-val')?.value.trim()||'',materialTaller:tallerEstado||'—',fotoTaller:tallerFotoData||null,estadoGeneral:getPill('estado-general'),resumen:isMant?buildResumenMant():'',observaciones:isMant?document.getElementById('mant-obs').value.trim():document.getElementById('simple-obs').value.trim(),incidencia:isMant?document.getElementById('mant-incidencia').value.trim():'',horasPresupuestadas:document.getElementById('horas-pres-'+pKey)?.value.trim()||'',materiales:getMaterilesFor(pKey),numDoc:genNumDoc(),fotos:fotosData[fotoKey].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+pKey),firmaCliente:ausenteState[pKey]?null:getFirmaBase64('cliente-'+pKey),clienteAusente:ausenteState[pKey],motivoAusencia:document.getElementById('ausente-motivo-'+pKey)?.value.trim()||'',presupuestoPdf:pdfData[pKey]||null,ubicacion,horaEnvio:calcHoraFin()};
+  const payload={empresa:empresaAlbaran,tipo:tipoLabel,fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,corte:getPill('a-corte'),corteHoras:document.getElementById('a-corte-horas-val')?.value.trim()||'',materialTaller:tallerEstado||'—',fotoTaller:tallerFotoData||null,estadoGeneral:getPill('estado-general'),resumen:isMant?buildResumenMant():'',observaciones:isMant?document.getElementById('mant-obs').value.trim():document.getElementById('simple-obs').value.trim(),incidencia:isMant?document.getElementById('mant-incidencia').value.trim():'',horasPresupuestadas:document.getElementById('horas-pres-'+pKey)?.value.trim()||'',materiales:getMaterilesFor(pKey),numDoc:genNumDoc(),fotos:fotosData[fotoKey].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+pKey),firmaCliente:ausenteState[pKey]?null:getFirmaBase64('cliente-'+pKey),clienteAusente:ausenteState[pKey],motivoAusencia:document.getElementById('ausente-motivo-'+pKey)?.value.trim()||'',presupuestoPdf:pdfData[pKey]||null,ubicacion,horaEnvio:calcHoraFin()};
   try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal();else throw new Error(data.error||'Error desconocido');}
   catch(err){showToast('❌ Error: '+(err.message||'sin conexión'),'error');btn.disabled=false;btn.textContent='📤 Enviar '+tipoLabel;}
 }
@@ -619,6 +630,71 @@ function borrarFotoTaller(e){
   const slot=document.getElementById('taller-foto-slot');
   slot.innerHTML='<span style="font-size:24px;">📷</span><span style="font-size:11px;color:var(--muted);margin-top:4px;">Toca para fotografiar</span>';
   slot.classList.remove('filled');
+}
+
+// TIMER Y BLOQUEO DE REFRESCO
+let timerInterval = null;
+let timerStart = null;
+let parteEnCurso = false;
+let timerPrefix = null;
+
+function iniciarParte(prefix) {
+  if(parteEnCurso) return;
+  timerStart = Date.now();
+  parteEnCurso = true;
+  timerPrefix = prefix;
+
+  // Bloquear refresco/cierre
+  window.onbeforeunload = function(e) {
+    const msg = '⚠️ Tienes un parte en curso. ¿Seguro que quieres salir?';
+    e.preventDefault();
+    e.returnValue = msg;
+    return msg;
+  };
+
+  // Cambiar botón a modo activo con timer
+  const btn = document.getElementById('btn-inicio-' + prefix);
+  btn.classList.add('activo');
+  btn.onclick = null;
+  btn.innerHTML = '<div style="text-align:center;width:100%;"><div class="timer-label">⏱ Parte en curso</div><div class="timer-display" id="timer-display-' + prefix + '">00:00:00</div></div>';
+
+  // Registrar hora de inicio
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mm = String(now.getMinutes()).padStart(2,'0');
+  const horaInicioId = prefix === 'c' ? 'c-hora-inicio' : 'a-hora-inicio';
+  const horaInput = document.getElementById(horaInicioId);
+  if(horaInput && !horaInput.value) horaInput.value = hh + ':' + mm;
+
+  // Arrancar el contador
+  timerInterval = setInterval(() => {
+    const elapsed = Date.now() - timerStart;
+    const totalSec = Math.floor(elapsed / 1000);
+    const h = String(Math.floor(totalSec / 3600)).padStart(2,'0');
+    const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2,'0');
+    const s = String(totalSec % 60).padStart(2,'0');
+    const display = document.getElementById('timer-display-' + prefix);
+    if(display) display.textContent = h + ':' + m + ':' + s;
+  }, 1000);
+}
+
+function detenerTimer() {
+  if(timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  parteEnCurso = false;
+  timerPrefix = null;
+  window.onbeforeunload = null;
+}
+
+function getTiempoTranscurrido() {
+  if(!timerStart) return '';
+  const elapsed = Date.now() - timerStart;
+  const totalSec = Math.floor(elapsed / 1000);
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  if(h > 0) return h + 'h ' + m + 'min ' + s + 's';
+  if(m > 0) return m + 'min ' + s + 's';
+  return s + 's';
 }
 
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type;setTimeout(()=>t.classList.add('show'),10);setTimeout(()=>t.classList.remove('show'),4000);}
