@@ -289,23 +289,8 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       </div>
       <div class="corte-horas" id="a-corte-horas"><input type="text" placeholder="Número de horas del corte (ej: 2h)" id="a-corte-horas-val"></div>
     </div>
-    <div class="field-group">
-      <label class="field-label">Material sustituido a taller</label>
-      <div class="pill-group">
-        <span class="pill" onclick="selectTaller(this,'Si')">Sí</span>
-        <span class="pill" onclick="selectTaller(this,'No')">No</span>
-      </div>
-      <div class="taller-foto-wrap" id="taller-foto-wrap">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">📷 Foto del material (obligatoria)</div>
-        <div class="taller-foto-slot" id="taller-foto-slot" onclick="abrirFotoTaller()">
-          <span style="font-size:24px;">📷</span>
-          <span style="font-size:11px;color:var(--muted);margin-top:4px;">Toca para fotografiar</span>
-        </div>
-        <input type="file" accept="image/*" capture="environment" id="taller-foto-input" style="display:none;" onchange="cargarFotoTaller(this)">
-      </div>
-      <div class="btn-inicio-wrap">
-        <button class="btn-inicio" id="btn-inicio-a" onclick="iniciarParte('a')">▶ INICIO</button>
-      </div>
+    <div class="btn-inicio-wrap" style="padding:0 0 4px;">
+      <button class="btn-inicio" id="btn-inicio-a" onclick="iniciarParte('a')">▶ INICIO</button>
     </div>
   </div>
   <div class="card" style="padding:14px;">
@@ -347,6 +332,21 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       </div>
     </div>
     <div class="card" id="sec-fotos-mant"><div class="section-header section-open" onclick="toggleSec('sec-fotos-mant')"><span class="sec-title">📷 Fotos <span style="font-size:11px;color:var(--bad);">(5 obligatorias)</span></span><span><span id="cnt-fotos-mant" style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:99px;background:var(--bad-bg);color:var(--bad);border:1px solid var(--bad);">0/5</span> <span class="chevron">⌄</span></span></div><div class="section-body" style="display:block;"><div class="fotos-section"><div class="fotos-grid" id="fotos-grid-mant"></div><input type="file" accept="image/*" capture="environment" class="foto-input-hidden" id="foto-input-mant"><div class="fotos-aviso" id="fotos-aviso-mant">⚠ Debes adjuntar las 5 fotografías para enviar</div></div></div></div>
+    <div class="card"><div class="field-group" style="margin:0;">
+      <label class="field-label">Material sustituido a taller</label>
+      <div class="pill-group">
+        <span class="pill" onclick="selectTaller(this,'Si')">Sí</span>
+        <span class="pill" onclick="selectTaller(this,'No')">No</span>
+      </div>
+      <div class="taller-foto-wrap" id="taller-foto-wrap">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">📷 Foto del material (obligatoria)</div>
+        <div class="taller-foto-slot" id="taller-foto-slot" onclick="abrirFotoTaller()">
+          <span style="font-size:24px;">📷</span>
+          <span style="font-size:11px;color:var(--muted);margin-top:4px;">Toca para fotografiar</span>
+        </div>
+        <input type="file" accept="image/*" capture="environment" id="taller-foto-input" style="display:none;" onchange="cargarFotoTaller(this)">
+      </div>
+    </div></div>
     <div class="card"><div class="section-header section-open" onclick="toggleSec('sec-firma-mant')"><span class="sec-title">✍️ Firmas</span><span class="chevron">⌄</span></div><div class="section-body" id="sec-firma-mant" style="display:block;"><div class="firma-section"><div class="firma-label">Firma del técnico <span style="color:var(--bad);font-size:10px;">*obligatoria</span></div><canvas class="firma-canvas" id="firma-tecnico-mant"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('tecnico-mant')">🗑 Borrar</button></div></div><div class="firma-section" style="border-top:1px solid var(--border);"><div class="firma-label">Firma del cliente <span style="color:var(--bad);font-size:10px;">*obligatoria</span><button class="cliente-ausente-btn" id="btn-ausente-mant" onclick="toggleAusente('mant')">Cliente ausente</button></div><canvas class="firma-canvas" id="firma-cliente-mant"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('cliente-mant')">🗑 Borrar</button></div><div class="firma-ausente-obs" id="ausente-obs-mant"><textarea class="obs-textarea" id="ausente-motivo-mant" placeholder="Motivo por el que el cliente no puede firmar..." style="margin-top:8px;"></textarea></div></div></div></div>
     <button class="send-btn" id="send-mant-btn" onclick="enviarAlbaran('mantenimiento')">📤 Enviar albarán de Mantenimiento</button>
   </div>
@@ -364,6 +364,20 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       </div>
     </div>
     <div class="card" id="sec-fotos-simple"><div class="section-header section-open" onclick="toggleSec('sec-fotos-simple')"><span class="sec-title">📷 Fotos <span style="font-size:11px;color:var(--bad);">(5 obligatorias)</span></span><span><span id="cnt-fotos-simple" style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:99px;background:var(--bad-bg);color:var(--bad);border:1px solid var(--bad);">0/5</span> <span class="chevron">⌄</span></span></div><div class="section-body" style="display:block;"><div class="fotos-section"><div class="fotos-grid" id="fotos-grid-simple"></div><input type="file" accept="image/*" capture="environment" class="foto-input-hidden" id="foto-input-simple"><div class="fotos-aviso" id="fotos-aviso-simple">⚠ Debes adjuntar las 5 fotografías para enviar</div></div></div></div>
+    <div class="card"><div class="field-group" style="margin:0;">
+      <label class="field-label">Material sustituido a taller</label>
+      <div class="pill-group">
+        <span class="pill" onclick="selectTaller(this,'Si')">Sí</span>
+        <span class="pill" onclick="selectTaller(this,'No')">No</span>
+      </div>
+      <div class="taller-foto-wrap" id="taller-foto-wrap-simple">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">📷 Foto del material (obligatoria)</div>
+        <div class="taller-foto-slot" id="taller-foto-slot-simple" onclick="abrirFotoTaller()">
+          <span style="font-size:24px;">📷</span>
+          <span style="font-size:11px;color:var(--muted);margin-top:4px;">Toca para fotografiar</span>
+        </div>
+      </div>
+    </div></div>
     <div class="card"><div class="section-header section-open" onclick="toggleSec('sec-firma-simple')"><span class="sec-title">✍️ Firmas</span><span class="chevron">⌄</span></div><div class="section-body" id="sec-firma-simple" style="display:block;"><div class="firma-section"><div class="firma-label">Firma del técnico <span style="color:var(--bad);font-size:10px;">*obligatoria</span></div><canvas class="firma-canvas" id="firma-tecnico-simple"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('tecnico-simple')">🗑 Borrar</button></div></div><div class="firma-section" style="border-top:1px solid var(--border);"><div class="firma-label">Firma del cliente <span style="color:var(--bad);font-size:10px;">*obligatoria</span><button class="cliente-ausente-btn" id="btn-ausente-simple" onclick="toggleAusente('simple')">Cliente ausente</button></div><canvas class="firma-canvas" id="firma-cliente-simple"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('cliente-simple')">🗑 Borrar</button></div><div class="firma-ausente-obs" id="ausente-obs-simple"><textarea class="obs-textarea" id="ausente-motivo-simple" placeholder="Motivo por el que el cliente no puede firmar..." style="margin-top:8px;"></textarea></div></div></div></div>
     <button class="send-btn" id="send-simple-btn" onclick="enviarAlbaran('simple')">📤 Enviar albarán</button>
   </div>
@@ -548,7 +562,7 @@ function buildResumenChecklist(tipo){
 
 function calcHoraFin(){const n=new Date();return String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
 function calcDuracion(){if(!window._horaInicio)return'—';const diff=Math.round((new Date()-window._horaInicio)/60000);return diff>=60?`${Math.floor(diff/60)}h ${diff%60}min`:`${diff}min`;}
-function genNumDoc(){const n=new Date();return`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}${String(n.getDate()).padStart(2,'0')}-${String(Math.floor(Math.random()*900)+100)}`;}
+function genNumDoc(){return '';}
 function obtenerUbicacion(){return new Promise(resolve=>{if(!navigator.geolocation){resolve(null);return;}navigator.geolocation.getCurrentPosition(pos=>resolve({lat:pos.coords.latitude.toFixed(6),lng:pos.coords.longitude.toFixed(6),precision:Math.round(pos.coords.accuracy)}),()=>resolve(null),{timeout:8000,enableHighAccuracy:true});});}
 
 async function enviarChecklist(tipo){
@@ -602,8 +616,16 @@ let tallerFotoData=null;
 function selectTaller(el,val){
   el.parentElement.querySelectorAll('.pill').forEach(p=>p.className='pill');
   const wrap=document.getElementById('taller-foto-wrap');
-  if(val==='Si'){el.classList.add('p-ok');tallerEstado='Si';wrap.classList.remove('show');}
-  else{el.classList.add('p-bad');tallerEstado='No';wrap.classList.add('show');}
+  const wrapSimple=document.getElementById('taller-foto-wrap-simple');
+  if(val==='Si'){
+    el.classList.add('p-ok');tallerEstado='Si';
+    if(wrap)wrap.classList.remove('show');
+    if(wrapSimple)wrapSimple.classList.remove('show');
+  } else {
+    el.classList.add('p-bad');tallerEstado='No';
+    if(wrap)wrap.classList.add('show');
+    if(wrapSimple)wrapSimple.classList.add('show');
+  }
 }
 function abrirFotoTaller(){document.getElementById('taller-foto-input').click();}
 function cargarFotoTaller(input){
@@ -711,6 +733,16 @@ document.getElementById('a-fecha-display').textContent=fechaTexto;
 document.getElementById('c-hora-inicio').value=horaStr;
 document.getElementById('a-hora-inicio').value=horaStr;
 window._horaInicio=nowInit;
+
+// Reloj en tiempo real hasta pulsar INICIO
+setInterval(()=>{
+  if(parteEnCurso) return;
+  const n=new Date();
+  const h=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+  document.getElementById('c-hora-inicio').value=h;
+  document.getElementById('a-hora-inicio').value=h;
+  window._horaInicio=n;
+},1000);
 </script>
 </body>
 </html>
