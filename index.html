@@ -1354,14 +1354,16 @@ function desbloquearBotonesInicio() {
 
 function comprobarPermisoUbicacion() {
   if(!navigator.geolocation) {
-    // Dispositivo sin GPS — mostrar aviso pero no bloquear
+    // Sin GPS: no bloquear, dejar continuar
+    ubicacionPermitida = true;
     return;
   }
-  // Comprobar estado del permiso sin pedirlo todavía (API Permissions)
+
   if(navigator.permissions) {
     navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
+
       if(result.state === 'granted') {
-        // Ya estaba concedido — obtener posición silenciosamente
+        // ✅ Ya concedido: obtener posición silenciosamente, sin banner, sin bloqueo
         navigator.geolocation.getCurrentPosition(function(pos) {
           ubicacionPermitida = true;
           window._ubicacionInicio = {
@@ -1369,9 +1371,16 @@ function comprobarPermisoUbicacion() {
             lng: pos.coords.longitude.toFixed(6),
             precision: Math.round(pos.coords.accuracy)
           };
-        }, function(){}, { timeout: 8000, enableHighAccuracy: true });
+          desbloquearBotonesInicio();
+        }, function() {
+          // Fallo al obtener posición aunque tenía permiso (sin señal, etc.)
+          // Dejamos pasar igualmente, el permiso estaba concedido
+          ubicacionPermitida = true;
+          desbloquearBotonesInicio();
+        }, { timeout: 10000, enableHighAccuracy: true, maximumAge: 60000 });
+
       } else if(result.state === 'denied') {
-        // Ya estaba denegado — mostrar banner bloqueado directamente
+        // ❌ Denegado explícitamente: mostrar banner con instrucciones
         var banner = document.getElementById('ubic-banner');
         banner.classList.add('show');
         banner.innerHTML =
@@ -1383,19 +1392,37 @@ function comprobarPermisoUbicacion() {
             '</div>' +
           '</div>';
         bloquearBotonesInicio();
+
       } else {
-        // 'prompt' — mostrar banner para que el técnico lo active
+        // ❓ Primera vez (prompt): mostrar banner para que el técnico lo active
         var banner = document.getElementById('ubic-banner');
         banner.classList.add('show');
         bloquearBotonesInicio();
       }
+
+      // Si el técnico cambia el permiso desde ajustes del móvil, reaccionar
       result.onchange = function() { comprobarPermisoUbicacion(); };
     });
+
   } else {
-    // Navegador sin API Permissions (iOS Safari antiguo) — mostrar banner directamente
-    var banner = document.getElementById('ubic-banner');
-    banner.classList.add('show');
-    bloquearBotonesInicio();
+    // iOS Safari sin API Permissions: intentar directamente
+    // Si ya lo había concedido antes, getCurrentPosition devolverá resultado sin diálogo
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      ubicacionPermitida = true;
+      window._ubicacionInicio = {
+        lat: pos.coords.latitude.toFixed(6),
+        lng: pos.coords.longitude.toFixed(6),
+        precision: Math.round(pos.coords.accuracy)
+      };
+      desbloquearBotonesInicio();
+      var banner = document.getElementById('ubic-banner');
+      banner.classList.remove('show');
+    }, function() {
+      // No concedido: mostrar banner
+      var banner = document.getElementById('ubic-banner');
+      banner.classList.add('show');
+      bloquearBotonesInicio();
+    }, { timeout: 10000, enableHighAccuracy: true, maximumAge: 60000 });
   }
 }
 
