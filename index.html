@@ -8,6 +8,7 @@
   <meta name="apple-mobile-web-app-title" content="Marcres">
   <meta name="application-name" content="Marcres">
   <meta name="theme-color" content="#184595">
+  <meta name="mobile-web-app-capable" content="yes">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="mobile-web-app-capable" content="yes">
@@ -19,7 +20,7 @@
 <style>
 :root{--bg:#F0EDE8;--surface:#FAFAF7;--surface2:#EFECE7;--border:#D8D4CC;--text:#1A1916;--muted:#7A776F;--accent:#184595;--accent2:#0d3175;--celeste:#03A0FB;--ok:#2D6A4F;--ok-bg:#D8F3DC;--warn:#8B5A00;--warn-bg:#FFF3CD;--bad:#8B1A1A;--bad-bg:#FFE0E0;--radius:12px;--radius-sm:8px;--font:'DM Sans','Helvetica Neue',sans-serif;--mono:'DM Mono',monospace;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:60px;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overscroll-behavior-y:contain;padding-bottom:60px;}
 .pantalla-final{display:none;position:fixed;inset:0;z-index:9999;background:var(--accent);flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;}
 .pantalla-final.show{display:flex;}
 .pf-check{font-size:80px;margin-bottom:20px;animation:bounce .5s ease;}
@@ -542,10 +543,10 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       </div>
       <div class="taller-foto-wrap" id="taller-foto-wrap">
         <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">📷 Foto del material (obligatoria)</div>
-        <div class="taller-foto-slot" id="taller-foto-slot" onclick="abrirFotoTaller()">
+        <label for="taller-foto-input" class="taller-foto-slot" id="taller-foto-slot" style="cursor:pointer;">
           <span style="font-size:24px;">📷</span>
           <span style="font-size:11px;color:var(--muted);margin-top:4px;">Toca para fotografiar</span>
-        </div>
+        </label>
         <input type="file" accept="image/*" capture="environment" id="taller-foto-input" style="display:none;" onchange="cargarFotoTaller(this)">
       </div>
     </div></div>
@@ -1025,6 +1026,15 @@ function _arrancarParte(prefix) {
   parteEnCurso = true;
   timerPrefix = prefix;
   bloquearEmpresa(prefix);
+
+  // Bloquear pull-to-refresh en Chrome Android
+  document.body.style.overscrollBehaviorY = 'contain';
+
+  // Bloquear refresco con teclado (F5, Ctrl+R)
+  document.addEventListener('keydown', bloquearTeclaRefresco);
+
+  // Bloquear gesto touch de pull-to-refresh
+  document.addEventListener('touchstart', bloquarPullRefresh, { passive: false });
 
   // Mostrar contenido debajo del botón
   const contenido = document.getElementById('contenido-parte-' + prefix);
@@ -1591,6 +1601,43 @@ function bloquearEmpresa(prefix) {
       btn.title = 'No se puede cambiar de empresa con un parte en curso';
     }
   });
+}
+
+
+// ══ BLOQUEO PULL-TO-REFRESH ══
+var _touchStartY = 0;
+
+function bloquarPullRefresh(e) {
+  if (!parteEnCurso) return;
+  _touchStartY = e.touches[0].clientY;
+  // Si el scroll está en el tope y el gesto va hacia abajo → bloquear
+  document.addEventListener('touchmove', _bloquearTouchMove, { passive: false });
+}
+
+function _bloquearTouchMove(e) {
+  if (!parteEnCurso) {
+    document.removeEventListener('touchmove', _bloquearTouchMove);
+    return;
+  }
+  var touchY = e.touches[0].clientY;
+  var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+  if (scrollTop === 0 && touchY > _touchStartY) {
+    e.preventDefault(); // Bloquear pull-to-refresh
+  }
+}
+
+function bloquearTeclaRefresco(e) {
+  if (!parteEnCurso) return;
+  if (e.key === 'F5' || (e.ctrlKey && e.key === 'r') || (e.metaKey && e.key === 'r')) {
+    e.preventDefault();
+  }
+}
+
+function desbloquearAntiRefresco() {
+  document.body.style.overscrollBehaviorY = '';
+  document.removeEventListener('keydown', bloquearTeclaRefresco);
+  document.removeEventListener('touchstart', bloquarPullRefresh);
+  document.removeEventListener('touchmove', _bloquearTouchMove);
 }
 
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type;setTimeout(()=>t.classList.add('show'),10);setTimeout(()=>t.classList.remove('show'),4000);}
