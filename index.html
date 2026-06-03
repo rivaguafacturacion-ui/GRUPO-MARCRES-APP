@@ -413,7 +413,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
         <div class="holded-dropdown" id="a-tecnico-drop" style="display:none;"></div>
       </div>
     </div>
-    <div class="field-group" id="a-tareas-wrap" style="display:none;">
+    <div class="field-group" id="a-tareas-wrap">
       <div class="tareas-seccion">
         <div class="tareas-seccion-header" onclick="toggleSeccionTareas()">
           <div class="tareas-seccion-titulo">
@@ -423,7 +423,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
           <span class="tareas-seccion-arrow" id="a-tareas-arrow">▼</span>
         </div>
         <div class="tareas-seccion-body" id="a-tareas-body">
-          <div id="a-tareas-lista"><div class="tareas-cargando-alb">⏳ Cargando tareas...</div></div>
+          <div id="a-tareas-lista"><div class="tareas-cargando-alb">Selecciona un técnico para ver sus tareas asignadas</div></div>
         </div>
         <div id="a-tarea-seleccionada" style="display:none;">
           <div class="tarea-sel-confirmacion">
@@ -1427,9 +1427,13 @@ function resetTecnicoAlbaran() {
   const inp = document.getElementById('a-tecnico');
   inp.value = ''; inp.style.color = ''; inp.style.fontWeight = '';
   document.getElementById('a-tecnico-drop').style.display = 'none';
-  document.getElementById('a-tareas-wrap').style.display = 'none';
-  document.getElementById('a-tareas-lista').innerHTML = '';
+  document.getElementById('a-tareas-lista').innerHTML = '<div class="tareas-cargando-alb">Selecciona un técnico para ver sus tareas asignadas</div>';
   document.getElementById('a-tarea-seleccionada').style.display = 'none';
+  document.getElementById('a-tareas-count').textContent = '0';
+  var body = document.getElementById('a-tareas-body');
+  var arrow = document.getElementById('a-tareas-arrow');
+  if (body) body.classList.remove('open');
+  if (arrow) arrow.classList.remove('open');
   resetCliente('a');
 }
 
