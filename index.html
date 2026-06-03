@@ -212,6 +212,12 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 .ubic-banner.ok{background:var(--ok);cursor:default;}
 .ubic-banner-sub{font-size:11px;font-weight:400;opacity:.85;display:block;margin-top:2px;}
 .btn-inicio.bloqueado{background:var(--muted) !important;cursor:not-allowed !important;opacity:.6;}
+
+.elec-obs{display:none;margin-top:8px;}
+.elec-obs.show{display:block;}
+.elec-obs textarea{width:100%;box-sizing:border-box;padding:8px 10px;font-family:var(--font);font-size:13px;color:var(--text);background:var(--surface);border:1.5px solid var(--bad);border-radius:var(--radius-sm);resize:vertical;min-height:64px;outline:none;}
+.elec-obs textarea:focus{border-color:var(--accent);}
+.elec-obs-label{font-size:11px;font-weight:600;color:var(--bad);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;}
 </style>
 </head>
 <body>
@@ -647,7 +653,43 @@ function buildChecklistTables(){
   for(let i=1;i<=4;i++){const r=document.createElement('tr');r.innerHTML=`<td class="row-name">Achique ${i}</td>${funcTd('ha'+i+'f')}${ruidoTd('ha'+i+'r')}${fugasTd('ha'+i+'g')}${estadoTd('ha'+i+'e')}`;document.getElementById('htb-achique').appendChild(r);}
 }
 const elecItems=['Equipos de protección sobreconsumo (Magnetotérmicos)','Equipos de protección contra derivaciones (Diferenciales)','Fallos por falta de derivaciones a tierra','Estado de los conductores (Tipo y estado)','Protección de bombas (Guardamotores y relés térmicos)','Iluminación en salida de emergencia / cuarto de máquinas'];
-function buildElec(){document.getElementById('elec-items-body').innerHTML=elecItems.map((item,i)=>`<div class="elec-item"><div class="elec-item-label">${i+1}. ${item}</div>${mkPills(['Favorable','Desfavorable','No existe'],'elec-'+i)}</div>`).join('');}
+function buildElec(){
+  document.getElementById('elec-items-body').innerHTML = elecItems.map(function(item, i) {
+    return '<div class="elec-item" id="elec-item-'+i+'">' +
+      '<div class="elec-item-label">' + (i+1) + '. ' + item + '</div>' +
+      mkPillsElec(['Favorable','Desfavorable','No existe'], 'elec-'+i) +
+      '<div class="elec-obs" id="elec-obs-'+i+'">' +
+        '<div class="elec-obs-label">📝 Observaciones</div>' +
+        '<textarea id="elec-obs-txt-'+i+'" placeholder="Describe el problema o estado encontrado..."></textarea>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function mkPillsElec(opts, gid) {
+  return '<div class="pill-group">' +
+    opts.map(function(o) {
+      return '<span class="pill" onclick="selectPillElec(this,\'' + gid + '\')">' + o + '</span>';
+    }).join('') +
+  '</div>';
+}
+
+function selectPillElec(el, gid) {
+  // Seleccionar pill normalmente
+  selectPillGroup(el, gid);
+  // Extraer índice del gid (elec-0, elec-1...)
+  var idx = gid.replace('elec-', '');
+  var obs = document.getElementById('elec-obs-' + idx);
+  if (!obs) return;
+  var val = el.textContent.trim();
+  if (val === 'Desfavorable' || val === 'No existe') {
+    obs.classList.add('show');
+    obs.querySelector('textarea').focus();
+  } else {
+    obs.classList.remove('show');
+    obs.querySelector('textarea').value = '';
+  }
+}
 
 const matIdxMap={};
 function addMatRowFor(key){if(matIdxMap[key]===undefined)matIdxMap[key]=0;const i=matIdxMap[key]++,uid=key+'-'+i;const tr=document.createElement('tr');tr.id='mat-row-'+uid;tr.innerHTML=`<td><input class="mat-input" placeholder="Descripción" id="mat-desc-${uid}"></td><td><input class="mat-input" type="number" min="0" placeholder="1" id="mat-cant-${uid}" oninput="calcTotalFor('${uid}','${key}')" style="width:48px;"></td><td><input class="mat-input" type="number" min="0" step="0.01" placeholder="0.00" id="mat-precio-${uid}" oninput="calcTotalFor('${uid}','${key}')" style="width:72px;"></td><td><span id="mat-total-${uid}" style="font-size:12px;color:var(--accent);font-weight:600;">—</span></td><td><button class="del-row-btn" onclick="document.getElementById('mat-row-${uid}').remove();recalcTotal('${key}')">×</button></td>`;document.getElementById('mat-tbody-'+key).appendChild(tr);}
@@ -692,7 +734,25 @@ function buildResumenMant(){
   return r;
 }
 function buildResumenChecklist(tipo){
-  if(tipo==='elec'){let r='CHECKLIST ELÉCTRICO\n';elecItems.forEach((item,i)=>r+=`  ${i+1}. ${item}: ${getPill('elec-'+i)}\n`);const trabajo=document.getElementById('elec-trabajo')?.value.trim();const herr=document.getElementById('elec-herramientas')?.value.trim();if(trabajo)r+=`\nTRABAJO REALIZADO\n  ${trabajo}\n`;if(herr)r+=`\nHERRAMIENTAS\n  ${herr}\n`;return r;}
+  if(tipo==='elec'){
+    let r='CHECKLIST ELÉCTRICO\n';
+    elecItems.forEach(function(item, i) {
+      var estado = getPill('elec-'+i);
+      r += '  ' + (i+1) + '. ' + item + ': ' + estado + '\n';
+      // Añadir observación si hay texto y el estado es desfavorable
+      if(estado === 'Desfavorable' || estado === 'No existe') {
+        var obs = document.getElementById('elec-obs-txt-'+i);
+        if(obs && obs.value.trim()) {
+          r += '     → Obs: ' + obs.value.trim() + '\n';
+        }
+      }
+    });
+    const trabajo=document.getElementById('elec-trabajo')?.value.trim();
+    const herr=document.getElementById('elec-herramientas')?.value.trim();
+    if(trabajo) r+='\nTRABAJO REALIZADO\n  '+trabajo+'\n';
+    if(herr) r+='\nHERRAMIENTAS\n  '+herr+'\n';
+    return r;
+  }
   else{let r='CHECKLIST HIDRÁULICO\n\nBOMBAS\n';for(let i=1;i<=4;i++)r+=`  Bomba ${i} → Func: ${getPill('hb'+i+'f')} | Ruido: ${getPill('hb'+i+'r')} | Fugas: ${getPill('hb'+i+'g')} | Estado: ${getPill('hb'+i+'e')}\n`;r+='\nDEPÓSITO\n';r+=`  Nivel: ${getPill('hdep-niv')} | Limpieza: ${getPill('hdep-lim')} | Llenado: ${getPill('hdep-lle')} | Estado: ${getPill('hdep-est')}\n`;r+='\nDESCALCIFICADORES\n';for(let i=1;i<=2;i++)r+=`  Descalcif. ${i} → Func: ${getPill('hd'+i+'f')} | Ruido: ${getPill('hd'+i+'r')} | Fugas: ${getPill('hd'+i+'g')} | Estado: ${getPill('hd'+i+'e')}\n`;r+='\nBOMBAS DE ACHIQUE\n';for(let i=1;i<=4;i++)r+=`  Achique ${i} → Func: ${getPill('ha'+i+'f')} | Ruido: ${getPill('ha'+i+'r')} | Fugas: ${getPill('ha'+i+'g')} | Estado: ${getPill('ha'+i+'e')}\n`;return r;}
 }
 
