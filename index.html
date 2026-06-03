@@ -225,6 +225,31 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 .elec-obs textarea{width:100%;box-sizing:border-box;padding:8px 10px;font-family:var(--font);font-size:13px;color:var(--text);background:var(--surface);border:1.5px solid var(--bad);border-radius:var(--radius-sm);resize:vertical;min-height:64px;outline:none;}
 .elec-obs textarea:focus{border-color:var(--accent);}
 .elec-obs-label{font-size:11px;font-weight:600;color:var(--bad);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;}
+.tareas-seccion{margin-top:2px;border:1.5px solid var(--accent);border-radius:var(--radius);overflow:hidden;}
+.tareas-seccion-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--accent);cursor:pointer;user-select:none;}
+.tareas-seccion-titulo{font-size:13px;font-weight:700;color:#fff;display:flex;align-items:center;gap:7px;}
+.tareas-seccion-badge{background:rgba(255,255,255,0.25);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;}
+.tareas-seccion-arrow{color:#fff;font-size:14px;transition:transform .2s;}
+.tareas-seccion-arrow.open{transform:rotate(180deg);}
+.tareas-seccion-body{display:none;background:var(--surface);}
+.tareas-seccion-body.open{display:block;}
+.tareas-cargando-alb{padding:14px;font-size:13px;color:var(--muted);text-align:center;font-style:italic;}
+.tarea-albaran-item{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;}
+.tarea-albaran-item:last-child{border-bottom:none;}
+.tarea-albaran-item:active,.tarea-albaran-item:hover{background:var(--surface2);}
+.tarea-albaran-item.sel{background:#EBF2FF;}
+.tarea-albaran-radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:2px;transition:all .15s;}
+.tarea-albaran-radio.sel{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 3px rgba(24,69,149,.15);}
+.tarea-albaran-info{flex:1;min-width:0;}
+.tarea-albaran-titulo{font-size:13px;font-weight:600;color:var(--text);line-height:1.3;}
+.tarea-albaran-sub{font-size:11px;color:var(--muted);margin-top:3px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.tarea-albaran-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;white-space:nowrap;flex-shrink:0;}
+.tarea-sel-confirmacion{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#EBF2FF;border-top:1.5px solid var(--accent);}
+.tarea-sel-icon{font-size:18px;flex-shrink:0;}
+.tarea-sel-info{flex:1;min-width:0;}
+.tarea-sel-nombre{font-size:13px;font-weight:700;color:var(--accent);}
+.tarea-sel-cliente{font-size:11px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tarea-sel-quitar{background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);padding:4px;}
 </style>
 </head>
 <body>
@@ -389,15 +414,26 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       </div>
     </div>
     <div class="field-group" id="a-tareas-wrap" style="display:none;">
-      <label class="field-label">Tarea asignada <span style="color:var(--muted);font-weight:400;font-size:10px;">— selecciona para rellenar cliente</span></label>
-      <div id="a-tareas-lista" style="margin-top:6px;"></div>
-      <div id="a-tarea-seleccionada" style="display:none;margin-top:8px;padding:8px 10px;background:var(--ok-bg);border:1px solid var(--ok);border-radius:var(--radius-sm);">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div>
-            <div style="font-size:13px;font-weight:600;color:var(--ok);" id="a-tarea-sel-titulo">—</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px;" id="a-tarea-sel-cliente">—</div>
+      <div class="tareas-seccion">
+        <div class="tareas-seccion-header" onclick="toggleSeccionTareas()">
+          <div class="tareas-seccion-titulo">
+            📋 Tareas asignadas
+            <span class="tareas-seccion-badge" id="a-tareas-count">0</span>
           </div>
-          <button onclick="resetTareaSeleccionada()" style="background:none;border:none;cursor:pointer;font-size:15px;color:var(--muted);">✕</button>
+          <span class="tareas-seccion-arrow" id="a-tareas-arrow">▼</span>
+        </div>
+        <div class="tareas-seccion-body" id="a-tareas-body">
+          <div id="a-tareas-lista"><div class="tareas-cargando-alb">⏳ Cargando tareas...</div></div>
+        </div>
+        <div id="a-tarea-seleccionada" style="display:none;">
+          <div class="tarea-sel-confirmacion">
+            <div class="tarea-sel-icon">✅</div>
+            <div class="tarea-sel-info">
+              <div class="tarea-sel-nombre" id="a-tarea-sel-titulo">—</div>
+              <div class="tarea-sel-cliente" id="a-tarea-sel-cliente">—</div>
+            </div>
+            <button class="tarea-sel-quitar" onclick="resetTareaSeleccionada()" title="Quitar selección">✕</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1273,25 +1309,41 @@ async function elegirTecnicoAlbaran(idxOId, nombre) {
     const data = await res.json();
     const tareas = (data.ok && data.tareas && data.tareas.length) ? data.tareas : [];
 
+    // Actualizar contador
+    var count = document.getElementById('a-tareas-count');
+    if (count) count.textContent = tareas.length;
+
     if (!tareas.length) {
-      lista.innerHTML = '<div class="tareas-cargando-alb" style="color:var(--muted);">Sin tareas asignadas hoy para este técnico.</div>';
+      lista.innerHTML = '<div class="tareas-cargando-alb">Sin tareas asignadas para este técnico.</div>';
+      // Abrir igualmente para que lo vea
+      var body = document.getElementById('a-tareas-body');
+      var arrow = document.getElementById('a-tareas-arrow');
+      if (body)  body.classList.add('open');
+      if (arrow) arrow.classList.add('open');
       return;
     }
 
-    // Guardar en array global — el onclick solo pasa el índice, sin JSON en el HTML
+    // Guardar en array global — el onclick solo pasa el índice
     window._tareasAlbaran = tareas;
 
     lista.innerHTML = tareas.map(function(t, i) {
-      var sub = [t.cliente, t.direccion].filter(Boolean).join(' · ');
-      var hora = t.hora ? ' <span style="font-family:var(--mono);font-size:10px;color:var(--accent);">' + t.hora + '</span>' : '';
+      var partes = [];
+      if (t.fecha)     partes.push('📅 ' + t.fecha);
+      if (t.hora)      partes.push('🕐 ' + t.hora);
+      if (t.prioridad) partes.push('⚡ ' + t.prioridad);
+      if (t.cliente)   partes.push(t.cliente);
+      if (t.direccion) partes.push(t.direccion);
+      var sub = partes.join(' · ');
+
       var tipo = t.tipo || '';
       var badgeCls = tipo.toLowerCase().indexOf('mant') >= 0 ? 'mant' :
                      tipo.toLowerCase().indexOf('urge') >= 0 ? 'urg' :
                      tipo.toLowerCase().indexOf('inst') >= 0 ? 'inst' : 'aviso';
+
       var html = '<div class="tarea-albaran-item" id="talb-' + i + '" onclick="seleccionarTareaAlbaran(' + i + ')">';
       html += '<div class="tarea-albaran-radio" id="talb-radio-' + i + '"></div>';
       html += '<div class="tarea-albaran-info">';
-      html += '<div class="tarea-albaran-titulo">' + (t.titulo || t.nombre || 'Sin título') + hora + '</div>';
+      html += '<div class="tarea-albaran-titulo">' + (t.titulo || t.nombre || 'Sin título') + '</div>';
       if (sub) html += '<div class="tarea-albaran-sub">' + sub + '</div>';
       html += '</div>';
       if (tipo) html += '<span class="tarea-albaran-badge tarea-badge ' + badgeCls + '">' + tipo + '</span>';
@@ -1299,9 +1351,25 @@ async function elegirTecnicoAlbaran(idxOId, nombre) {
       return html;
     }).join('');
 
+    // Abrir automáticamente al cargar
+    var body  = document.getElementById('a-tareas-body');
+    var arrow = document.getElementById('a-tareas-arrow');
+    if (body)  body.classList.add('open');
+    if (arrow) arrow.classList.add('open');
+
   } catch(e) {
     lista.innerHTML = '<div class="tareas-cargando-alb" style="color:var(--bad);">Error cargando tareas. Puedes rellenar el cliente manualmente.</div>';
+    var body = document.getElementById('a-tareas-body');
+    if (body) body.classList.add('open');
   }
+}
+
+function toggleSeccionTareas() {
+  var body  = document.getElementById('a-tareas-body');
+  var arrow = document.getElementById('a-tareas-arrow');
+  if (!body) return;
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
 }
 
 function seleccionarTareaAlbaran(idx) {
@@ -1309,10 +1377,16 @@ function seleccionarTareaAlbaran(idx) {
   var t = tareas[idx];
   if (!t) return;
 
+  // Marcar seleccionada visualmente
+  document.querySelectorAll('.tarea-albaran-item').forEach(function(el) { el.classList.remove('sel'); });
   document.querySelectorAll('.tarea-albaran-radio').forEach(function(r) { r.classList.remove('sel'); });
-  document.getElementById('talb-radio-' + idx).classList.add('sel');
+  var item  = document.getElementById('talb-' + idx);
+  var radio = document.getElementById('talb-radio-' + idx);
+  if (item)  item.classList.add('sel');
+  if (radio) radio.classList.add('sel');
   tareaAlbaranSeleccionada = t;
 
+  // Rellenar campos automáticamente
   var cInp = document.getElementById('a-cliente');
   cInp.value = t.cliente || '';
   cInp.style.color = 'var(--ok)';
@@ -1321,13 +1395,20 @@ function seleccionarTareaAlbaran(idx) {
 
   if (document.getElementById('a-direccion')) document.getElementById('a-direccion').value = t.direccion || '';
   if (document.getElementById('a-poblacion')) document.getElementById('a-poblacion').value = t.poblacion || t.city || '';
-  if (document.getElementById('a-cp')) document.getElementById('a-cp').value = t.cp || t.postalCode || '';
+  if (document.getElementById('a-cp'))        document.getElementById('a-cp').value        = t.cp || t.postalCode || '';
 
-  document.getElementById('a-tarea-sel-titulo').textContent = t.titulo || t.nombre || '—';
-  document.getElementById('a-tarea-sel-cliente').textContent = t.cliente || '—';
+  // Mostrar confirmación y cerrar la lista
+  document.getElementById('a-tarea-sel-titulo').textContent  = t.titulo || t.nombre || '—';
+  document.getElementById('a-tarea-sel-cliente').textContent = t.cliente || (t.direccion || '—');
   document.getElementById('a-tarea-seleccionada').style.display = 'block';
 
-  showToast('✅ Cliente rellenado desde la tarea', 'success');
+  // Cerrar el desplegable tras elegir
+  var body  = document.getElementById('a-tareas-body');
+  var arrow = document.getElementById('a-tareas-arrow');
+  if (body)  body.classList.remove('open');
+  if (arrow) arrow.classList.remove('open');
+
+  showToast('✅ Datos cargados desde la tarea', 'success');
 }
 
 function resetTareaSeleccionada() {
