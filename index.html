@@ -308,6 +308,30 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
         <div class="holded-dropdown" id="c-tecnico-drop" style="display:none;"></div>
       </div>
     </div>
+    <div class="field-group" id="c-tareas-wrap">
+      <div class="tareas-seccion">
+        <div class="tareas-seccion-header" onclick="toggleSeccionTareasC()">
+          <div class="tareas-seccion-titulo">
+            📋 Tareas asignadas
+            <span class="tareas-seccion-badge" id="c-tareas-count">0</span>
+          </div>
+          <span class="tareas-seccion-arrow open" id="c-tareas-arrow">▼</span>
+        </div>
+        <div class="tareas-seccion-body open" id="c-tareas-body">
+          <div id="c-tareas-lista"><div class="tareas-cargando-alb">Selecciona un técnico para ver sus tareas asignadas</div></div>
+        </div>
+        <div id="c-tarea-seleccionada" style="display:none;">
+          <div class="tarea-sel-confirmacion">
+            <div class="tarea-sel-icon">✅</div>
+            <div class="tarea-sel-info">
+              <div class="tarea-sel-nombre" id="c-tarea-sel-titulo">—</div>
+              <div class="tarea-sel-cliente" id="c-tarea-sel-cliente">—</div>
+            </div>
+            <button class="tarea-sel-quitar" onclick="resetTareaSeleccionadaC()" title="Quitar selección">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="field-group cliente-wrap" id="c-cliente-wrap">
       <label class="field-label">Cliente <span style="color:var(--bad)">*</span> <span class="holded-badge">Holded</span></label>
       <div style="display:flex;align-items:center;gap:6px;">
@@ -894,6 +918,8 @@ function elegirTecnico(id,nombre,prefix){
   inp.style.fontWeight='600';
   document.getElementById(prefix+'-tecnico-drop').style.display='none';
   tecnicoElegido[prefix]=true;
+  // Cargar tareas si es checklist
+  if(prefix==='c') cargarTareasChecklist(id, nombre);
 }
 
 function resetTecnico(prefix){
@@ -901,6 +927,13 @@ function resetTecnico(prefix){
   const inp=document.getElementById(prefix+'-tecnico');
   inp.value='';inp.style.color='';inp.style.fontWeight='';
   document.getElementById(prefix+'-tecnico-drop').style.display='none';
+  // Resetear tareas del checklist
+  if(prefix==='c'){
+    document.getElementById('c-tareas-lista').innerHTML='<div class="tareas-cargando-alb">Selecciona un técnico para ver sus tareas asignadas</div>';
+    document.getElementById('c-tareas-count').textContent='0';
+    document.getElementById('c-tarea-seleccionada').style.display='none';
+    window._tareasChecklist=[];
+  }
 }
 
 // MATERIAL TALLER
@@ -991,6 +1024,7 @@ function _arrancarParte(prefix) {
   timerStart = Date.now();
   parteEnCurso = true;
   timerPrefix = prefix;
+  bloquearEmpresa(prefix);
 
   // Mostrar contenido debajo del botón
   const contenido = document.getElementById('contenido-parte-' + prefix);
@@ -1304,7 +1338,7 @@ async function elegirTecnicoAlbaran(idxOId, nombre) {
   lista.innerHTML = '<div class="tareas-cargando-alb">⏳ Cargando tareas asignadas...</div>';
 
   try {
-    const url = GAS_URL + '?action=tareas&empleadoId=' + encodeURIComponent(id);
+    const url = GAS_URL + '?action=tareas&empleadoId=' + encodeURIComponent(id) + '&empleadoNombre=' + encodeURIComponent(nomFinal);
     const res = await fetch(url);
     const data = await res.json();
     const tareas = (data.ok && data.tareas && data.tareas.length) ? data.tareas : [];
@@ -1435,6 +1469,128 @@ function resetTecnicoAlbaran() {
   if (body) body.classList.remove('open');
   if (arrow) arrow.classList.remove('open');
   resetCliente('a');
+}
+
+
+// ══ TAREAS CHECKLIST ══
+function toggleSeccionTareasC() {
+  var body  = document.getElementById('c-tareas-body');
+  var arrow = document.getElementById('c-tareas-arrow');
+  if (body)  body.classList.toggle('open');
+  if (arrow) arrow.classList.toggle('open');
+}
+
+async function cargarTareasChecklist(empleadoId, nombreTecnico) {
+  var lista = document.getElementById('c-tareas-lista');
+  var count = document.getElementById('c-tareas-count');
+  lista.innerHTML = '<div class="tareas-cargando-alb">⏳ Cargando tareas...</div>';
+  if (count) count.textContent = '0';
+
+  try {
+    var url = GAS_URL + '?action=tareas&empleadoId=' + encodeURIComponent(empleadoId) + '&empleadoNombre=' + encodeURIComponent(nombreTecnico || '');
+    var res  = await fetch(url);
+    var data = await res.json();
+    var tareas = (data.ok && data.tareas && data.tareas.length) ? data.tareas : [];
+
+    if (count) count.textContent = tareas.length;
+
+    if (!tareas.length) {
+      lista.innerHTML = '<div class="tareas-cargando-alb">Sin tareas asignadas para este técnico.</div>';
+      return;
+    }
+
+    window._tareasChecklist = tareas;
+    lista.innerHTML = tareas.map(function(t, i) {
+      var partes = [];
+      if (t.fecha)     partes.push('📅 ' + t.fecha);
+      if (t.hora)      partes.push('🕐 ' + t.hora);
+      if (t.prioridad) partes.push('⚡ ' + t.prioridad);
+      if (t.cliente)   partes.push(t.cliente);
+      if (t.direccion) partes.push(t.direccion);
+      var sub = partes.join(' · ');
+      var tipo = t.tipo || '';
+      var badgeCls = tipo.toLowerCase().indexOf('mant') >= 0 ? 'mant' :
+                     tipo.toLowerCase().indexOf('urge') >= 0 ? 'urg' :
+                     tipo.toLowerCase().indexOf('inst') >= 0 ? 'inst' : 'aviso';
+      var html = '<div class="tarea-albaran-item" id="ctalb-' + i + '" onclick="seleccionarTareaChecklist(' + i + ')">';
+      html += '<div class="tarea-albaran-radio" id="ctalb-radio-' + i + '"></div>';
+      html += '<div class="tarea-albaran-info">';
+      html += '<div class="tarea-albaran-titulo">' + (t.titulo || t.nombre || 'Sin título') + '</div>';
+      if (sub) html += '<div class="tarea-albaran-sub">' + sub + '</div>';
+      html += '</div>';
+      if (tipo) html += '<span class="tarea-albaran-badge tarea-badge ' + badgeCls + '">' + tipo + '</span>';
+      html += '</div>';
+      return html;
+    }).join('');
+
+    // Abrir sección
+    var body  = document.getElementById('c-tareas-body');
+    var arrow = document.getElementById('c-tareas-arrow');
+    if (body)  body.classList.add('open');
+    if (arrow) arrow.classList.add('open');
+
+  } catch(err) {
+    lista.innerHTML = '<div class="tareas-cargando-alb" style="color:var(--bad);">Error cargando tareas.</div>';
+  }
+}
+
+function seleccionarTareaChecklist(idx) {
+  var tareas = window._tareasChecklist || [];
+  var t = tareas[idx];
+  if (!t) return;
+
+  document.querySelectorAll('#c-tareas-lista .tarea-albaran-item').forEach(function(el) { el.classList.remove('sel'); });
+  document.querySelectorAll('#c-tareas-lista .tarea-albaran-radio').forEach(function(r)  { r.classList.remove('sel'); });
+  var item  = document.getElementById('ctalb-' + idx);
+  var radio = document.getElementById('ctalb-radio-' + idx);
+  if (item)  item.classList.add('sel');
+  if (radio) radio.classList.add('sel');
+
+  // Rellenar campos
+  var cInp = document.getElementById('c-cliente');
+  cInp.value = t.cliente || '';
+  cInp.style.color = 'var(--ok)';
+  cInp.style.fontWeight = '600';
+  clienteElegido['c'] = true;
+
+  if (document.getElementById('c-direccion')) document.getElementById('c-direccion').value = t.direccion || '';
+  if (document.getElementById('c-poblacion')) document.getElementById('c-poblacion').value = t.poblacion || t.city || '';
+  if (document.getElementById('c-cp'))        document.getElementById('c-cp').value        = t.cp || t.postalCode || '';
+
+  document.getElementById('c-tarea-sel-titulo').textContent  = t.titulo || t.nombre || '—';
+  document.getElementById('c-tarea-sel-cliente').textContent = t.cliente || t.direccion || '—';
+  document.getElementById('c-tarea-seleccionada').style.display = 'block';
+
+  // Cerrar lista
+  var body  = document.getElementById('c-tareas-body');
+  var arrow = document.getElementById('c-tareas-arrow');
+  if (body)  body.classList.remove('open');
+  if (arrow) arrow.classList.remove('open');
+
+  showToast('✅ Datos cargados desde la tarea', 'success');
+}
+
+function resetTareaSeleccionadaC() {
+  window._tareasChecklist && (window._tareasChecklist = window._tareasChecklist);
+  document.querySelectorAll('#c-tareas-lista .tarea-albaran-item').forEach(function(el) { el.classList.remove('sel'); });
+  document.querySelectorAll('#c-tareas-lista .tarea-albaran-radio').forEach(function(r)  { r.classList.remove('sel'); });
+  document.getElementById('c-tarea-seleccionada').style.display = 'none';
+  resetCliente('c');
+}
+
+// ══ BLOQUEAR EMPRESA TRAS INICIO ══
+function bloquearEmpresa(prefix) {
+  var ids = prefix === 'c'
+    ? ['c-btn-rivagua', 'c-btn-marcres']
+    : ['a-btn-rivagua', 'a-btn-marcres'];
+  ids.forEach(function(id) {
+    var btn = document.getElementById(id);
+    if (btn) {
+      btn.style.pointerEvents = 'none';
+      btn.style.opacity = '0.5';
+      btn.title = 'No se puede cambiar de empresa con un parte en curso';
+    }
+  });
 }
 
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type;setTimeout(()=>t.classList.add('show'),10);setTimeout(()=>t.classList.remove('show'),4000);}
