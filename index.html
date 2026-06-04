@@ -781,7 +781,7 @@ async function buscarProductosHolded(q, uid) {
   if (!drop) return;
 
   // Si no hay query, ocultar dropdown
-  if (!q || q.length < 2) { drop.style.display = 'none'; return; }
+  if (!q || q.length < 1) { drop.style.display = 'none'; return; }
 
   drop.style.display = 'block';
   drop.innerHTML = '<div class="mat-producto-item"><span class="mat-producto-nombre">Buscando...</span></div>';
@@ -795,12 +795,24 @@ async function buscarProductosHolded(q, uid) {
     }
 
     var todos = productosCache[empresa] || [];
-    var ql    = q.toLowerCase();
+
+    // Búsqueda flexible: quitar guiones bajos y espacios extra para comparar
+    var ql = q.toLowerCase().replace(/_/g, ' ').replace(/\s+/g, ' ').trim();
     var filtrados = todos.filter(function(p) {
-      return (p.name || '').toLowerCase().indexOf(ql) >= 0 ||
-             (p.sku  || '').toLowerCase().indexOf(ql) >= 0 ||
-             (p.desc || '').toLowerCase().indexOf(ql) >= 0;
+      var nombre = (p.name || '').toLowerCase().replace(/_/g, ' ');
+      var sku    = (p.sku  || '').toLowerCase();
+      var desc   = (p.desc || '').toLowerCase().replace(/_/g, ' ');
+      return nombre.indexOf(ql) >= 0 || sku.indexOf(ql) >= 0 || desc.indexOf(ql) >= 0;
     }).slice(0, 15);
+
+    // Si no hay resultados con búsqueda exacta, intentar por palabras individuales
+    if (!filtrados.length && ql.length >= 3) {
+      var palabras = ql.split(' ').filter(function(p) { return p.length >= 3; });
+      filtrados = todos.filter(function(p) {
+        var nombre = (p.name || '').toLowerCase().replace(/_/g, ' ');
+        return palabras.every(function(pal) { return nombre.indexOf(pal) >= 0; });
+      }).slice(0, 15);
+    }
 
     if (!filtrados.length) {
       drop.innerHTML = '<div class="mat-producto-item"><span class="mat-producto-nombre" style="color:var(--muted)">Sin resultados</span></div>';
