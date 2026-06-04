@@ -560,8 +560,8 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       <div class="taller-foto-wrap" id="taller-foto-wrap">
         <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">📷 Foto del material (obligatoria)</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;" id="taller-foto-grid">
-          <div id="taller-slot-0" class="foto-slot" onclick="document.getElementById('taller-foto-input').click()" style="cursor:pointer;width:90px;height:90px;flex-shrink:0;">
-            <span style="font-size:22px;">📷</span>
+          <div id="taller-slot-0" onclick="document.getElementById('taller-foto-input').click()" style="cursor:pointer;width:72px;height:72px;flex-shrink:0;border-radius:8px;border:1.5px dashed var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">
+            <span style="font-size:20px;">📷</span>
           </div>
         </div>
       </div>
@@ -1273,16 +1273,14 @@ function cargarFotoTaller(input) {
       canvas.getContext('2d').drawImage(imgTemp, 0, 0, w, h);
       tallerFotoData = canvas.toDataURL('image/jpeg', 0.75);
 
-      // Mostrar miniatura igual que las otras fotos del parte
+      // Mostrar miniatura
       var slot = document.getElementById('taller-slot-0');
       if (slot) {
-        slot.className = 'foto-slot filled';
         slot.onclick = null;
-        slot.style.width  = '90px';
-        slot.style.height = '90px';
+        slot.style.cssText = 'width:72px;height:72px;flex-shrink:0;border-radius:8px;border:1.5px solid var(--ok);background:var(--surface2);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;cursor:default;';
         slot.innerHTML =
-          '<img src="' + tallerFotoData + '" style="width:100%;height:100%;object-fit:cover;border-radius:6px;">' +
-          '<button onclick="borrarFotoTaller(event)" style="position:absolute;top:3px;right:3px;width:20px;height:20px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;font-size:12px;cursor:pointer;line-height:1;">✕</button>';
+          '<img src="' + tallerFotoData + '" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border-radius:7px;">' +
+          '<button onclick="borrarFotoTaller(event)" style="position:absolute;top:2px;right:2px;width:18px;height:18px;background:rgba(0,0,0,.65);color:#fff;border:none;border-radius:50%;font-size:11px;cursor:pointer;line-height:18px;text-align:center;z-index:2;">✕</button>';
       }
       // Limpiar el input para permitir volver a seleccionar si se borra
       input.value = '';
@@ -1301,9 +1299,9 @@ function borrarFotoTaller(e) {
   tallerFotoData = null;
   var slot = document.getElementById('taller-slot-0');
   if (slot) {
-    slot.className = 'foto-slot';
+    slot.style.cssText = 'cursor:pointer;width:72px;height:72px;flex-shrink:0;border-radius:8px;border:1.5px dashed var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;';
     slot.onclick = function(){ document.getElementById('taller-foto-input').click(); };
-    slot.innerHTML = '<span style="font-size:22px;">📷</span>';
+    slot.innerHTML = '<span style="font-size:20px;">📷</span>';
   }
 }
 
