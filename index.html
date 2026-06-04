@@ -555,10 +555,14 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       </div>
       <div class="taller-foto-wrap" id="taller-foto-wrap">
         <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">📷 Foto del material (obligatoria)</div>
-        <label for="taller-foto-input" class="taller-foto-slot" id="taller-foto-slot" style="cursor:pointer;">
-          <span style="font-size:24px;">📷</span>
-          <span style="font-size:11px;color:var(--muted);margin-top:4px;">Toca para fotografiar</span>
-        </label>
+        <div id="taller-foto-container" class="taller-foto-slot" style="cursor:pointer;">
+          <label for="taller-foto-input" id="taller-foto-label" style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;cursor:pointer;">
+            <span style="font-size:24px;">📷</span>
+            <span style="font-size:11px;color:var(--muted);margin-top:4px;">Toca para fotografiar</span>
+          </label>
+          <img id="taller-foto-img" src="" alt="Foto taller" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:8px;">
+          <button id="taller-foto-borrar" onclick="borrarFotoTaller(event)" style="display:none;position:absolute;top:5px;right:5px;width:26px;height:26px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:99px;font-size:14px;cursor:pointer;z-index:2;">✕</button>
+        </div>
         <input type="file" accept="image/*" capture="environment" id="taller-foto-input" style="display:none;" onchange="cargarFotoTaller(this)">
       </div>
     </div></div>
@@ -1137,29 +1141,31 @@ function cargarFotoTaller(input){
       canvas.getContext('2d').drawImage(img,0,0,w,h);
       tallerFotoData=canvas.toDataURL('image/jpeg',0.75);
 
-      // Reemplazar el label por un div para que la imagen no reabra la cámara
-      const slot=document.getElementById('taller-foto-slot');
-      const div=document.createElement('div');
-      div.className='taller-foto-slot filled';
-      div.id='taller-foto-slot';
-      div.innerHTML='<img src="'+tallerFotoData+'" alt="Foto taller" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:8px;">' +
-        '<button class="remove-btn" onclick="borrarFotoTaller(event)" style="position:absolute;top:5px;right:5px;width:26px;height:26px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:99px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;">✕</button>';
-      slot.parentNode.replaceChild(div, slot);
+      // Mostrar imagen y ocultar label
+      const imgEl   = document.getElementById('taller-foto-img');
+      const labelEl = document.getElementById('taller-foto-label');
+      const borrar  = document.getElementById('taller-foto-borrar');
+      const cont    = document.getElementById('taller-foto-container');
+      if(imgEl)   { imgEl.src = tallerFotoData; imgEl.style.display = 'block'; }
+      if(labelEl) { labelEl.style.display = 'none'; }
+      if(borrar)  { borrar.style.display = 'flex'; }
+      if(cont)    { cont.classList.add('filled'); cont.style.cursor = 'default'; }
     };img.src=e.target.result;
   };reader.readAsDataURL(file);
 }
 function borrarFotoTaller(e){
   e.stopPropagation();
   tallerFotoData=null;
-  // Restaurar el label original para que vuelva a abrir la cámara
-  const slot=document.getElementById('taller-foto-slot');
-  const label=document.createElement('label');
-  label.htmlFor='taller-foto-input';
-  label.className='taller-foto-slot';
-  label.id='taller-foto-slot';
-  label.style.cursor='pointer';
-  label.innerHTML='<span style="font-size:24px;">📷</span><span style="font-size:11px;color:var(--muted);margin-top:4px;">Toca para fotografiar</span>';
-  slot.parentNode.replaceChild(label, slot);
+  const imgEl   = document.getElementById('taller-foto-img');
+  const labelEl = document.getElementById('taller-foto-label');
+  const borrar  = document.getElementById('taller-foto-borrar');
+  const cont    = document.getElementById('taller-foto-container');
+  const inp     = document.getElementById('taller-foto-input');
+  if(imgEl)   { imgEl.src = ''; imgEl.style.display = 'none'; }
+  if(labelEl) { labelEl.style.display = 'flex'; }
+  if(borrar)  { borrar.style.display = 'none'; }
+  if(cont)    { cont.classList.remove('filled'); cont.style.cursor = 'pointer'; }
+  if(inp)     { inp.value = ''; }
 }
 
 // TIMER Y BLOQUEO DE REFRESCO
