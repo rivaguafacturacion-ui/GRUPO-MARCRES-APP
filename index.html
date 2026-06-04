@@ -172,7 +172,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 .btn-inicio.activo{background:var(--azul);cursor:default;display:flex;align-items:center;justify-content:center;gap:10px;}
 .timer-display{font-size:22px;font-weight:900;font-family:monospace;color:#fff;}
 .timer-label{font-size:11px;color:rgba(255,255,255,.7);text-transform:uppercase;}
-.taller-foto-slot{width:100%;height:120px;border-radius:8px;border:1.5px dashed var(--border);background:var(--surface2);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;}
+.taller-foto-slot{width:100%;height:160px;border-radius:8px;border:1.5px dashed var(--border);background:var(--surface2);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;}
 .taller-foto-slot.filled{border-style:solid;border-color:var(--ok);}
 .taller-foto-slot img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
 .taller-foto-slot .remove-btn{position:absolute;top:5px;right:5px;width:22px;height:22px;background:rgba(0,0,0,.6);color:#fff;border-radius:99px;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;border:none;}
@@ -252,17 +252,21 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 .tarea-sel-cliente{font-size:11px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .tarea-sel-quitar{background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);padding:4px;}
 
-.mat-producto-wrap{position:relative;width:100%;}
+.mat-producto-wrap{position:static;width:100%;}
 .mat-producto-input{width:100%;box-sizing:border-box;padding:5px 7px;font-family:var(--font);font-size:12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);}
 .mat-producto-input.elegido{color:var(--ok);font-weight:600;border-color:var(--ok);}
-.mat-producto-drop{position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);z-index:200;max-height:180px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,.12);}
-.mat-producto-item{padding:8px 10px;font-size:12px;cursor:pointer;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:2px;}
+.mat-producto-drop{position:fixed;left:8px;right:8px;background:var(--surface);border:1.5px solid var(--accent);border-radius:var(--radius);z-index:999;max-height:55vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.18);}
+.mat-producto-drop-header{padding:10px 14px 6px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:1;}
+.mat-producto-item{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
 .mat-producto-item:last-child{border-bottom:none;}
 .mat-producto-item:active{background:var(--surface2);}
-.mat-producto-nombre{font-weight:600;color:var(--text);}
-.mat-producto-ref{font-size:10px;color:var(--muted);}
-.mat-producto-precio{font-size:11px;color:var(--accent);font-weight:600;}
-.mat-producto-stock{font-size:10px;color:var(--ok);}
+.mat-producto-info{flex:1;min-width:0;}
+.mat-producto-nombre{font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mat-producto-ref{font-size:11px;color:var(--muted);margin-top:2px;}
+.mat-producto-precios{display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0;gap:2px;}
+.mat-producto-precio{font-size:13px;color:var(--accent);font-weight:700;}
+.mat-producto-stock{font-size:10px;color:var(--ok);font-weight:600;}
+.mat-elegir-btn{background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:6px 12px;font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -560,7 +564,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
             <span style="font-size:24px;">📷</span>
             <span style="font-size:11px;color:var(--muted);margin-top:4px;">Toca para fotografiar</span>
           </label>
-          <img id="taller-foto-img" src="" alt="Foto taller" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:8px;">
+          <img id="taller-foto-img" src="" alt="Foto taller" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;right:0;bottom:0;border-radius:8px;">
           <button id="taller-foto-borrar" onclick="borrarFotoTaller(event)" style="display:none;position:absolute;top:5px;right:5px;width:26px;height:26px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:99px;font-size:14px;cursor:pointer;z-index:2;">✕</button>
         </div>
         <input type="file" accept="image/*" capture="environment" id="taller-foto-input" style="display:none;" onchange="cargarFotoTaller(this)">
@@ -826,18 +830,28 @@ async function buscarProductosHolded(q, uid) {
     // Guardar en window para acceso por índice
     window['_prods_' + uid] = filtrados;
 
-    var html = '';
+    var html = '<div class="mat-producto-drop-header">Resultados: ' + filtrados.length + '</div>';
     for (var pi = 0; pi < filtrados.length; pi++) {
-      var p = filtrados[pi];
-      var stock = p.hasStock ? '<span class="mat-producto-stock">Stock: ' + (p.stock || 0) + '</span>' : '';
-      html += '<div class="mat-producto-item" onclick="elegirProducto(\'' + uid + '\',' + pi + ')">';
-      html += '<span class="mat-producto-nombre">' + (p.name || '') + '</span>';
-      html += '<span class="mat-producto-ref">' + (p.sku ? 'Ref: ' + p.sku : '') + (p.desc ? ' · ' + p.desc.substring(0,40) : '') + '</span>';
-      html += '<div style="display:flex;justify-content:space-between;">';
-      html += '<span class="mat-producto-precio">' + (p.price ? p.price.toFixed(2) + ' €' : '') + '</span>';
-      html += stock + '</div></div>';
+      var p      = filtrados[pi];
+      var stock  = p.hasStock ? '<span class="mat-producto-stock">Stock: ' + (p.stock || 0) + '</span>' : '';
+      var ref    = p.sku ? 'Ref: ' + p.sku : '';
+      var desc2  = p.desc ? p.desc.substring(0,50) : '';
+      var precio = p.price ? p.price.toFixed(2) + ' €' : '';
+      var subref = [ref, desc2].filter(function(x){return x;}).join(' · ');
+      html += '<div class="mat-producto-item">';
+      html += '<div class="mat-producto-info">';
+      html += '<div class="mat-producto-nombre">' + (p.name || '').replace(/_/g,' ') + '</div>';
+      html += '<div class="mat-producto-ref">' + subref + '</div>';
+      html += '</div>';
+      html += '<div class="mat-producto-precios">';
+      html += '<span class="mat-producto-precio">' + precio + '</span>';
+      html += stock + '</div>';
+      html += '<button class="mat-elegir-btn" onclick="elegirProducto(\'' + uid + '\',' + pi + ')">Elegir</button>';
+      html += '</div>';
     }
     drop.innerHTML = html;
+    var inputEl = document.getElementById('mat-desc-' + uid);
+    if (inputEl) { var rect = inputEl.getBoundingClientRect(); drop.style.top = (rect.bottom + window.scrollY + 4) + 'px'; }
 
   } catch(err) {
     drop.innerHTML = '<div class="mat-producto-item"><span class="mat-producto-nombre" style="color:var(--bad)">Error cargando productos</span></div>';
