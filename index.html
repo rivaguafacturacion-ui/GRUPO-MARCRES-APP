@@ -559,13 +559,9 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       </div>
       <div class="taller-foto-wrap" id="taller-foto-wrap">
         <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">📷 Foto del material (obligatoria)</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;" id="taller-foto-grid">
-          <div id="taller-slot-0" onclick="document.getElementById('taller-foto-input').click()" style="cursor:pointer;width:72px;height:72px;flex-shrink:0;border-radius:8px;border:1.5px dashed var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">
-            <span style="font-size:20px;">📷</span>
-          </div>
-        </div>
+        <div class="fotos-grid" id="fotos-grid-taller"></div>
+        <input type="file" accept="image/*" capture="environment" class="foto-input-hidden" id="foto-input-taller">
       </div>
-      <input type="file" accept="image/*" capture="environment" id="taller-foto-input" style="display:none;" onchange="cargarFotoTaller(this)">
     </div></div>
     <div class="card"><div class="section-header section-open" onclick="toggleSec('sec-firma-mant')"><span class="sec-title">✍️ Firmas</span><span class="chevron">⌄</span></div><div class="section-body" id="sec-firma-mant" style="display:block;"><div class="firma-section"><div class="firma-label">Firma del técnico <span style="color:var(--bad);font-size:10px;">*obligatoria</span></div><canvas class="firma-canvas" id="firma-tecnico-mant"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('tecnico-mant')">🗑 Borrar</button></div></div><div class="firma-section" style="border-top:1px solid var(--border);"><div class="firma-label">Firma del cliente <span style="color:var(--bad);font-size:10px;">*obligatoria</span><button class="cliente-ausente-btn" id="btn-ausente-mant" onclick="toggleAusente('mant')">Cliente ausente</button></div><canvas class="firma-canvas" id="firma-cliente-mant"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('cliente-mant')">🗑 Borrar</button></div><div class="firma-ausente-obs" id="ausente-obs-mant"><textarea class="obs-textarea" id="ausente-motivo-mant" placeholder="Motivo por el que el cliente no puede firmar..." style="margin-top:8px;"></textarea></div></div></div></div>
     <button class="send-btn" id="send-mant-btn" onclick="enviarAlbaran('mantenimiento')">📤 Enviar albarán de Mantenimiento</button>
@@ -633,7 +629,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 <script>
 const GAS_URL='https://script.google.com/macros/s/AKfycbwMdbr48W3chZxft1IppcFmMm9RaEkvMrwrqIY9YofjYwJtLaVPirO8MpNM1rbumWE-2w/exec';
 let empresaChecklist=null,empresaAlbaran=null,tipoAlbaran=null,currentFotoKey=null,currentFotoSlot=null;
-const fotosData={mant:Array(5).fill(null),simple:Array(5).fill(null),elec:Array(5).fill(null),hid:Array(5).fill(null)};
+const fotosData={mant:Array(5).fill(null),simple:Array(5).fill(null),elec:Array(5).fill(null),hid:Array(5).fill(null),taller:Array(1).fill(null)};
 const ausenteState={elec:false,hid:false,mant:false,simple:false};
 const firmaData={};
 const pdfData={elec:null,hid:null,mant:null,simple:null};
@@ -883,7 +879,8 @@ async function buscarProductosHolded(q, uid) {
     lista.innerHTML = html;
 
   } catch(err) {
-    lista.innerHTML = '<div style="padding:20px;text-align:center;color:var(--bad);font-size:14px;">Error cargando productos</div>';
+    lista.innerHTML = '<div style="padding:20px;text-align:center;color:var(--bad);font-size:14px;">Error: ' + err.message + '</div>';
+    console.error('buscarProductosHolded error:', err);
   }
 }
 
@@ -1067,11 +1064,11 @@ function getMaterilesFor(key){const filas=[],tbody=document.getElementById('mat-
 function cargarPdf(input,key){const file=input.files[0];if(!file)return;if(file.size>5*1024*1024){showToast('⚠ El PDF no puede superar 5 MB','error');input.value='';return;}const reader=new FileReader();reader.onload=e=>{pdfData[key]={base64:e.target.result.split(',')[1],nombre:file.name};document.getElementById('pdf-name-'+key).textContent='✅ '+file.name;document.getElementById('pdf-name-'+key).style.color='var(--ok)';document.getElementById('pdf-label-'+key).style.borderColor='var(--ok)';document.getElementById('pdf-clear-'+key).style.display='inline-block';};reader.readAsDataURL(file);}
 function borrarPdf(key){pdfData[key]=null;document.getElementById('pdf-input-'+key).value='';document.getElementById('pdf-name-'+key).textContent='Seleccionar PDF...';document.getElementById('pdf-name-'+key).style.color='var(--muted)';document.getElementById('pdf-label-'+key).style.borderColor='var(--border)';document.getElementById('pdf-clear-'+key).style.display='none';}
 
-function buildFotoGrid(key){const grid=document.getElementById('fotos-grid-'+key);grid.innerHTML='';for(let i=0;i<5;i++){const slot=document.createElement('div');slot.className='foto-slot'+(fotosData[key][i]?' filled':'');if(fotosData[key][i]){slot.innerHTML=`<img src="${fotosData[key][i]}" alt="Foto ${i+1}"><button class="remove-btn" onclick="removePhoto('${key}',${i},event)">✕</button>`;}else{slot.innerHTML=`<span class="slot-icon">📷</span><span class="slot-num">${i+1}</span>`;slot.onclick=()=>openCamera(key,i);}grid.appendChild(slot);}updateFotoCounter(key);}
+function buildFotoGrid(key){if(key==='taller'){tallerFotoData=fotosData['taller'][0]||null;}const grid=document.getElementById('fotos-grid-'+key);grid.innerHTML='';const maxSlots=key==='taller'?1:5;for(let i=0;i<maxSlots;i++){const slot=document.createElement('div');slot.className='foto-slot'+(fotosData[key][i]?' filled':'');if(fotosData[key][i]){slot.innerHTML=`<img src="${fotosData[key][i]}" alt="Foto ${i+1}"><button class="remove-btn" onclick="removePhoto('${key}',${i},event)">✕</button>`;}else{slot.innerHTML=`<span class="slot-icon">📷</span><span class="slot-num">${i+1}</span>`;slot.onclick=()=>openCamera(key,i);}grid.appendChild(slot);}updateFotoCounter(key);}
 function openCamera(key,slot){currentFotoKey=key;currentFotoSlot=slot;const inp=document.getElementById('foto-input-'+key);if(inp){inp.value='';inp.click();}}
 function removePhoto(key,slot,e){e.stopPropagation();fotosData[key][slot]=null;buildFotoGrid(key);}
 function updateFotoCounter(key){const cnt=fotosData[key].filter(Boolean).length;const el=document.getElementById('cnt-fotos-'+key)||document.getElementById('cnt-'+key);if(!el)return;el.textContent=cnt+'/5';el.style.background=cnt===5?'var(--ok-bg)':'var(--bad-bg)';el.style.color=cnt===5?'var(--ok)':'var(--bad)';el.style.borderColor=cnt===5?'var(--ok)':'var(--bad)';}
-function initFotos(){['mant','simple','elec','hid'].forEach(key=>{const inp=document.getElementById('foto-input-'+key);if(!inp)return;inp.addEventListener('change',function(){const file=this.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{const img=new Image();img.onload=()=>{const canvas=document.createElement('canvas'),MAX=800;let w=img.width,h=img.height;if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);fotosData[currentFotoKey][currentFotoSlot]=canvas.toDataURL('image/jpeg',0.75);buildFotoGrid(currentFotoKey);};img.src=e.target.result;};reader.readAsDataURL(file);});buildFotoGrid(key);});}
+function initFotos(){['mant','simple','elec','hid','taller'].forEach(key=>{const inp=document.getElementById('foto-input-'+key);if(!inp)return;inp.addEventListener('change',function(){const file=this.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{const img=new Image();img.onload=()=>{const canvas=document.createElement('canvas'),MAX=800;let w=img.width,h=img.height;if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);fotosData[currentFotoKey][currentFotoSlot]=canvas.toDataURL('image/jpeg',0.75);buildFotoGrid(currentFotoKey);};img.src=e.target.result;};reader.readAsDataURL(file);});buildFotoGrid(key);});}
 
 function initFirmas(){document.querySelectorAll('.firma-canvas').forEach(canvas=>{const id=canvas.id;firmaData[id]={signed:false};let drawing=false,lx=0,ly=0;const ctx=canvas.getContext('2d');ctx.strokeStyle='#184595';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';function getPos(e){const r=canvas.getBoundingClientRect();const src=e.touches?e.touches[0]:e;return{x:(src.clientX-r.left)*(canvas.width/r.width),y:(src.clientY-r.top)*(canvas.height/r.height)};}function start(e){e.preventDefault();drawing=true;const p=getPos(e);lx=p.x;ly=p.y;ctx.beginPath();ctx.arc(lx,ly,1,0,Math.PI*2);ctx.fill();}function move(e){e.preventDefault();if(!drawing)return;const p=getPos(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p.x,p.y);ctx.stroke();lx=p.x;ly=p.y;firmaData[id].signed=true;canvas.classList.add('signed');}function end(){drawing=false;}canvas.width=canvas.offsetWidth||300;canvas.height=140;canvas.addEventListener('mousedown',start);canvas.addEventListener('mousemove',move);canvas.addEventListener('mouseup',end);canvas.addEventListener('touchstart',start,{passive:false});canvas.addEventListener('touchmove',move,{passive:false});canvas.addEventListener('touchend',end);});}
 function limpiarFirma(id){const canvas=document.getElementById('firma-'+id);if(!canvas)return;canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);firmaData['firma-'+id]={signed:false};canvas.classList.remove('signed');}
@@ -1255,41 +1252,11 @@ function selectTaller(el,val){
 }
 function abrirFotoTaller(){document.getElementById('taller-foto-input').click();}
 function cargarFotoTaller(input) {
-  var file = input.files[0];
-  if (!file) return;
-
-  var reader = new FileReader();
-  reader.onload = function(ev) {
-    var dataUrl = ev.target.result;
-    var imgTemp = new Image();
-    imgTemp.onload = function() {
-      // Redimensionar igual que las otras fotos
-      var canvas = document.createElement('canvas');
-      var MAX = 800;
-      var w = imgTemp.width, h = imgTemp.height;
-      if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
-      if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(imgTemp, 0, 0, w, h);
-      tallerFotoData = canvas.toDataURL('image/jpeg', 0.75);
-
-      // Mostrar miniatura
-      var slot = document.getElementById('taller-slot-0');
-      if (slot) {
-        slot.onclick = null;
-        slot.style.cssText = 'width:72px;height:72px;flex-shrink:0;border-radius:8px;border:1.5px solid var(--ok);background:var(--surface2);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;cursor:default;';
-        slot.innerHTML =
-          '<img src="' + tallerFotoData + '" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border-radius:7px;">' +
-          '<button onclick="borrarFotoTaller(event)" style="position:absolute;top:2px;right:2px;width:18px;height:18px;background:rgba(0,0,0,.65);color:#fff;border:none;border-radius:50%;font-size:11px;cursor:pointer;line-height:18px;text-align:center;z-index:2;">✕</button>';
-      }
-      // Limpiar el input para permitir volver a seleccionar si se borra
-      input.value = '';
-      showToast('✅ Foto añadida', 'success');
-    };
-    imgTemp.src = dataUrl;
-  };
-  reader.readAsDataURL(file);
+  // Compatibilidad — ya gestionado por initFotos vía foto-input-taller
+  // Esta función queda como fallback
 }
+
+
 
 
 
@@ -1297,13 +1264,11 @@ function cargarFotoTaller(input) {
 function borrarFotoTaller(e) {
   e.stopPropagation();
   tallerFotoData = null;
-  var slot = document.getElementById('taller-slot-0');
-  if (slot) {
-    slot.style.cssText = 'cursor:pointer;width:72px;height:72px;flex-shrink:0;border-radius:8px;border:1.5px dashed var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;';
-    slot.onclick = function(){ document.getElementById('taller-foto-input').click(); };
-    slot.innerHTML = '<span style="font-size:20px;">📷</span>';
-  }
+  fotosData['taller'][0] = null;
+  buildFotoGrid('taller');
 }
+
+
 
 // TIMER Y BLOQUEO DE REFRESCO
 let timerInterval = null;
