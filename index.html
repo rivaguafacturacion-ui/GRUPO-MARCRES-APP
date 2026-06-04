@@ -585,20 +585,6 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       </div>
     </div>
     <div class="card" id="sec-fotos-simple"><div class="section-header section-open" onclick="toggleSec('sec-fotos-simple')"><span class="sec-title">📷 Fotos <span style="font-size:11px;color:var(--bad);">(5 obligatorias)</span></span><span><span id="cnt-fotos-simple" style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:99px;background:var(--bad-bg);color:var(--bad);border:1px solid var(--bad);">0/5</span> <span class="chevron">⌄</span></span></div><div class="section-body" style="display:block;"><div class="fotos-section"><div class="fotos-grid" id="fotos-grid-simple"></div><input type="file" accept="image/*" capture="environment" class="foto-input-hidden" id="foto-input-simple"><div class="fotos-aviso" id="fotos-aviso-simple">⚠ Debes adjuntar las 5 fotografías para enviar</div></div></div></div>
-    <div class="card"><div class="field-group" style="margin:0;">
-      <label class="field-label">Material sustituido a taller</label>
-      <div class="pill-group">
-        <span class="pill" onclick="selectTaller(this,'Si')">Sí</span>
-        <span class="pill" onclick="selectTaller(this,'No')">No</span>
-      </div>
-      <div class="taller-foto-wrap" id="taller-foto-wrap-simple">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">📷 Foto del material (obligatoria)</div>
-        <div class="taller-foto-slot" id="taller-foto-slot-simple" onclick="abrirFotoTaller()">
-          <span style="font-size:24px;">📷</span>
-          <span style="font-size:11px;color:var(--muted);margin-top:4px;">Toca para fotografiar</span>
-        </div>
-      </div>
-    </div></div>
     <div class="card"><div class="section-header section-open" onclick="toggleSec('sec-firma-simple')"><span class="sec-title">✍️ Firmas</span><span class="chevron">⌄</span></div><div class="section-body" id="sec-firma-simple" style="display:block;"><div class="firma-section"><div class="firma-label">Firma del técnico <span style="color:var(--bad);font-size:10px;">*obligatoria</span></div><canvas class="firma-canvas" id="firma-tecnico-simple"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('tecnico-simple')">🗑 Borrar</button></div></div><div class="firma-section" style="border-top:1px solid var(--border);"><div class="firma-label">Firma del cliente <span style="color:var(--bad);font-size:10px;">*obligatoria</span><button class="cliente-ausente-btn" id="btn-ausente-simple" onclick="toggleAusente('simple')">Cliente ausente</button></div><canvas class="firma-canvas" id="firma-cliente-simple"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('cliente-simple')">🗑 Borrar</button></div><div class="firma-ausente-obs" id="ausente-obs-simple"><textarea class="obs-textarea" id="ausente-motivo-simple" placeholder="Motivo por el que el cliente no puede firmar..." style="margin-top:8px;"></textarea></div></div></div></div>
     <button class="send-btn" id="send-simple-btn" onclick="enviarAlbaran('simple')">📤 Enviar albarán</button>
   </div>
