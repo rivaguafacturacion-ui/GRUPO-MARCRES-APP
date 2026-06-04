@@ -559,19 +559,14 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       </div>
       <div class="taller-foto-wrap" id="taller-foto-wrap">
         <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">📷 Foto del material (obligatoria)</div>
-        <div id="taller-foto-container" style="width:100%;height:160px;border-radius:8px;border:1.5px dashed var(--border);background:var(--surface2);position:relative;overflow:hidden;">
-          <!-- Estado vacío: label clickable -->
-          <label for="taller-foto-input" id="taller-foto-label" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;z-index:1;">
-            <span style="font-size:32px;">📷</span>
-            <span style="font-size:12px;color:var(--muted);margin-top:6px;">Toca para fotografiar</span>
-          </label>
-          <!-- Estado con foto: imagen a pantalla completa -->
-          <img id="taller-foto-img" src="" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;z-index:2;">
-          <!-- Botón borrar -->
-          <button id="taller-foto-borrar" onclick="borrarFotoTaller(event)" style="position:absolute;top:8px;right:8px;width:28px;height:28px;background:rgba(0,0,0,.65);color:#fff;border:none;border-radius:50%;font-size:16px;line-height:1;cursor:pointer;display:none;z-index:3;align-items:center;justify-content:center;">✕</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;" id="taller-foto-grid">
+          <!-- Slot vacío -->
+          <div id="taller-slot-0" class="foto-slot" onclick="document.getElementById('taller-foto-input').click()" style="cursor:pointer;">
+            <span style="font-size:22px;">📷</span>
+          </div>
         </div>
-        <input type="file" accept="image/*" capture="environment" id="taller-foto-input" style="display:none;" onchange="cargarFotoTaller(this)">
       </div>
+      <input type="file" accept="image/*" capture="environment" id="taller-foto-input" style="display:none;" onchange="cargarFotoTaller(this)">
     </div></div>
     <div class="card"><div class="section-header section-open" onclick="toggleSec('sec-firma-mant')"><span class="sec-title">✍️ Firmas</span><span class="chevron">⌄</span></div><div class="section-body" id="sec-firma-mant" style="display:block;"><div class="firma-section"><div class="firma-label">Firma del técnico <span style="color:var(--bad);font-size:10px;">*obligatoria</span></div><canvas class="firma-canvas" id="firma-tecnico-mant"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('tecnico-mant')">🗑 Borrar</button></div></div><div class="firma-section" style="border-top:1px solid var(--border);"><div class="firma-label">Firma del cliente <span style="color:var(--bad);font-size:10px;">*obligatoria</span><button class="cliente-ausente-btn" id="btn-ausente-mant" onclick="toggleAusente('mant')">Cliente ausente</button></div><canvas class="firma-canvas" id="firma-cliente-mant"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('cliente-mant')">🗑 Borrar</button></div><div class="firma-ausente-obs" id="ausente-obs-mant"><textarea class="obs-textarea" id="ausente-motivo-mant" placeholder="Motivo por el que el cliente no puede firmar..." style="margin-top:8px;"></textarea></div></div></div></div>
     <button class="send-btn" id="send-mant-btn" onclick="enviarAlbaran('mantenimiento')">📤 Enviar albarán de Mantenimiento</button>
@@ -1269,7 +1264,7 @@ function cargarFotoTaller(input) {
     var dataUrl = ev.target.result;
     var imgTemp = new Image();
     imgTemp.onload = function() {
-      // Redimensionar
+      // Redimensionar igual que las otras fotos
       var canvas = document.createElement('canvas');
       var MAX = 800;
       var w = imgTemp.width, h = imgTemp.height;
@@ -1279,25 +1274,17 @@ function cargarFotoTaller(input) {
       canvas.getContext('2d').drawImage(imgTemp, 0, 0, w, h);
       tallerFotoData = canvas.toDataURL('image/jpeg', 0.75);
 
-      // Mostrar previsualización
-      var imgEl   = document.getElementById('taller-foto-img');
-      var labelEl = document.getElementById('taller-foto-label');
-      var borrar  = document.getElementById('taller-foto-borrar');
-      var cont    = document.getElementById('taller-foto-container');
-
-      if (imgEl) {
-        imgEl.src = tallerFotoData;
-        imgEl.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:2;border-radius:8px;';
+      // Mostrar miniatura igual que las otras fotos del parte
+      var slot = document.getElementById('taller-slot-0');
+      if (slot) {
+        slot.className = 'foto-slot filled';
+        slot.onclick = null;
+        slot.innerHTML =
+          '<img src="' + tallerFotoData + '" style="width:100%;height:100%;object-fit:cover;border-radius:6px;">' +
+          '<button onclick="borrarFotoTaller(event)" style="position:absolute;top:3px;right:3px;width:20px;height:20px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;font-size:12px;cursor:pointer;line-height:1;">✕</button>';
       }
-      if (labelEl) {
-        labelEl.style.display = 'none';
-      }
-      if (borrar) {
-        borrar.style.cssText = 'position:absolute;top:8px;right:8px;width:28px;height:28px;background:rgba(0,0,0,.65);color:#fff;border:none;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:3;';
-      }
-      if (cont) {
-        cont.style.border = '1.5px solid var(--ok)';
-      }
+      // Limpiar el input para permitir volver a seleccionar si se borra
+      input.value = '';
       showToast('✅ Foto añadida', 'success');
     };
     imgTemp.src = dataUrl;
@@ -1306,19 +1293,17 @@ function cargarFotoTaller(input) {
 }
 
 
-function borrarFotoTaller(e){
+
+
+function borrarFotoTaller(e) {
   e.stopPropagation();
-  tallerFotoData=null;
-  const imgEl   = document.getElementById('taller-foto-img');
-  const labelEl = document.getElementById('taller-foto-label');
-  const borrar  = document.getElementById('taller-foto-borrar');
-  const cont    = document.getElementById('taller-foto-container');
-  const inp     = document.getElementById('taller-foto-input');
-  if(imgEl)   { imgEl.src = ''; imgEl.style.display = 'none'; imgEl.style.zIndex = '2'; }
-  if(labelEl) { labelEl.style.display = 'flex'; }
-  if(borrar)  { borrar.style.display = 'none'; }
-  if(cont)    { cont.classList.remove('filled'); cont.style.cursor = 'pointer'; }
-  if(inp)     { inp.value = ''; }
+  tallerFotoData = null;
+  var slot = document.getElementById('taller-slot-0');
+  if (slot) {
+    slot.className = 'foto-slot';
+    slot.onclick = function(){ document.getElementById('taller-foto-input').click(); };
+    slot.innerHTML = '<span style="font-size:22px;">📷</span>';
+  }
 }
 
 // TIMER Y BLOQUEO DE REFRESCO
