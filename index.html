@@ -508,6 +508,23 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       </div>
     </div>
   </div>
+      <div class="card"><div class="field-group" style="margin:0;">
+      <label class="field-label">Material sustituido a taller</label>
+      <div class="taller-btn-group">
+        <button class="taller-btn" id="taller-btn-si" onclick="selectTallerNuevo('Si')">✔ Sí</button>
+        <button class="taller-btn" id="taller-btn-no" onclick="selectTallerNuevo('No')">✖ No</button>
+      </div>
+      <div class="taller-nueva-foto" id="taller-nueva-foto">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">📷 Foto del material (obligatoria)</div>
+        <div class="taller-grid" id="taller-grid">
+          <div class="taller-slot" id="taller-slot-nuevo" onclick="document.getElementById('taller-input-nuevo').click()">
+            <span style="font-size:22px;">📷</span>
+          </div>
+        </div>
+      </div>
+      <input type="file" accept="image/*" capture="environment" id="taller-input-nuevo" style="display:none;" onchange="onTallerFoto(this)">
+    </div></div>
+
   <div class="contenido-parte" id="contenido-parte-a">
   <div class="card" style="padding:14px;">
     <label class="field-label" style="margin-bottom:10px;display:block;">Albarán de</label>
@@ -548,22 +565,6 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       </div>
     </div>
     <div class="card" id="sec-fotos-mant"><div class="section-header section-open" onclick="toggleSec('sec-fotos-mant')"><span class="sec-title">📷 Fotos <span style="font-size:11px;color:var(--bad);">(5 obligatorias)</span></span><span><span id="cnt-fotos-mant" style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:99px;background:var(--bad-bg);color:var(--bad);border:1px solid var(--bad);">0/5</span> <span class="chevron">⌄</span></span></div><div class="section-body" style="display:block;"><div class="fotos-section"><div class="fotos-grid" id="fotos-grid-mant"></div><input type="file" accept="image/*" capture="environment" class="foto-input-hidden" id="foto-input-mant"><div class="fotos-aviso" id="fotos-aviso-mant">⚠ Debes adjuntar las 5 fotografías para enviar</div></div></div></div>
-    <div class="card"><div class="field-group" style="margin:0;">
-      <label class="field-label">Material sustituido a taller</label>
-      <div class="taller-btn-group">
-        <button class="taller-btn" id="taller-btn-si" onclick="selectTallerNuevo('Si')">✔ Sí</button>
-        <button class="taller-btn" id="taller-btn-no" onclick="selectTallerNuevo('No')">✖ No</button>
-      </div>
-      <div class="taller-nueva-foto" id="taller-nueva-foto">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">📷 Foto del material (obligatoria)</div>
-        <div class="taller-grid" id="taller-grid">
-          <div class="taller-slot" id="taller-slot-nuevo" onclick="document.getElementById('taller-input-nuevo').click()">
-            <span style="font-size:22px;">📷</span>
-          </div>
-        </div>
-      </div>
-      <input type="file" accept="image/*" capture="environment" id="taller-input-nuevo" style="display:none;" onchange="onTallerFoto(this)">
-    </div></div>
     <div class="card"><div class="section-header section-open" onclick="toggleSec('sec-firma-mant')"><span class="sec-title">✍️ Firmas</span><span class="chevron">⌄</span></div><div class="section-body" id="sec-firma-mant" style="display:block;"><div class="firma-section"><div class="firma-label">Firma del técnico <span style="color:var(--bad);font-size:10px;">*obligatoria</span></div><canvas class="firma-canvas" id="firma-tecnico-mant"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('tecnico-mant')">🗑 Borrar</button></div></div><div class="firma-section" style="border-top:1px solid var(--border);"><div class="firma-label">Firma del cliente <span style="color:var(--bad);font-size:10px;">*obligatoria</span><button class="cliente-ausente-btn" id="btn-ausente-mant" onclick="toggleAusente('mant')">Cliente ausente</button></div><canvas class="firma-canvas" id="firma-cliente-mant"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('cliente-mant')">🗑 Borrar</button></div><div class="firma-ausente-obs" id="ausente-obs-mant"><textarea class="obs-textarea" id="ausente-motivo-mant" placeholder="Motivo por el que el cliente no puede firmar..." style="margin-top:8px;"></textarea></div></div></div></div>
     <button class="send-btn" id="send-mant-btn" onclick="enviarAlbaran('mantenimiento')">📤 Enviar albarán de Mantenimiento</button>
   </div>
