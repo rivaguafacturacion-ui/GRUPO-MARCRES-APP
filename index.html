@@ -174,8 +174,9 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 .timer-label{font-size:11px;color:rgba(255,255,255,.7);text-transform:uppercase;}
 .taller-foto-slot{width:100%;height:120px;border-radius:8px;border:1.5px dashed var(--border);background:var(--surface2);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;}
 .taller-foto-slot.filled{border-style:solid;border-color:var(--ok);}
-.taller-foto-slot img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;right:0;bottom:0;}
-.taller-foto-slot .remove-btn{position:absolute;top:5px;right:5px;width:22px;height:22px;background:rgba(0,0,0,.6);color:#fff;border-radius:99px;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;border:none;}.send-btn{width:100%;padding:16px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-family:var(--font);font-size:16px;font-weight:600;cursor:pointer;margin-top:4px;transition:all .15s;}
+.taller-foto-slot img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+.taller-foto-slot .remove-btn{position:absolute;top:5px;right:5px;width:22px;height:22px;background:rgba(0,0,0,.6);color:#fff;border-radius:99px;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;border:none;}
+.send-btn{width:100%;padding:16px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-family:var(--font);font-size:16px;font-weight:600;cursor:pointer;margin-top:4px;transition:all .15s;}
 .send-btn:hover{background:var(--accent2);}
 .send-btn:active{transform:scale(.98);}
 .send-btn:disabled{background:var(--muted);cursor:not-allowed;}
@@ -250,11 +251,6 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 .tarea-sel-nombre{font-size:13px;font-weight:700;color:var(--accent);}
 .tarea-sel-cliente{font-size:11px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .tarea-sel-quitar{background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);padding:4px;}
-
-.mat-producto-wrap{position:relative;width:100%;}
-.mat-producto-input{width:100%;box-sizing:border-box;padding:5px 7px;font-family:var(--font);font-size:12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);}
-.mat-producto-input.elegido{color:var(--ok);font-weight:600;border-color:var(--ok);}
-.mat-elegir-btn{background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:8px 16px;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -547,11 +543,12 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       </div>
       <div class="taller-foto-wrap" id="taller-foto-wrap">
         <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">📷 Foto del material (obligatoria)</div>
-        <div class="taller-foto-slot" id="taller-foto-slot" onclick="abrirFotoTaller()">
+        <label for="taller-foto-input" class="taller-foto-slot" id="taller-foto-slot" style="cursor:pointer;">
           <span style="font-size:24px;">📷</span>
           <span style="font-size:11px;color:var(--muted);margin-top:4px;">Toca para fotografiar</span>
-        </div>
+        </label>
         <input type="file" accept="image/*" capture="environment" id="taller-foto-input" style="display:none;" onchange="cargarFotoTaller(this)">
+      </div>
     </div></div>
     <div class="card"><div class="section-header section-open" onclick="toggleSec('sec-firma-mant')"><span class="sec-title">✍️ Firmas</span><span class="chevron">⌄</span></div><div class="section-body" id="sec-firma-mant" style="display:block;"><div class="firma-section"><div class="firma-label">Firma del técnico <span style="color:var(--bad);font-size:10px;">*obligatoria</span></div><canvas class="firma-canvas" id="firma-tecnico-mant"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('tecnico-mant')">🗑 Borrar</button></div></div><div class="firma-section" style="border-top:1px solid var(--border);"><div class="firma-label">Firma del cliente <span style="color:var(--bad);font-size:10px;">*obligatoria</span><button class="cliente-ausente-btn" id="btn-ausente-mant" onclick="toggleAusente('mant')">Cliente ausente</button></div><canvas class="firma-canvas" id="firma-cliente-mant"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('cliente-mant')">🗑 Borrar</button></div><div class="firma-ausente-obs" id="ausente-obs-mant"><textarea class="obs-textarea" id="ausente-motivo-mant" placeholder="Motivo por el que el cliente no puede firmar..." style="margin-top:8px;"></textarea></div></div></div></div>
     <button class="send-btn" id="send-mant-btn" onclick="enviarAlbaran('mantenimiento')">📤 Enviar albarán de Mantenimiento</button>
@@ -786,7 +783,6 @@ function addMatRowFor(key) {
   var tr = document.createElement('tr');
   tr.id = 'mat-row-' + uid;
 
-  // Celda descripción con buscador
   var tdDesc = document.createElement('td');
   tdDesc.style.minWidth = '140px';
   var inpDesc = document.createElement('input');
@@ -796,38 +792,38 @@ function addMatRowFor(key) {
   inpDesc.autocomplete = 'off';
   inpDesc.setAttribute('oninput', 'buscarProductosHolded(this.value,"' + uid + '")');
   inpDesc.setAttribute('onfocus', 'if(this.value.length>0)buscarProductosHolded(this.value,"' + uid + '")');
-  tdDesc.appendChild(inpDesc);
-  tr.appendChild(tdDesc);
+  tdDesc.appendChild(inpDesc); tr.appendChild(tdDesc);
 
   var tdCant = document.createElement('td');
   var inpCant = document.createElement('input');
-  inpCant.className = 'mat-input'; inpCant.type = 'number'; inpCant.min = '0'; inpCant.placeholder = '1';
-  inpCant.id = 'mat-cant-' + uid; inpCant.style.width = '48px';
-  inpCant.setAttribute('oninput', 'calcTotalFor("' + uid + '","' + key + '")');
+  inpCant.className = 'mat-input'; inpCant.type='number'; inpCant.min='0'; inpCant.placeholder='1';
+  inpCant.id='mat-cant-'+uid; inpCant.style.width='48px';
+  inpCant.setAttribute('oninput','calcTotalFor("'+uid+'","'+key+'")');
   tdCant.appendChild(inpCant); tr.appendChild(tdCant);
 
   var tdPrecio = document.createElement('td');
   var inpPrecio = document.createElement('input');
-  inpPrecio.className = 'mat-input'; inpPrecio.type = 'number'; inpPrecio.min = '0'; inpPrecio.step = '0.01'; inpPrecio.placeholder = '0.00';
-  inpPrecio.id = 'mat-precio-' + uid; inpPrecio.style.width = '72px';
-  inpPrecio.setAttribute('oninput', 'calcTotalFor("' + uid + '","' + key + '")');
+  inpPrecio.className='mat-input'; inpPrecio.type='number'; inpPrecio.min='0'; inpPrecio.step='0.01'; inpPrecio.placeholder='0.00';
+  inpPrecio.id='mat-precio-'+uid; inpPrecio.style.width='72px';
+  inpPrecio.setAttribute('oninput','calcTotalFor("'+uid+'","'+key+'")');
   tdPrecio.appendChild(inpPrecio); tr.appendChild(tdPrecio);
 
   var tdTotal = document.createElement('td');
   var spanTotal = document.createElement('span');
-  spanTotal.id = 'mat-total-' + uid;
-  spanTotal.style.cssText = 'font-size:12px;color:var(--accent);font-weight:600;';
-  spanTotal.textContent = '—';
+  spanTotal.id='mat-total-'+uid;
+  spanTotal.style.cssText='font-size:12px;color:var(--accent);font-weight:600;';
+  spanTotal.textContent='—';
   tdTotal.appendChild(spanTotal); tr.appendChild(tdTotal);
 
   var tdDel = document.createElement('td');
   var btnDel = document.createElement('button');
-  btnDel.className = 'del-row-btn'; btnDel.textContent = '×';
-  btnDel.setAttribute('onclick', 'document.getElementById("mat-row-' + uid + '").remove();recalcTotal("' + key + '")');
+  btnDel.className='del-row-btn'; btnDel.textContent='×';
+  btnDel.setAttribute('onclick','document.getElementById("mat-row-'+uid+'").remove();recalcTotal("'+key+'")');
   tdDel.appendChild(btnDel); tr.appendChild(tdDel);
 
-  document.getElementById('mat-tbody-' + key).appendChild(tr);
+  document.getElementById('mat-tbody-'+key).appendChild(tr);
 }
+
 function calcTotalFor(uid,key){const c=parseFloat(document.getElementById('mat-cant-'+uid)?.value)||0;const p=parseFloat(document.getElementById('mat-precio-'+uid)?.value)||0;const el=document.getElementById('mat-total-'+uid);if(el)el.textContent=c&&p?(c*p).toFixed(2)+' €':'—';recalcTotal(key);}
 function recalcTotal(key){const tbody=document.getElementById('mat-tbody-'+key);if(!tbody)return;let total=0,hay=false;tbody.querySelectorAll('[id^="mat-cant-"]').forEach(el=>{const uid=el.id.replace('mat-cant-','');const c=parseFloat(el.value)||0;const p=parseFloat(document.getElementById('mat-precio-'+uid)?.value)||0;if(c&&p){total+=c*p;hay=true;}});const display=document.getElementById('mat-total-display-'+key);const sum=document.getElementById('mat-total-sum-'+key);if(display&&sum){display.style.display=hay?'block':'none';sum.textContent=total.toFixed(2)+' €';}}
 function getMaterilesFor(key){const filas=[],tbody=document.getElementById('mat-tbody-'+key);if(!tbody)return'—';tbody.querySelectorAll('[id^="mat-desc-"]').forEach(el=>{const uid=el.id.replace('mat-desc-',''),desc=el.value.trim();if(!desc)return;filas.push(`${desc} | Cant: ${document.getElementById('mat-cant-'+uid)?.value||''} | P.u.: ${document.getElementById('mat-precio-'+uid)?.value||''}€ | Total: ${document.getElementById('mat-total-'+uid)?.textContent||''}`);});return filas.length?filas.join('\n'):'—';}
@@ -1022,7 +1018,6 @@ function selectTaller(el,val){
   }
 }
 function abrirFotoTaller(){document.getElementById('taller-foto-input').click();}
-
 function cargarFotoTaller(input){
   const file=input.files[0];if(!file)return;
   const reader=new FileReader();
@@ -1037,19 +1032,17 @@ function cargarFotoTaller(input){
       canvas.getContext('2d').drawImage(img,0,0,w,h);
       tallerFotoData=canvas.toDataURL('image/jpeg',0.75);
       const slot=document.getElementById('taller-foto-slot');
-      slot.innerHTML='<img src="'+tallerFotoData+'" alt="Foto taller"><button class="remove-btn" onclick="borrarFotoTaller(event)">&#x2715;</button>';
+      slot.innerHTML=`<img src="${tallerFotoData}" alt="Foto taller"><button class="remove-btn" onclick="borrarFotoTaller(event)">✕</button>`;
       slot.classList.add('filled');
     };img.src=e.target.result;
   };reader.readAsDataURL(file);
 }
-
 function borrarFotoTaller(e){
   e.stopPropagation();tallerFotoData=null;
   const slot=document.getElementById('taller-foto-slot');
   slot.innerHTML='<span style="font-size:24px;">📷</span><span style="font-size:11px;color:var(--muted);margin-top:4px;">Toca para fotografiar</span>';
   slot.classList.remove('filled');
 }
-
 
 // TIMER Y BLOQUEO DE REFRESCO
 let timerInterval = null;
@@ -1736,16 +1729,16 @@ async function buscarProductosHolded(q, uid) {
     }
     filtrarProductosPanel(q);
   } catch(err) {
-    lista.innerHTML = '<div style="padding:20px;text-align:center;color:var(--bad);">Error cargando productos.<br><small>' + err.message + '</small><br><br><button onclick="productosCache={};buscarProductosHolded(document.getElementById(\'productos-search-input\').value,\''+_prodUidActivo+'\');" style="padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;">Reintentar</button></div>';
+    lista.innerHTML = '<div style="padding:20px;text-align:center;color:var(--bad);">Error: ' + err.message + '</div>';
   }
 }
 
 function filtrarProductosPanel(q) {
-  var uid     = _prodUidActivo;
+  var uid   = _prodUidActivo;
   var empresa = empresaAlbaran || empresaChecklist || 'marcres';
-  var todos   = productosCache[empresa] || [];
-  var lista   = document.getElementById('productos-lista');
-  var count   = document.getElementById('productos-count');
+  var todos = productosCache[empresa] || [];
+  var lista = document.getElementById('productos-lista');
+  var count = document.getElementById('productos-count');
   if (!lista) return;
   var ql = (q || '').toLowerCase().replace(/_/g,' ').trim();
   var filtrados = !ql ? [] : todos.filter(function(p) {
@@ -1762,24 +1755,24 @@ function filtrarProductosPanel(q) {
   for (var pi = 0; pi < filtrados.length; pi++) {
     var p = filtrados[pi];
     var precio = p.price ? p.price.toFixed(2) + ' €' : '';
-    var stock  = p.hasStock ? '<span style="font-size:11px;color:var(--ok);font-weight:600;margin-left:6px;">Stock: ' + (p.stock||0) + '</span>' : '';
+    var stock  = p.hasStock ? '<span style="font-size:11px;color:var(--ok);font-weight:600;margin-left:6px;">Stock: '+(p.stock||0)+'</span>' : '';
     html += '<div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);">';
     html += '<div style="flex:1;min-width:0;">';
-    html += '<div style="font-size:14px;font-weight:600;color:var(--text);">' + (p.name||'').replace(/_/g,' ') + '</div>';
-    if (p.sku) html += '<div style="font-size:11px;color:var(--muted);">Ref: ' + p.sku + '</div>';
-    html += '<div><span style="font-size:13px;color:var(--accent);font-weight:700;">' + precio + '</span>' + stock + '</div>';
+    html += '<div style="font-size:14px;font-weight:600;color:var(--text);">'+(p.name||'').replace(/_/g,' ')+'</div>';
+    if (p.sku) html += '<div style="font-size:11px;color:var(--muted);">Ref: '+p.sku+'</div>';
+    html += '<div><span style="font-size:13px;color:var(--accent);font-weight:700;">'+precio+'</span>'+stock+'</div>';
     html += '</div>';
-    html += '<button data-uid="' + uid + '" data-pi="' + pi + '" onclick="_elegirProd(this)" class="mat-elegir-btn">Elegir</button>';
+    html += '<button data-uid="'+uid+'" data-pi="'+pi+'" onclick="_elegirProd(this)" class="mat-elegir-btn">Elegir</button>';
     html += '</div>';
   }
   lista.innerHTML = html;
 }
 
 function _elegirProd(btn) {
-  var uid = btn.getAttribute('data-uid');
-  var idx = parseInt(btn.getAttribute('data-pi'));
+  var uid   = btn.getAttribute('data-uid');
+  var idx   = parseInt(btn.getAttribute('data-pi'));
   var prods = window['_prods_' + uid] || [];
-  var p = prods[idx];
+  var p     = prods[idx];
   if (!p) return;
   var inp = document.getElementById('mat-desc-' + uid);
   if (inp) { inp.value = p.name || ''; inp.classList.add('elegido'); }
