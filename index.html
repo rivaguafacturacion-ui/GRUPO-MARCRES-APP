@@ -251,6 +251,18 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 .tarea-sel-nombre{font-size:13px;font-weight:700;color:var(--accent);}
 .tarea-sel-cliente{font-size:11px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .tarea-sel-quitar{background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);padding:4px;}
+
+.mat-producto-wrap{position:relative;width:100%;}
+.mat-producto-input{width:100%;box-sizing:border-box;padding:5px 7px;font-family:var(--font);font-size:12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);}
+.mat-producto-input.elegido{color:var(--ok);font-weight:600;border-color:var(--ok);}
+.mat-producto-drop{position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);z-index:200;max-height:180px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,.12);}
+.mat-producto-item{padding:8px 10px;font-size:12px;cursor:pointer;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:2px;}
+.mat-producto-item:last-child{border-bottom:none;}
+.mat-producto-item:active{background:var(--surface2);}
+.mat-producto-nombre{font-weight:600;color:var(--text);}
+.mat-producto-ref{font-size:10px;color:var(--muted);}
+.mat-producto-precio{font-size:11px;color:var(--accent);font-weight:600;}
+.mat-producto-stock{font-size:10px;color:var(--ok);}
 </style>
 </head>
 <body>
@@ -760,7 +772,151 @@ function selectPillElec(el, gid) {
 }
 
 const matIdxMap={};
-function addMatRowFor(key){if(matIdxMap[key]===undefined)matIdxMap[key]=0;const i=matIdxMap[key]++,uid=key+'-'+i;const tr=document.createElement('tr');tr.id='mat-row-'+uid;tr.innerHTML=`<td><input class="mat-input" placeholder="Descripción" id="mat-desc-${uid}"></td><td><input class="mat-input" type="number" min="0" placeholder="1" id="mat-cant-${uid}" oninput="calcTotalFor('${uid}','${key}')" style="width:48px;"></td><td><input class="mat-input" type="number" min="0" step="0.01" placeholder="0.00" id="mat-precio-${uid}" oninput="calcTotalFor('${uid}','${key}')" style="width:72px;"></td><td><span id="mat-total-${uid}" style="font-size:12px;color:var(--accent);font-weight:600;">—</span></td><td><button class="del-row-btn" onclick="document.getElementById('mat-row-${uid}').remove();recalcTotal('${key}')">×</button></td>`;document.getElementById('mat-tbody-'+key).appendChild(tr);}
+// Cache de productos por empresa
+var productosCache = {};
+
+async function buscarProductosHolded(q, uid) {
+  var empresa = empresaAlbaran || empresaChecklist || 'marcres';
+  var drop = document.getElementById('mat-drop-' + uid);
+  if (!drop) return;
+
+  // Si no hay query, ocultar dropdown
+  if (!q || q.length < 2) { drop.style.display = 'none'; return; }
+
+  drop.style.display = 'block';
+  drop.innerHTML = '<div class="mat-producto-item"><span class="mat-producto-nombre">Buscando...</span></div>';
+
+  try {
+    // Usar caché si ya tenemos productos
+    if (!productosCache[empresa]) {
+      var res  = await fetch(GAS_URL + '?action=productos&empresa=' + empresa);
+      var data = await res.json();
+      productosCache[empresa] = data.ok ? data.productos : [];
+    }
+
+    var todos = productosCache[empresa] || [];
+    var ql    = q.toLowerCase();
+    var filtrados = todos.filter(function(p) {
+      return (p.name || '').toLowerCase().indexOf(ql) >= 0 ||
+             (p.sku  || '').toLowerCase().indexOf(ql) >= 0 ||
+             (p.desc || '').toLowerCase().indexOf(ql) >= 0;
+    }).slice(0, 15);
+
+    if (!filtrados.length) {
+      drop.innerHTML = '<div class="mat-producto-item"><span class="mat-producto-nombre" style="color:var(--muted)">Sin resultados</span></div>';
+      return;
+    }
+
+    // Guardar en window para acceso por índice
+    window['_prods_' + uid] = filtrados;
+
+    var html = '';
+    for (var pi = 0; pi < filtrados.length; pi++) {
+      var p = filtrados[pi];
+      var stock = p.hasStock ? '<span class="mat-producto-stock">Stock: ' + (p.stock || 0) + '</span>' : '';
+      html += '<div class="mat-producto-item" onclick="elegirProducto(\'' + uid + '\',' + pi + ')">';
+      html += '<span class="mat-producto-nombre">' + (p.name || '') + '</span>';
+      html += '<span class="mat-producto-ref">' + (p.sku ? 'Ref: ' + p.sku : '') + (p.desc ? ' · ' + p.desc.substring(0,40) : '') + '</span>';
+      html += '<div style="display:flex;justify-content:space-between;">';
+      html += '<span class="mat-producto-precio">' + (p.price ? p.price.toFixed(2) + ' €' : '') + '</span>';
+      html += stock + '</div></div>';
+    }
+    drop.innerHTML = html;
+
+  } catch(err) {
+    drop.innerHTML = '<div class="mat-producto-item"><span class="mat-producto-nombre" style="color:var(--bad)">Error cargando productos</span></div>';
+  }
+}
+
+function elegirProducto(uid, idx) {
+  var prods = window['_prods_' + uid] || [];
+  var p     = prods[idx];
+  if (!p) return;
+
+  // Rellenar descripción
+  var inp = document.getElementById('mat-desc-' + uid);
+  if (inp) {
+    inp.value      = p.name || '';
+    inp.classList.add('elegido');
+  }
+
+  // Rellenar precio
+  var precioInp = document.getElementById('mat-precio-' + uid);
+  if (precioInp && p.price) {
+    precioInp.value = p.price.toFixed(2);
+  }
+
+  // Cerrar dropdown
+  var drop = document.getElementById('mat-drop-' + uid);
+  if (drop) drop.style.display = 'none';
+
+  // Calcular total
+  var key = uid.split('-').slice(0,-1).join('-');
+  calcTotalFor(uid, key);
+
+  showToast('✅ Producto añadido', 'success');
+}
+
+function addMatRowFor(key) {
+  if (matIdxMap[key] === undefined) matIdxMap[key] = 0;
+  var i   = matIdxMap[key]++;
+  var uid = key + '-' + i;
+  var tr  = document.createElement('tr');
+  tr.id   = 'mat-row-' + uid;
+
+  // Construir la fila usando DOM para evitar problemas de comillas
+  var tdDesc = document.createElement('td');
+  tdDesc.style.minWidth = '140px';
+  var wrap = document.createElement('div');
+  wrap.className = 'mat-producto-wrap';
+  var inpDesc = document.createElement('input');
+  inpDesc.className = 'mat-input mat-producto-input';
+  inpDesc.placeholder = 'Buscar producto...';
+  inpDesc.id = 'mat-desc-' + uid;
+  inpDesc.autocomplete = 'off';
+  inpDesc.setAttribute('oninput', 'buscarProductosHolded(this.value,"' + uid + '")');
+  inpDesc.setAttribute('onblur', 'setTimeout(function(){var d=document.getElementById("mat-drop-' + uid + '");if(d)d.style.display="none";},200)');
+  var drop = document.createElement('div');
+  drop.className = 'mat-producto-drop';
+  drop.id = 'mat-drop-' + uid;
+  drop.style.display = 'none';
+  wrap.appendChild(inpDesc);
+  wrap.appendChild(drop);
+  tdDesc.appendChild(wrap);
+  tr.appendChild(tdDesc);
+
+  var tdCant = document.createElement('td');
+  var inpCant = document.createElement('input');
+  inpCant.className = 'mat-input';
+  inpCant.type = 'number'; inpCant.min = '0'; inpCant.placeholder = '1';
+  inpCant.id = 'mat-cant-' + uid; inpCant.style.width = '48px';
+  inpCant.setAttribute('oninput', 'calcTotalFor("' + uid + '","' + key + '")');
+  tdCant.appendChild(inpCant); tr.appendChild(tdCant);
+
+  var tdPrecio = document.createElement('td');
+  var inpPrecio = document.createElement('input');
+  inpPrecio.className = 'mat-input';
+  inpPrecio.type = 'number'; inpPrecio.min = '0'; inpPrecio.step = '0.01'; inpPrecio.placeholder = '0.00';
+  inpPrecio.id = 'mat-precio-' + uid; inpPrecio.style.width = '72px';
+  inpPrecio.setAttribute('oninput', 'calcTotalFor("' + uid + '","' + key + '")');
+  tdPrecio.appendChild(inpPrecio); tr.appendChild(tdPrecio);
+
+  var tdTotal = document.createElement('td');
+  var spanTotal = document.createElement('span');
+  spanTotal.id = 'mat-total-' + uid;
+  spanTotal.style.cssText = 'font-size:12px;color:var(--accent);font-weight:600;';
+  spanTotal.textContent = '—';
+  tdTotal.appendChild(spanTotal); tr.appendChild(tdTotal);
+
+  var tdDel = document.createElement('td');
+  var btnDel = document.createElement('button');
+  btnDel.className = 'del-row-btn';
+  btnDel.textContent = '×';
+  btnDel.setAttribute('onclick', 'document.getElementById("mat-row-' + uid + '").remove();recalcTotal("' + key + '")');
+  tdDel.appendChild(btnDel); tr.appendChild(tdDel);
+
+  document.getElementById('mat-tbody-' + key).appendChild(tr);
+}
 function calcTotalFor(uid,key){const c=parseFloat(document.getElementById('mat-cant-'+uid)?.value)||0;const p=parseFloat(document.getElementById('mat-precio-'+uid)?.value)||0;const el=document.getElementById('mat-total-'+uid);if(el)el.textContent=c&&p?(c*p).toFixed(2)+' €':'—';recalcTotal(key);}
 function recalcTotal(key){const tbody=document.getElementById('mat-tbody-'+key);if(!tbody)return;let total=0,hay=false;tbody.querySelectorAll('[id^="mat-cant-"]').forEach(el=>{const uid=el.id.replace('mat-cant-','');const c=parseFloat(el.value)||0;const p=parseFloat(document.getElementById('mat-precio-'+uid)?.value)||0;if(c&&p){total+=c*p;hay=true;}});const display=document.getElementById('mat-total-display-'+key);const sum=document.getElementById('mat-total-sum-'+key);if(display&&sum){display.style.display=hay?'block':'none';sum.textContent=total.toFixed(2)+' €';}}
 function getMaterilesFor(key){const filas=[],tbody=document.getElementById('mat-tbody-'+key);if(!tbody)return'—';tbody.querySelectorAll('[id^="mat-desc-"]').forEach(el=>{const uid=el.id.replace('mat-desc-',''),desc=el.value.trim();if(!desc)return;filas.push(`${desc} | Cant: ${document.getElementById('mat-cant-'+uid)?.value||''} | P.u.: ${document.getElementById('mat-precio-'+uid)?.value||''}€ | Total: ${document.getElementById('mat-total-'+uid)?.textContent||''}`);});return filas.length?filas.join('\n'):'—';}
