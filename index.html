@@ -609,6 +609,17 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 </div>
 
 
+
+<!-- OVERLAY GLOBAL PRODUCTOS -->
+<div id="productos-overlay" style="display:none;position:fixed;inset:0;z-index:998;background:rgba(0,0,0,.3);" onclick="cerrarOverlayProductos()"></div>
+<div id="productos-panel" style="display:none;position:fixed;left:0;right:0;bottom:0;z-index:999;background:var(--surface);border-radius:16px 16px 0 0;max-height:70vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,.15);">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);">
+    <div style="font-size:14px;font-weight:700;color:var(--text);">📦 Seleccionar producto</div>
+    <button onclick="cerrarOverlayProductos()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);">✕</button>
+  </div>
+  <div id="productos-lista"></div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -783,19 +794,26 @@ const matIdxMap={};
 // Cache de productos por empresa
 var productosCache = {};
 
+// UID activo para el selector de productos
+var _prodUidActivo = null;
+
 async function buscarProductosHolded(q, uid) {
+  _prodUidActivo = uid;
   var empresa = empresaAlbaran || empresaChecklist || 'marcres';
-  var drop = document.getElementById('mat-drop-' + uid);
-  if (!drop) return;
 
-  // Si no hay query, ocultar dropdown
-  if (!q || q.length < 1) { drop.style.display = 'none'; return; }
+  if (!q || q.length < 1) { cerrarOverlayProductos(); return; }
 
-  drop.style.display = 'block';
-  drop.innerHTML = '<div class="mat-producto-item"><span class="mat-producto-nombre">Buscando...</span></div>';
+  // Mostrar overlay con "Buscando..."
+  var lista = document.getElementById('productos-lista');
+  var overlay = document.getElementById('productos-overlay');
+  var panel   = document.getElementById('productos-panel');
+  if (!lista || !overlay || !panel) return;
+
+  overlay.style.display = 'block';
+  panel.style.display   = 'block';
+  lista.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:14px;">⏳ Buscando...</div>';
 
   try {
-    // Usar caché si ya tenemos productos
     if (!productosCache[empresa]) {
       var res  = await fetch(GAS_URL + '?action=productos&empresa=' + empresa);
       var data = await res.json();
@@ -803,60 +821,65 @@ async function buscarProductosHolded(q, uid) {
     }
 
     var todos = productosCache[empresa] || [];
+    var ql = q.toLowerCase().replace(/_/g, ' ').trim();
 
-    // Búsqueda flexible: quitar guiones bajos y espacios extra para comparar
-    var ql = q.toLowerCase().replace(/_/g, ' ').replace(/\s+/g, ' ').trim();
     var filtrados = todos.filter(function(p) {
       var nombre = (p.name || '').toLowerCase().replace(/_/g, ' ');
       var sku    = (p.sku  || '').toLowerCase();
       var desc   = (p.desc || '').toLowerCase().replace(/_/g, ' ');
       return nombre.indexOf(ql) >= 0 || sku.indexOf(ql) >= 0 || desc.indexOf(ql) >= 0;
-    }).slice(0, 15);
+    }).slice(0, 20);
 
-    // Si no hay resultados con búsqueda exacta, intentar por palabras individuales
     if (!filtrados.length && ql.length >= 3) {
-      var palabras = ql.split(' ').filter(function(p) { return p.length >= 3; });
+      var palabras = ql.split(' ').filter(function(w) { return w.length >= 3; });
       filtrados = todos.filter(function(p) {
         var nombre = (p.name || '').toLowerCase().replace(/_/g, ' ');
         return palabras.every(function(pal) { return nombre.indexOf(pal) >= 0; });
-      }).slice(0, 15);
+      }).slice(0, 20);
     }
 
+    window['_prods_' + uid] = filtrados;
+
     if (!filtrados.length) {
-      drop.innerHTML = '<div class="mat-producto-item"><span class="mat-producto-nombre" style="color:var(--muted)">Sin resultados</span></div>';
+      lista.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:14px;">Sin resultados para "' + q + '"</div>';
       return;
     }
 
-    // Guardar en window para acceso por índice
-    window['_prods_' + uid] = filtrados;
-
-    var html = '<div class="mat-producto-drop-header">Resultados: ' + filtrados.length + '</div>';
+    var html = '';
     for (var pi = 0; pi < filtrados.length; pi++) {
       var p      = filtrados[pi];
-      var stock  = p.hasStock ? '<span class="mat-producto-stock">Stock: ' + (p.stock || 0) + '</span>' : '';
       var ref    = p.sku ? 'Ref: ' + p.sku : '';
-      var desc2  = p.desc ? p.desc.substring(0,50) : '';
+      var desc2  = p.desc ? p.desc.substring(0, 50) : '';
+      var subref = [ref, desc2].filter(function(x) { return x; }).join(' · ');
       var precio = p.price ? p.price.toFixed(2) + ' €' : '';
-      var subref = [ref, desc2].filter(function(x){return x;}).join(' · ');
-      html += '<div class="mat-producto-item">';
-      html += '<div class="mat-producto-info">';
-      html += '<div class="mat-producto-nombre">' + (p.name || '').replace(/_/g,' ') + '</div>';
-      html += '<div class="mat-producto-ref">' + subref + '</div>';
-      html += '</div>';
-      html += '<div class="mat-producto-precios">';
-      html += '<span class="mat-producto-precio">' + precio + '</span>';
-      html += stock + '</div>';
-      html += '<button class="mat-elegir-btn" onclick="elegirProducto(\'' + uid + '\',' + pi + ')">Elegir</button>';
+      var stock  = p.hasStock ? '<span style="font-size:11px;color:var(--ok);font-weight:600;">Stock: ' + (p.stock || 0) + '</span>' : '';
+
+      html += '<div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);">';
+      html += '<div style="flex:1;min-width:0;">';
+      html += '<div style="font-size:14px;font-weight:600;color:var(--text);">' + (p.name || '').replace(/_/g,' ') + '</div>';
+      if (subref) html += '<div style="font-size:11px;color:var(--muted);margin-top:2px;">' + subref + '</div>';
+      html += '<div style="display:flex;gap:8px;margin-top:4px;">';
+      html += '<span style="font-size:13px;color:var(--accent);font-weight:700;">' + precio + '</span>';
+      html += stock;
+      html += '</div></div>';
+            html += '<button data-uid="' + uid + '" data-pi="' + pi + '" onclick="var u=this.getAttribute(\'data-uid\');var i=parseInt(this.getAttribute(\'data-pi\'));elegirProducto(u,i);" style="background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:8px 16px;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0;">Elegir</button>';
       html += '</div>';
     }
-    drop.innerHTML = html;
-    var inputEl = document.getElementById('mat-desc-' + uid);
-    if (inputEl) { var rect = inputEl.getBoundingClientRect(); drop.style.top = (rect.bottom + window.scrollY + 4) + 'px'; }
+    lista.innerHTML = html;
 
   } catch(err) {
-    drop.innerHTML = '<div class="mat-producto-item"><span class="mat-producto-nombre" style="color:var(--bad)">Error cargando productos</span></div>';
+    lista.innerHTML = '<div style="padding:20px;text-align:center;color:var(--bad);font-size:14px;">Error cargando productos</div>';
   }
 }
+
+function cerrarOverlayProductos() {
+  var overlay = document.getElementById('productos-overlay');
+  var panel   = document.getElementById('productos-panel');
+  if (overlay) overlay.style.display = 'none';
+  if (panel)   panel.style.display   = 'none';
+}
+
+
 
 function elegirProducto(uid, idx) {
   var prods = window['_prods_' + uid] || [];
