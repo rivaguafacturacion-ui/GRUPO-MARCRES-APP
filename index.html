@@ -605,7 +605,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 
 <!-- OVERLAY GLOBAL PRODUCTOS -->
 <div id="productos-overlay" style="display:none;position:fixed;inset:0;z-index:998;background:rgba(0,0,0,.3);" onclick="cerrarOverlayProductos()"></div>
-<div id="productos-panel" style="display:none;position:fixed;left:0;right:0;bottom:0;z-index:999;background:var(--surface);border-radius:16px 16px 0 0;max-height:75vh;display:none;flex-direction:column;box-shadow:0 -4px 24px rgba(0,0,0,.15);">
+<div id="productos-panel" style="display:none;position:fixed;left:0;right:0;bottom:0;z-index:999;background:var(--surface);border-radius:16px 16px 0 0;max-height:75vh;flex-direction:column;box-shadow:0 -4px 24px rgba(0,0,0,.15);">
   <div style="padding:14px 16px 10px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:1;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
       <div style="font-size:14px;font-weight:700;color:var(--text);">📦 Seleccionar producto</div>
@@ -629,7 +629,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 <script>
 const GAS_URL='https://script.google.com/macros/s/AKfycbwMdbr48W3chZxft1IppcFmMm9RaEkvMrwrqIY9YofjYwJtLaVPirO8MpNM1rbumWE-2w/exec';
 let empresaChecklist=null,empresaAlbaran=null,tipoAlbaran=null,currentFotoKey=null,currentFotoSlot=null;
-const fotosData={mant:Array(5).fill(null),simple:Array(5).fill(null),elec:Array(5).fill(null),hid:Array(5).fill(null),taller:Array(1).fill(null)};
+const fotosData={mant:Array(5).fill(null),simple:Array(5).fill(null),elec:Array(5).fill(null),hid:Array(5).fill(null),taller:[null]};
 const ausenteState={elec:false,hid:false,mant:false,simple:false};
 const firmaData={};
 const pdfData={elec:null,hid:null,mant:null,simple:null};
@@ -1065,7 +1065,7 @@ function buildFotoGrid(key){if(key==='taller'){tallerFotoData=fotosData['taller'
 function openCamera(key,slot){currentFotoKey=key;currentFotoSlot=slot;const inp=document.getElementById('foto-input-'+key);if(inp){inp.value='';inp.click();}}
 function removePhoto(key,slot,e){e.stopPropagation();fotosData[key][slot]=null;buildFotoGrid(key);}
 function updateFotoCounter(key){const cnt=fotosData[key].filter(Boolean).length;const max=key==='taller'?1:5;const el=document.getElementById('cnt-fotos-'+key)||document.getElementById('cnt-'+key);if(!el)return;el.textContent=cnt+'/'+max;el.style.background=cnt===max?'var(--ok-bg)':'var(--bad-bg)';el.style.color=cnt===max?'var(--ok)':'var(--bad)';el.style.borderColor=cnt===max?'var(--ok)':'var(--bad)';}
-function initFotos(){['mant','simple','elec','hid','taller'].forEach(key=>{const inp=document.getElementById('foto-input-'+key);if(!inp)return;inp.addEventListener('change',function(){const file=this.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{const img=new Image();img.onload=()=>{const canvas=document.createElement('canvas'),MAX=800;let w=img.width,h=img.height;if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);fotosData[currentFotoKey][currentFotoSlot]=canvas.toDataURL('image/jpeg',0.75);buildFotoGrid(currentFotoKey);};img.src=e.target.result;};reader.readAsDataURL(file);});buildFotoGrid(key);});}
+function initFotos(){['mant','simple','elec','hid'].forEach(key=>{const inp=document.getElementById('foto-input-'+key);if(!inp)return;inp.addEventListener('change',function(){const file=this.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{const img=new Image();img.onload=()=>{const canvas=document.createElement('canvas'),MAX=800;let w=img.width,h=img.height;if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);fotosData[currentFotoKey][currentFotoSlot]=canvas.toDataURL('image/jpeg',0.75);buildFotoGrid(currentFotoKey);};img.src=e.target.result;};reader.readAsDataURL(file);});buildFotoGrid(key);});}
 
 function initFirmas(){document.querySelectorAll('.firma-canvas').forEach(canvas=>{const id=canvas.id;firmaData[id]={signed:false};let drawing=false,lx=0,ly=0;const ctx=canvas.getContext('2d');ctx.strokeStyle='#184595';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';function getPos(e){const r=canvas.getBoundingClientRect();const src=e.touches?e.touches[0]:e;return{x:(src.clientX-r.left)*(canvas.width/r.width),y:(src.clientY-r.top)*(canvas.height/r.height)};}function start(e){e.preventDefault();drawing=true;const p=getPos(e);lx=p.x;ly=p.y;ctx.beginPath();ctx.arc(lx,ly,1,0,Math.PI*2);ctx.fill();}function move(e){e.preventDefault();if(!drawing)return;const p=getPos(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p.x,p.y);ctx.stroke();lx=p.x;ly=p.y;firmaData[id].signed=true;canvas.classList.add('signed');}function end(){drawing=false;}canvas.width=canvas.offsetWidth||300;canvas.height=140;canvas.addEventListener('mousedown',start);canvas.addEventListener('mousemove',move);canvas.addEventListener('mouseup',end);canvas.addEventListener('touchstart',start,{passive:false});canvas.addEventListener('touchmove',move,{passive:false});canvas.addEventListener('touchend',end);});}
 function limpiarFirma(id){const canvas=document.getElementById('firma-'+id);if(!canvas)return;canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);firmaData['firma-'+id]={signed:false};canvas.classList.remove('signed');}
@@ -1248,22 +1248,16 @@ function selectTaller(el,val){
   }
 }
 function abrirFotoTaller(){document.getElementById('taller-foto-input').click();}
-function cargarFotoTaller(input) {
-  // Compatibilidad — ya gestionado por initFotos vía foto-input-taller
-  // Esta función queda como fallback
-}
+function cargarFotoTaller(input){}
 
 
 
 
 
 
-function borrarFotoTaller(e) {
-  e.stopPropagation();
-  tallerFotoData = null;
-  fotosData['taller'][0] = null;
-  buildFotoGrid('taller');
-}
+
+function borrarFotoTaller(e){e.stopPropagation();removeFotoTaller(e);}
+
 
 
 
@@ -1926,6 +1920,64 @@ function desbloquearAntiRefresco() {
   document.removeEventListener('touchmove', _bloquearTouchMove);
 }
 
+
+// ══ FOTO TALLER — sistema independiente ══
+function initFotoTaller() {
+  var inp = document.getElementById('foto-input-taller');
+  if (!inp) return;
+  inp.addEventListener('change', function() {
+    var file = this.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var canvas = document.createElement('canvas'), MAX = 800;
+        var w = img.width, h = img.height;
+        if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+        if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        fotosData['taller'][0] = canvas.toDataURL('image/jpeg', 0.75);
+        tallerFotoData = fotosData['taller'][0];
+        buildFotoGridTaller();
+        showToast('✅ Foto de taller añadida', 'success');
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+    this.value = '';
+  });
+  buildFotoGridTaller();
+}
+
+function buildFotoGridTaller() {
+  var grid = document.getElementById('fotos-grid-taller');
+  if (!grid) return;
+  grid.innerHTML = '';
+  var slot = document.createElement('div');
+  if (fotosData['taller'][0]) {
+    slot.className = 'foto-slot filled';
+    slot.innerHTML = '<img src="' + fotosData['taller'][0] + '" alt="Foto taller">' +
+      '<button class="remove-btn" onclick="removeFotoTaller(event)">✕</button>';
+  } else {
+    slot.className = 'foto-slot';
+    slot.innerHTML = '<span class="slot-icon">📷</span><span class="slot-num">1</span>';
+    slot.onclick = function() {
+      var inp = document.getElementById('foto-input-taller');
+      if (inp) { inp.value = ''; inp.click(); }
+    };
+  }
+  grid.appendChild(slot);
+}
+
+function removeFotoTaller(e) {
+  e.stopPropagation();
+  fotosData['taller'][0] = null;
+  tallerFotoData = null;
+  buildFotoGridTaller();
+}
+
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type;setTimeout(()=>t.classList.add('show'),10);setTimeout(()=>t.classList.remove('show'),4000);}
 function tickClock(){const n=new Date();document.getElementById('hora-display').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
 tickClock();setInterval(tickClock,30000);
@@ -2068,7 +2120,7 @@ function comprobarPermisoUbicacion() {
 }
 
 buildAlbaranTables();buildChecklistTables();
-comprobarPermisoUbicacion();buildElec();initFotos();initFirmas();
+comprobarPermisoUbicacion();buildElec();initFotos();initFirmas();initFotoTaller();
 addMatRowFor('simple');addMatRowFor('mant');addMatRowFor('elec');addMatRowFor('hid');
 const nowInit=new Date();
 const horaStr=String(nowInit.getHours()).padStart(2,'0')+':'+String(nowInit.getMinutes()).padStart(2,'0');
