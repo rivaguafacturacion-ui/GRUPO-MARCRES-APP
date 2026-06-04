@@ -975,26 +975,23 @@ function elegirProducto(uid, idx) {
 
   // Rellenar descripción
   var inp = document.getElementById('mat-desc-' + uid);
-  if (inp) {
-    inp.value      = p.name || '';
-    inp.classList.add('elegido');
-  }
+  if (inp) { inp.value = p.name || ''; inp.classList.add('elegido'); }
 
   // Rellenar precio
   var precioInp = document.getElementById('mat-precio-' + uid);
-  if (precioInp && p.price) {
-    precioInp.value = p.price.toFixed(2);
-  }
-
-  // Cerrar dropdown
-  var drop = document.getElementById('mat-drop-' + uid);
-  if (drop) drop.style.display = 'none';
+  if (precioInp && p.price) { precioInp.value = p.price.toFixed(2); }
 
   // Calcular total
   var key = uid.split('-').slice(0,-1).join('-');
   calcTotalFor(uid, key);
 
-  showToast('✅ Producto añadido', 'success');
+  // Cerrar el panel overlay
+  cerrarOverlayProductos();
+
+  // Añadir automáticamente una nueva fila vacía para seguir añadiendo
+  addMatRowFor(key);
+
+  showToast('✅ ' + (p.name || 'Producto') + ' añadido', 'success');
 }
 
 function addMatRowFor(key) {
@@ -1067,7 +1064,7 @@ function borrarPdf(key){pdfData[key]=null;document.getElementById('pdf-input-'+k
 function buildFotoGrid(key){if(key==='taller'){tallerFotoData=fotosData['taller'][0]||null;}const grid=document.getElementById('fotos-grid-'+key);grid.innerHTML='';const maxSlots=key==='taller'?1:5;for(let i=0;i<maxSlots;i++){const slot=document.createElement('div');slot.className='foto-slot'+(fotosData[key][i]?' filled':'');if(fotosData[key][i]){slot.innerHTML=`<img src="${fotosData[key][i]}" alt="Foto ${i+1}"><button class="remove-btn" onclick="removePhoto('${key}',${i},event)">✕</button>`;}else{slot.innerHTML=`<span class="slot-icon">📷</span><span class="slot-num">${i+1}</span>`;slot.onclick=()=>openCamera(key,i);}grid.appendChild(slot);}updateFotoCounter(key);}
 function openCamera(key,slot){currentFotoKey=key;currentFotoSlot=slot;const inp=document.getElementById('foto-input-'+key);if(inp){inp.value='';inp.click();}}
 function removePhoto(key,slot,e){e.stopPropagation();fotosData[key][slot]=null;buildFotoGrid(key);}
-function updateFotoCounter(key){const cnt=fotosData[key].filter(Boolean).length;const el=document.getElementById('cnt-fotos-'+key)||document.getElementById('cnt-'+key);if(!el)return;el.textContent=cnt+'/5';el.style.background=cnt===5?'var(--ok-bg)':'var(--bad-bg)';el.style.color=cnt===5?'var(--ok)':'var(--bad)';el.style.borderColor=cnt===5?'var(--ok)':'var(--bad)';}
+function updateFotoCounter(key){const cnt=fotosData[key].filter(Boolean).length;const max=key==='taller'?1:5;const el=document.getElementById('cnt-fotos-'+key)||document.getElementById('cnt-'+key);if(!el)return;el.textContent=cnt+'/'+max;el.style.background=cnt===max?'var(--ok-bg)':'var(--bad-bg)';el.style.color=cnt===max?'var(--ok)':'var(--bad)';el.style.borderColor=cnt===max?'var(--ok)':'var(--bad)';}
 function initFotos(){['mant','simple','elec','hid','taller'].forEach(key=>{const inp=document.getElementById('foto-input-'+key);if(!inp)return;inp.addEventListener('change',function(){const file=this.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{const img=new Image();img.onload=()=>{const canvas=document.createElement('canvas'),MAX=800;let w=img.width,h=img.height;if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);fotosData[currentFotoKey][currentFotoSlot]=canvas.toDataURL('image/jpeg',0.75);buildFotoGrid(currentFotoKey);};img.src=e.target.result;};reader.readAsDataURL(file);});buildFotoGrid(key);});}
 
 function initFirmas(){document.querySelectorAll('.firma-canvas').forEach(canvas=>{const id=canvas.id;firmaData[id]={signed:false};let drawing=false,lx=0,ly=0;const ctx=canvas.getContext('2d');ctx.strokeStyle='#184595';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';function getPos(e){const r=canvas.getBoundingClientRect();const src=e.touches?e.touches[0]:e;return{x:(src.clientX-r.left)*(canvas.width/r.width),y:(src.clientY-r.top)*(canvas.height/r.height)};}function start(e){e.preventDefault();drawing=true;const p=getPos(e);lx=p.x;ly=p.y;ctx.beginPath();ctx.arc(lx,ly,1,0,Math.PI*2);ctx.fill();}function move(e){e.preventDefault();if(!drawing)return;const p=getPos(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p.x,p.y);ctx.stroke();lx=p.x;ly=p.y;firmaData[id].signed=true;canvas.classList.add('signed');}function end(){drawing=false;}canvas.width=canvas.offsetWidth||300;canvas.height=140;canvas.addEventListener('mousedown',start);canvas.addEventListener('mousemove',move);canvas.addEventListener('mouseup',end);canvas.addEventListener('touchstart',start,{passive:false});canvas.addEventListener('touchmove',move,{passive:false});canvas.addEventListener('touchend',end);});}
