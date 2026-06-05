@@ -738,7 +738,7 @@ function buildChecklistTables(){
   for(let i=1;i<=2;i++){const r=document.createElement('tr');r.innerHTML=`<td class="row-name">Descalcif. ${i}</td>${funcTd('hd'+i+'f')}${ruidoTd('hd'+i+'r')}${fugasTd('hd'+i+'g')}${estadoTd('hd'+i+'e')}`;document.getElementById('htb-desc').appendChild(r);}
   for(let i=1;i<=4;i++){const r=document.createElement('tr');r.innerHTML=`<td class="row-name">Achique ${i}</td>${funcTd('ha'+i+'f')}${ruidoTd('ha'+i+'r')}${fugasTd('ha'+i+'g')}${estadoTd('ha'+i+'e')}`;document.getElementById('htb-achique').appendChild(r);}
 }
-const elecItems=['Equipos de protección sobreconsumo (Magnetotérmicos)','Equipos de protección contra derivaciones (Diferenciales)','Fallos por falta de derivaciones a tierra','Estado de los conductores (Tipo y estado)','Protección de bombas (Guardamotores y relés térmicos)','Iluminación en salida de emergencia / cuarto de máquinas'];
+const elecItems=['Equipos de protección sobreconsumo (Magnetotérmicos)','Equipos de protección contra derivaciones (Diferenciales)','Fallos por falta de derivaciones a tierra','Estado de los conductores (Tipo y estado)','Protección de bombas (Guardamotores y relés térmicos)','Iluminación en salida de emergencia / cuarto de máquinas','Estado cuadro de maniobras'];
 function buildElec(){
   document.getElementById('elec-items-body').innerHTML = elecItems.map(function(item, i) {
     return '<div class="elec-item" id="elec-item-'+i+'">' +
