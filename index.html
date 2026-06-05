@@ -362,13 +362,6 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       <div><label class="field-label">Población</label><input type="text" class="field-input" id="c-poblacion" placeholder="Población"></div>
       <div><label class="field-label">C.P.</label><input type="text" class="field-input" id="c-cp" placeholder="Código postal" inputmode="numeric"></div>
     </div>
-    <div class="field-group">
-      <label class="field-label">Corte de agua</label>
-      <div class="pill-group">
-        <span class="pill" onclick="selectCorte(this,'c','Si')">Sí</span>
-        <span class="pill" onclick="selectCorte(this,'c','No')">No</span>
-      </div>
-      <div class="corte-horas" id="c-corte-horas"><input type="text" placeholder="Número de horas del corte (ej: 2h)" id="c-corte-horas-val"></div>
       <div class="btn-inicio-wrap">
         <button class="btn-inicio" id="btn-inicio-c" onclick="iniciarParte('c')">▶ INICIO</button>
         <div class="ubic-aviso" id="ubic-aviso-c">
@@ -396,6 +389,14 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <div class="card" id="csec-mat-elec">
       <div class="section-header" onclick="toggleSec('csec-mat-elec')"><span class="sec-title">Presupuesto Materiales</span><span class="chevron">⌄</span></div>
       <div class="section-body">
+        <div class="field-group">
+          <label class="field-label">Corte de agua</label>
+          <div class="pill-group">
+            <span class="pill" onclick="selectCorte(this,'c-elec','Si')">Sí</span>
+            <span class="pill" onclick="selectCorte(this,'c-elec','No')">No</span>
+          </div>
+          <div class="corte-horas" id="c-elec-corte-horas"><input type="text" placeholder="Número de horas del corte (ej: 2h)" id="c-elec-corte-horas-val"></div>
+        </div>
         <div class="field-group"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-elec" placeholder="Ej: 2h, 1h 30min..." inputmode="decimal"></div>
         <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-elec"></tbody></table></div>
         <div id="mat-total-display-elec" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-elec">0.00 €</span></div>
@@ -417,6 +418,14 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <div class="card" id="csec-mat-hid">
       <div class="section-header" onclick="toggleSec('csec-mat-hid')"><span class="sec-title">Presupuesto Materiales</span><span class="chevron">⌄</span></div>
       <div class="section-body">
+        <div class="field-group">
+          <label class="field-label">Corte de agua</label>
+          <div class="pill-group">
+            <span class="pill" onclick="selectCorte(this,'c-hid','Si')">Sí</span>
+            <span class="pill" onclick="selectCorte(this,'c-hid','No')">No</span>
+          </div>
+          <div class="corte-horas" id="c-hid-corte-horas"><input type="text" placeholder="Número de horas del corte (ej: 2h)" id="c-hid-corte-horas-val"></div>
+        </div>
         <div class="field-group"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-hid" placeholder="Ej: 2h, 1h 30min..." inputmode="decimal"></div>
         <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-hid"></tbody></table></div>
         <div id="mat-total-display-hid" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-hid">0.00 €</span></div>
@@ -900,7 +909,7 @@ async function enviarChecklist(tipo){
   btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
   const ubicacion=await obtenerUbicacion();
   btn.textContent='⏳ Enviando...';
-  const payload={empresa:empresaChecklist,tipo:tipoNombre,fecha:fechaTexto,horaInicio:document.getElementById('c-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('c-direccion').value.trim(),poblacion:document.getElementById('c-poblacion').value.trim(),cp:document.getElementById('c-cp').value.trim(),tecnico,corte:getPill('c-corte'),corteHoras:document.getElementById('c-corte-horas-val')?.value.trim()||'',resumen:buildResumenChecklist(tipo),observaciones:tipo==='elec'?document.getElementById('elec-obs').value.trim():document.getElementById('hid-obs').value.trim(),horasPresupuestadas:document.getElementById('horas-pres-'+tipo)?.value.trim()||'',materiales:getMaterilesFor(tipo),estadoGeneral:null,numDoc:genNumDoc(),fotos:fotosData[tipo].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+tipo),firmaCliente:ausenteState[tipo]?null:getFirmaBase64('cliente-'+tipo),clienteAusente:ausenteState[tipo],motivoAusencia:document.getElementById('ausente-motivo-'+tipo)?.value.trim()||'',presupuestoPdf:pdfData[tipo]||null,ubicacion,horaEnvio:calcHoraFin()};
+  const payload={empresa:empresaChecklist,tipo:tipoNombre,fecha:fechaTexto,horaInicio:document.getElementById('c-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('c-direccion').value.trim(),poblacion:document.getElementById('c-poblacion').value.trim(),cp:document.getElementById('c-cp').value.trim(),tecnico,corte:getPill('c-'+tipo+'-corte'),corteHoras:document.getElementById('c-'+tipo+'-corte-horas-val')?.value.trim()||'',resumen:buildResumenChecklist(tipo),observaciones:tipo==='elec'?document.getElementById('elec-obs').value.trim():document.getElementById('hid-obs').value.trim(),horasPresupuestadas:document.getElementById('horas-pres-'+tipo)?.value.trim()||'',materiales:getMaterilesFor(tipo),estadoGeneral:null,numDoc:genNumDoc(),fotos:fotosData[tipo].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+tipo),firmaCliente:ausenteState[tipo]?null:getFirmaBase64('cliente-'+tipo),clienteAusente:ausenteState[tipo],motivoAusencia:document.getElementById('ausente-motivo-'+tipo)?.value.trim()||'',presupuestoPdf:pdfData[tipo]||null,ubicacion,horaEnvio:calcHoraFin()};
   try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal();else throw new Error(data.error||'Error desconocido');}
   catch(err){showToast('❌ Error: '+(err.message||'sin conexión'),'error');btn.disabled=false;btn.textContent=`📤 Enviar ${tipoNombre.toLowerCase()}`;}
 }
