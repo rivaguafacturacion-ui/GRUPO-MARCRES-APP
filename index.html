@@ -511,23 +511,6 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       </div>
     </div>
   </div>
-      <div class="card"><div class="field-group" style="margin:0;">
-      <label class="field-label">Material sustituido a taller</label>
-      <div class="taller-btn-group">
-        <button class="taller-btn" id="taller-btn-si" onclick="selectTallerNuevo('Si')">✔ Sí</button>
-        <button class="taller-btn" id="taller-btn-no" onclick="selectTallerNuevo('No')">✖ No</button>
-      </div>
-      <div class="taller-nueva-foto" id="taller-nueva-foto">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">📷 Foto del material (obligatoria)</div>
-        <div class="taller-grid" id="taller-grid">
-          <div class="taller-slot" id="taller-slot-nuevo" onclick="document.getElementById('taller-input-nuevo').click()">
-            <span style="font-size:22px;">📷</span>
-          </div>
-        </div>
-      </div>
-      <input type="file" accept="image/*" capture="environment" id="taller-input-nuevo" style="display:none;" onchange="onTallerFoto(this)">
-    </div></div>
-
   <div class="contenido-parte" id="contenido-parte-a">
   <div class="card" style="padding:14px;">
     <label class="field-label" style="margin-bottom:10px;display:block;">Albarán de</label>
@@ -573,7 +556,24 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
   </div>
 
   <div id="panel-simple" class="panel">
-    <div class="card" id="sec-obs-simple"><div class="section-header section-open" onclick="toggleSec('sec-obs-simple')"><span class="sec-title">Observaciones / Descripción</span><span class="chevron">⌄</span></div><div class="section-body" style="display:block;"><div class="obs-section"><textarea class="obs-textarea" id="simple-obs" placeholder="Describe el trabajo realizado..."></textarea></div></div></div>
+    <div class="card" id="sec-obs-simple"><div class="section-header section-open" onclick="toggleSec('sec-obs-simple')"><span class="sec-title">Observaciones / Descripción</span><span class="chevron">⌄</span></div><div class="section-body" style="display:block;"><div class="obs-section"><textarea class="obs-textarea" id="simple-obs" placeholder="Describe el trabajo realizado..."></textarea></div></div>
+
+      <div class="card"><div class="field-group" style="margin:0;">
+      <label class="field-label">Material sustituido a taller</label>
+      <div class="taller-btn-group">
+        <button class="taller-btn" id="taller-btn-si" onclick="selectTallerNuevo('Si')">✔ Sí</button>
+        <button class="taller-btn" id="taller-btn-no" onclick="selectTallerNuevo('No')">✖ No</button>
+      </div>
+      <div class="taller-nueva-foto" id="taller-nueva-foto">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">📷 Foto del material (obligatoria)</div>
+        <div class="taller-grid" id="taller-grid">
+          <div class="taller-slot" id="taller-slot-nuevo" onclick="document.getElementById('taller-input-nuevo').click()">
+            <span style="font-size:22px;">📷</span>
+          </div>
+        </div>
+      </div>
+      <input type="file" accept="image/*" capture="environment" id="taller-input-nuevo" style="display:none;" onchange="onTallerFoto(this)">
+    </div></div></div>
     <div class="card" id="sec-mat-simple">
       <div class="section-header section-open" onclick="toggleSec('sec-mat-simple')"><span class="sec-title">Presupuesto Materiales</span><span class="chevron">⌄</span></div>
       <div class="section-body" style="display:block;">
@@ -714,14 +714,14 @@ function selectCorte(el,prefix,val){const yaActivo=el.classList.contains('p-ok')
 const OK_VALS=['Bien','OK','Si hay','Favorable'];
 const WARN_VALS=['Regular','Bajo','Sucio','Desfavorable','Alta'];
 function selectPillGroup(el,group){const yaActivo=el.classList.contains('p-ok')||el.classList.contains('p-warn')||el.classList.contains('p-bad');el.parentElement.querySelectorAll('.pill').forEach(p=>p.className='pill');if(yaActivo){delete el.dataset.group;return;}const t=el.textContent.trim();if(OK_VALS.includes(t))el.classList.add('p-ok');else if(WARN_VALS.includes(t))el.classList.add('p-warn');else el.classList.add('p-bad');if(group)el.dataset.group=group;}
-function selectPillBad(el,group){const yaActivo=el.classList.contains('p-ok')||el.classList.contains('p-bad');el.parentElement.querySelectorAll('.pill').forEach(p=>p.className='pill');if(yaActivo){delete el.dataset.group;return;}const t=el.textContent.trim();if(t==='No')el.classList.add('p-ok');else el.classList.add('p-bad');if(group)el.dataset.group=group;}
+function pillBad(el,gid){el.parentElement.querySelectorAll('.pill').forEach(function(p){p.className='pill';delete p.dataset.group;});var activo=el.classList.contains('p-ok')||el.classList.contains('p-bad');if(activo)return;if(el.textContent.trim()==='No'){el.classList.add('p-ok');}else{el.classList.add('p-bad');}el.dataset.group=gid;}
 function getPill(g){const el=document.querySelector(`[data-group="${g}"].p-ok,[data-group="${g}"].p-warn,[data-group="${g}"].p-bad`);return el?el.textContent.trim():'—';}
 function mkPills(opts,gid){return `<div class="pill-group">${opts.map(o=>`<span class="pill" onclick="selectPillGroup(this,'${gid}')">${o}</span>`).join('')}</div>`;}
 function mkTd(opts,gid){return `<td>${mkPills(opts,gid)}</td>`;}
 function estadoTd(gid){return mkTd(['Bien','Regular','Mal'],gid);}
 function funcTd(gid){return mkTd(['OK','Fallo'],gid);}
-function ruidoTd(gid){return '<td><div class="pill-group"><span class="pill pill-bad-logic" data-gid="'+gid+'">No</span><span class="pill pill-bad-logic" data-gid="'+gid+'">S\u00ed</span></div></td>';}
-function fugasTd(gid){return '<td><div class="pill-group"><span class="pill pill-bad-logic" data-gid="'+gid+'">No</span><span class="pill pill-bad-logic" data-gid="'+gid+'">S\u00ed</span></div></td>';}
+function ruidoTd(gid){return '<td><div class="pill-group"><span class="pill" onclick="pillBad(this,&apos;'+gid+'&apos;)">No</span><span class="pill" onclick="pillBad(this,&apos;'+gid+'&apos;)">Sí</span></div></td>';}
+function fugasTd(gid){return '<td><div class="pill-group"><span class="pill" onclick="pillBad(this,&apos;'+gid+'&apos;)">No</span><span class="pill" onclick="pillBad(this,&apos;'+gid+'&apos;)">Sí</span></div></td>';}
 function siNoTd(gid){return mkTd(['SI','NO'],gid);}
 
 function buildAlbaranTables(){
@@ -1976,18 +1976,6 @@ function comprobarPermisoUbicacion() {
 
 buildAlbaranTables();buildChecklistTables();
 comprobarPermisoUbicacion();buildElec();initFotos();initFirmas();
-// Listener delegado para pills de ruido/fugas (No=verde, Sí=rojo)
-document.addEventListener('click',function(e){
-  var el=e.target;
-  if(!el.classList.contains('pill-bad-logic'))return;
-  var gid=el.getAttribute('data-gid');
-  var yaActivo=el.classList.contains('p-ok')||el.classList.contains('p-bad');
-  el.parentElement.querySelectorAll('.pill-bad-logic').forEach(function(p){p.className='pill pill-bad-logic';p.setAttribute('data-gid',gid);});
-  if(yaActivo){delete el.dataset.group;return;}
-  var t=el.textContent.trim();
-  if(t==='No')el.classList.add('p-ok');else el.classList.add('p-bad');
-  el.dataset.group=gid;
-});
 addMatRowFor('simple');addMatRowFor('mant');addMatRowFor('elec');addMatRowFor('hid');
 const nowInit=new Date();
 const horaStr=String(nowInit.getHours()).padStart(2,'0')+':'+String(nowInit.getMinutes()).padStart(2,'0');
