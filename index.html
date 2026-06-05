@@ -712,15 +712,16 @@ function toggleSec(id){const sec=document.getElementById(id);const hdr=sec.query
 function selectCorte(el,prefix,val){const yaActivo=el.classList.contains('p-ok')||el.classList.contains('p-bad');el.parentElement.querySelectorAll('.pill').forEach(p=>p.className='pill');const horas=document.getElementById(prefix+'-corte-horas');if(yaActivo){if(horas)horas.classList.remove('show');return;}if(val==='Si')el.classList.add('p-bad');else el.classList.add('p-ok');el.dataset.group=prefix+'-corte';if(horas)horas.classList.toggle('show',val==='Si');}
 
 const OK_VALS=['Bien','OK','Sí','Si hay','Favorable','No'];
-const WARN_VALS=['Regular','Bajo','Sucio','Desfavorable','Alta','Sí'];
+const WARN_VALS=['Regular','Bajo','Sucio','Desfavorable','Alta'];
 function selectPillGroup(el,group){const yaActivo=el.classList.contains('p-ok')||el.classList.contains('p-warn')||el.classList.contains('p-bad');el.parentElement.querySelectorAll('.pill').forEach(p=>p.className='pill');if(yaActivo){delete el.dataset.group;return;}const t=el.textContent.trim();if(OK_VALS.includes(t))el.classList.add('p-ok');else if(WARN_VALS.includes(t))el.classList.add('p-warn');else el.classList.add('p-bad');if(group)el.dataset.group=group;}
+function selectPillBad(el,group){const yaActivo=el.classList.contains('p-ok')||el.classList.contains('p-bad');el.parentElement.querySelectorAll('.pill').forEach(p=>p.className='pill');if(yaActivo){delete el.dataset.group;return;}const t=el.textContent.trim();if(t==='No')el.classList.add('p-ok');else el.classList.add('p-bad');if(group)el.dataset.group=group;}
 function getPill(g){const el=document.querySelector(`[data-group="${g}"].p-ok,[data-group="${g}"].p-warn,[data-group="${g}"].p-bad`);return el?el.textContent.trim():'—';}
 function mkPills(opts,gid){return `<div class="pill-group">${opts.map(o=>`<span class="pill" onclick="selectPillGroup(this,'${gid}')">${o}</span>`).join('')}</div>`;}
 function mkTd(opts,gid){return `<td>${mkPills(opts,gid)}</td>`;}
 function estadoTd(gid){return mkTd(['Bien','Regular','Mal'],gid);}
 function funcTd(gid){return mkTd(['OK','Fallo'],gid);}
-function ruidoTd(gid){return mkTd(['No','Sí'],gid);}
-function fugasTd(gid){return mkTd(['No','Sí'],gid);}
+function ruidoTd(gid){return `<td><div class="pill-group"><span class="pill" onclick="selectPillBad(this,'${gid}')">No</span><span class="pill" onclick="selectPillBad(this,'${gid}')">Sí</span></div></td>`;}
+function fugasTd(gid){return `<td><div class="pill-group"><span class="pill" onclick="selectPillBad(this,'${gid}')">No</span><span class="pill" onclick="selectPillBad(this,'${gid}')">Sí</span></div></td>`;}
 function siNoTd(gid){return mkTd(['SI','NO'],gid);}
 
 function buildAlbaranTables(){
