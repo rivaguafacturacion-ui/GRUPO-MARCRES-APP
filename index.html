@@ -1771,6 +1771,48 @@ function quitarFotoTaller(e){
   var slot=document.getElementById('taller-slot-nuevo');
   if(slot){slot.className='taller-slot';slot.innerHTML='<span style="font-size:22px;">📷</span>';slot.onclick=function(){document.getElementById('taller-input-nuevo').click();};}
 }
+
+function calcTotalFor(uid, key) {
+  var cant   = parseFloat(document.getElementById('mat-cant-'+uid)?.value) || 0;
+  var precio = parseFloat(document.getElementById('mat-precio-'+uid)?.value) || 0;
+  var total  = cant * precio;
+  var spanT  = document.getElementById('mat-total-'+uid);
+  if (spanT) spanT.textContent = total > 0 ? total.toFixed(2) + ' €' : '—';
+  recalcTotal(key);
+}
+
+function recalcTotal(key) {
+  var tbody = document.getElementById('mat-tbody-'+key);
+  if (!tbody) return;
+  var rows  = tbody.querySelectorAll('tr');
+  var suma  = 0;
+  rows.forEach(function(tr) {
+    var uid = tr.id.replace('mat-row-','');
+    var cant   = parseFloat(document.getElementById('mat-cant-'+uid)?.value) || 0;
+    var precio = parseFloat(document.getElementById('mat-precio-'+uid)?.value) || 0;
+    suma += cant * precio;
+  });
+  var disp = document.getElementById('mat-total-display-'+key);
+  var span = document.getElementById('mat-total-sum-'+key);
+  if (disp) disp.style.display = suma > 0 ? 'block' : 'none';
+  if (span) span.textContent = suma.toFixed(2) + ' €';
+}
+
+function getMaterilesFor(key) {
+  var tbody = document.getElementById('mat-tbody-'+key);
+  if (!tbody) return [];
+  var rows = tbody.querySelectorAll('tr');
+  var result = [];
+  rows.forEach(function(tr) {
+    var uid    = tr.id.replace('mat-row-','');
+    var desc   = document.getElementById('mat-desc-'+uid)?.value.trim() || '';
+    var cant   = parseFloat(document.getElementById('mat-cant-'+uid)?.value) || 1;
+    var precio = parseFloat(document.getElementById('mat-precio-'+uid)?.value) || 0;
+    if (desc) result.push({ descripcion: desc, cantidad: cant, precio: precio, total: cant * precio });
+  });
+  return result;
+}
+
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type;setTimeout(()=>t.classList.add('show'),10);setTimeout(()=>t.classList.remove('show'),4000);}
 function tickClock(){const n=new Date();document.getElementById('hora-display').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
 tickClock();setInterval(tickClock,30000);
