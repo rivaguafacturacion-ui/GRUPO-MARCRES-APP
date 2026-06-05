@@ -292,7 +292,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 </div>
 
 <div class="app-nav">
-  <button class="nav-btn active" id="nav-checklist" onclick="switchApp('checklist')"><span>✅</span> Checklist</button>
+  <button class="nav-btn" id="nav-checklist" onclick="switchApp('checklist')"><span>✅</span> Checklist</button>
   <button class="nav-btn" id="nav-albaran" onclick="switchApp('albaran')"><span>📋</span> Albarán</button>
 </div>
 
@@ -304,7 +304,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 </div>
 
 <!-- CHECKLIST -->
-<div id="app-checklist" class="app-panel active">
+<div id="app-checklist" class="app-panel">
 <div class="main">
   <p class="page-title">Checklist Técnico</p>
   <div class="empresa-row">
@@ -319,7 +319,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <div class="field-group"><label class="field-label">Técnico <span style="color:var(--bad)">*</span> <span class="holded-badge">Holded</span></label>
       <div style="position:relative;">
         <div style="display:flex;align-items:center;gap:6px;">
-          <input type="text" class="field-input" id="c-tecnico" placeholder="Escribe para buscar técnico..." autocomplete="off" oninput="buscarEmpleado(this.value,'c')" onfocus="buscarEmpleado(this.value,'c')" style="flex:1;">
+          <input type="text" class="field-input" id="c-tecnico" placeholder="Elige primero Checklist o Albarán..." autocomplete="off" oninput="buscarEmpleado(this.value,'c')" onfocus="buscarEmpleado(this.value,'c')" style="flex:1;" disabled>
           <button onclick="resetTecnico('c')" title="Borrar técnico" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);flex-shrink:0;">✕</button>
         </div>
         <div class="holded-dropdown" id="c-tecnico-drop" style="display:none;"></div>
@@ -457,7 +457,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <div class="field-group"><label class="field-label">Técnico <span style="color:var(--bad)">*</span> <span class="holded-badge">Holded</span></label>
       <div style="position:relative;">
         <div style="display:flex;align-items:center;gap:6px;">
-          <input type="text" class="field-input" id="a-tecnico" placeholder="Escribe para buscar técnico..." autocomplete="off" oninput="buscarEmpleadoAlbaran(this.value)" onfocus="buscarEmpleadoAlbaran(this.value)" style="flex:1;">
+          <input type="text" class="field-input" id="a-tecnico" placeholder="Elige primero Checklist o Albarán..." autocomplete="off" oninput="buscarEmpleadoAlbaran(this.value)" onfocus="buscarEmpleadoAlbaran(this.value)" style="flex:1;" disabled>
           <button onclick="resetTecnicoAlbaran()" title="Borrar técnico" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);flex-shrink:0;">✕</button>
         </div>
         <div class="holded-dropdown" id="a-tecnico-drop" style="display:none;"></div>
@@ -713,6 +713,14 @@ function switchApp(app){
   document.getElementById('app-albaran').classList.toggle('active',app==='albaran');
   document.getElementById('nav-checklist').classList.toggle('active',app==='checklist');
   document.getElementById('nav-albaran').classList.toggle('active',app==='albaran');
+  var tc=document.getElementById('c-tecnico'),ta=document.getElementById('a-tecnico');
+  if(app==='checklist'){
+    tc.disabled=false;tc.placeholder='Escribe para buscar técnico...';
+    ta.disabled=true;ta.placeholder='Elige primero Checklist o Albarán...';
+  }else{
+    ta.disabled=false;ta.placeholder='Escribe para buscar técnico...';
+    tc.disabled=true;tc.placeholder='Elige primero Checklist o Albarán...';
+  }
 }
 function switchChecklist(tab){document.getElementById('panel-elec').classList.toggle('active',tab==='elec');document.getElementById('panel-hid').classList.toggle('active',tab==='hid');document.getElementById('ptab-elec').classList.toggle('active',tab==='elec');document.getElementById('ptab-hid').classList.toggle('active',tab==='hid');}
 function selectEmpresa(e,prefix){if(prefix==='c'){empresaChecklist=e;document.getElementById('c-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('c-btn-marcres').classList.toggle('active',e==='marcres');}else{empresaAlbaran=e;document.getElementById('a-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('a-btn-marcres').classList.toggle('active',e==='marcres');}document.getElementById('header-empresa-label').textContent=e==='rivagua'?'Rivagua':'Marcres';}
