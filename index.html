@@ -88,6 +88,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .empresa-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
 .empresa-btn{padding:14px 8px;border-radius:var(--radius-sm);border:2px solid var(--accent);background:#fff;font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;text-align:center;color:var(--accent);transition:all .15s;}
 .empresa-btn.active{background:var(--accent);color:#fff;}
+.field-input:disabled{background:#f0f0f0;color:#aaa;cursor:not-allowed;opacity:.7;}
+.empresa-aviso{background:#FFF3CD;border:2px solid #8B5A00;border-radius:var(--radius-sm);padding:12px 16px;text-align:center;font-size:13px;font-weight:700;color:#8B5A00;margin-bottom:10px;display:none;}
+.empresa-aviso.show{display:block;}
 .card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);margin-bottom:10px;overflow:hidden;}
 .field-group{padding:11px 14px;border-bottom:1px solid var(--border);}
 .field-group:last-child{border-bottom:none;}
@@ -311,6 +314,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <button class="empresa-btn" id="c-btn-rivagua" onclick="selectEmpresa('rivagua','c')">Rivagua</button>
     <button class="empresa-btn" id="c-btn-marcres" onclick="selectEmpresa('marcres','c')">Marcres</button>
   </div>
+  <div class="empresa-aviso show" id="c-empresa-aviso">⚠️ Selecciona Rivagua o Marcres para continuar</div>
   <div class="card">
     <div class="field-group field-row">
       <div><label class="field-label">Fecha</label><div class="fecha-display" id="c-fecha-display">--</div></div>
@@ -319,7 +323,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <div class="field-group"><label class="field-label">Técnico <span style="color:var(--bad)">*</span> <span class="holded-badge">Holded</span></label>
       <div style="position:relative;">
         <div style="display:flex;align-items:center;gap:6px;">
-          <input type="text" class="field-input" id="c-tecnico" placeholder="Elige primero Checklist o Albarán..." autocomplete="off" oninput="buscarEmpleado(this.value,'c')" onfocus="buscarEmpleado(this.value,'c')" style="flex:1;" disabled>
+          <input type="text" class="field-input" id="c-tecnico" placeholder="Selecciona empresa primero..." autocomplete="off" oninput="buscarEmpleado(this.value,'c')" onfocus="buscarEmpleado(this.value,'c')" style="flex:1;" disabled>
           <button onclick="resetTecnico('c')" title="Borrar técnico" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);flex-shrink:0;">✕</button>
         </div>
         <div class="holded-dropdown" id="c-tecnico-drop" style="display:none;"></div>
@@ -449,6 +453,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <button class="empresa-btn" id="a-btn-rivagua" onclick="selectEmpresa('rivagua','a')">Rivagua</button>
     <button class="empresa-btn" id="a-btn-marcres" onclick="selectEmpresa('marcres','a')">Marcres</button>
   </div>
+  <div class="empresa-aviso show" id="a-empresa-aviso">⚠️ Selecciona Rivagua o Marcres para continuar</div>
   <div class="card">
     <div class="field-group field-row">
       <div><label class="field-label">Fecha</label><div class="fecha-display" id="a-fecha-display">--</div></div>
@@ -457,7 +462,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <div class="field-group"><label class="field-label">Técnico <span style="color:var(--bad)">*</span> <span class="holded-badge">Holded</span></label>
       <div style="position:relative;">
         <div style="display:flex;align-items:center;gap:6px;">
-          <input type="text" class="field-input" id="a-tecnico" placeholder="Elige primero Checklist o Albarán..." autocomplete="off" oninput="buscarEmpleadoAlbaran(this.value)" onfocus="buscarEmpleadoAlbaran(this.value)" style="flex:1;" disabled>
+          <input type="text" class="field-input" id="a-tecnico" placeholder="Selecciona empresa primero..." autocomplete="off" oninput="buscarEmpleadoAlbaran(this.value)" onfocus="buscarEmpleadoAlbaran(this.value)" style="flex:1;" disabled>
           <button onclick="resetTecnicoAlbaran()" title="Borrar técnico" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);flex-shrink:0;">✕</button>
         </div>
         <div class="holded-dropdown" id="a-tecnico-drop" style="display:none;"></div>
@@ -720,21 +725,19 @@ function desbloquearTecnicoSiProcede(){
   var tc=document.getElementById('c-tecnico'),ta=document.getElementById('a-tecnico');
   var checkActivo=document.getElementById('app-checklist').classList.contains('active');
   var albActivo=document.getElementById('app-albaran').classList.contains('active');
-  // Checklist
   if(checkActivo && empresaChecklist){
     tc.disabled=false;tc.placeholder='Escribe para buscar técnico...';
   }else{
-    tc.disabled=true;tc.placeholder=checkActivo?'Elige primero Marcres o Rivagua...':'Elige primero Checklist o Albarán...';
+    tc.disabled=true;tc.placeholder='Selecciona empresa primero...';
   }
-  // Albarán
   if(albActivo && empresaAlbaran){
     ta.disabled=false;ta.placeholder='Escribe para buscar técnico...';
   }else{
-    ta.disabled=true;ta.placeholder=albActivo?'Elige primero Marcres o Rivagua...':'Elige primero Checklist o Albarán...';
+    ta.disabled=true;ta.placeholder='Selecciona empresa primero...';
   }
 }
 function switchChecklist(tab){document.getElementById('panel-elec').classList.toggle('active',tab==='elec');document.getElementById('panel-hid').classList.toggle('active',tab==='hid');document.getElementById('ptab-elec').classList.toggle('active',tab==='elec');document.getElementById('ptab-hid').classList.toggle('active',tab==='hid');}
-function selectEmpresa(e,prefix){if(prefix==='c'){empresaChecklist=e;document.getElementById('c-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('c-btn-marcres').classList.toggle('active',e==='marcres');}else{empresaAlbaran=e;document.getElementById('a-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('a-btn-marcres').classList.toggle('active',e==='marcres');}document.getElementById('header-empresa-label').textContent=e==='rivagua'?'Rivagua':'Marcres';desbloquearTecnicoSiProcede();}
+function selectEmpresa(e,prefix){if(prefix==='c'){empresaChecklist=e;document.getElementById('c-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('c-btn-marcres').classList.toggle('active',e==='marcres');var av=document.getElementById('c-empresa-aviso');if(av)av.classList.remove('show');}else{empresaAlbaran=e;document.getElementById('a-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('a-btn-marcres').classList.toggle('active',e==='marcres');var av2=document.getElementById('a-empresa-aviso');if(av2)av2.classList.remove('show');}document.getElementById('header-empresa-label').textContent=e==='rivagua'?'Rivagua':'Marcres';desbloquearTecnicoSiProcede();}
 function selectTipo(t){tipoAlbaran=t;['mantenimiento','aviso','trabajo','guardia'].forEach(x=>document.getElementById('tipo-'+x).classList.toggle('active',x===t));const esMant=t==='mantenimiento';document.getElementById('panel-mantenimiento').classList.toggle('active',esMant);document.getElementById('panel-simple').classList.toggle('active',!esMant);if(!esMant){const labels={aviso:'Aviso',trabajo:'Trabajo',guardia:'Guardia'};document.getElementById('send-simple-btn').textContent='📤 Enviar albarán de '+labels[t];}}
 function toggleSec(id){const sec=document.getElementById(id);const hdr=sec.querySelector('.section-header');const body=sec.querySelector('.section-body');const open=hdr.classList.contains('section-open');hdr.classList.toggle('section-open',!open);body.style.display=open?'none':'block';}
 function selectCorte(el,prefix,val){const yaActivo=el.classList.contains('p-ok')||el.classList.contains('p-bad');el.parentElement.querySelectorAll('.pill').forEach(p=>p.className='pill');const horas=document.getElementById(prefix+'-corte-horas');if(yaActivo){if(horas)horas.classList.remove('show');return;}if(val==='Si')el.classList.add('p-bad');else el.classList.add('p-ok');el.dataset.group=prefix+'-corte';if(horas)horas.classList.toggle('show',val==='Si');}
