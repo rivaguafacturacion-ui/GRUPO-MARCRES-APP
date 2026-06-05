@@ -1687,9 +1687,10 @@ function desbloquearAntiRefresco() {
 
 
 var productosCache={},_prodUidActivo=null;
+// El inventario es siempre el de Marcres (catálogo compartido Grupo Marcres)
+var EMPRESA_INVENTARIO='marcres';
 async function buscarProductosHolded(q,uid){
   _prodUidActivo=uid;
-  var empresa=empresaAlbaran||empresaChecklist||'marcres';
   if(!q||q.length<1){cerrarOverlayProductos();return;}
   var overlay=document.getElementById('productos-overlay'),panel=document.getElementById('productos-panel'),lista=document.getElementById('productos-lista');
   if(!overlay||!panel||!lista)return;
@@ -1698,20 +1699,37 @@ async function buscarProductosHolded(q,uid){
   var si=document.getElementById('productos-search-input');
   if(si){si.value=q;setTimeout(function(){si.focus();},100);}
   try{
-    if(!productosCache[empresa]){
-      var res=await fetch(GAS_URL+'?action=productos&empresa='+empresa);
+    if(!productosCache[EMPRESA_INVENTARIO]){
+      var res=await fetch(GAS_URL+'?action=productos&empresa='+EMPRESA_INVENTARIO);
       var data=await res.json();
-      productosCache[empresa]=data.ok?data.productos:[];
+      if(!data.ok||!data.productos||!data.productos.length){
+        lista.innerHTML='<div style="padding:20px;text-align:center;color:var(--bad);">No se pudo cargar el catálogo de productos.</div>';
+        return;
+      }
+      productosCache[EMPRESA_INVENTARIO]=data.productos;
     }
     filtrarProductosPanel(q);
   }catch(err){lista.innerHTML='<div style="padding:20px;text-align:center;color:var(--bad);">Error: '+err.message+'</div>';}
 }
+function _sinAcentos(s){
+  return (s||'').toLowerCase()
+    .replace(/á/g,'a').replace(/à/g,'a').replace(/ä/g,'a')
+    .replace(/é/g,'e').replace(/è/g,'e').replace(/ë/g,'e')
+    .replace(/í/g,'i').replace(/ì/g,'i').replace(/ï/g,'i')
+    .replace(/ó/g,'o').replace(/ò/g,'o').replace(/ö/g,'o')
+    .replace(/ú/g,'u').replace(/ù/g,'u').replace(/ü/g,'u')
+    .replace(/ñ/g,'n').replace(/ç/g,'c').replace(/_/g,' ').trim();
+}
 function filtrarProductosPanel(q){
-  var uid=_prodUidActivo,empresa=empresaAlbaran||empresaChecklist||'marcres';
-  var todos=productosCache[empresa]||[],lista=document.getElementById('productos-lista'),count=document.getElementById('productos-count');
+  var uid=_prodUidActivo;
+  var todos=productosCache[EMPRESA_INVENTARIO]||[],lista=document.getElementById('productos-lista'),count=document.getElementById('productos-count');
   if(!lista)return;
-  var ql=(q||'').toLowerCase().replace(/_/g,' ').trim();
-  var filtrados=!ql?[]:todos.filter(function(p){return (p.name||'').toLowerCase().replace(/_/g,' ').indexOf(ql)>=0||(p.sku||'').toLowerCase().indexOf(ql)>=0;}).slice(0,20);
+  var ql=_sinAcentos(q||'');
+  var filtrados=!ql?[]:todos.filter(function(p){
+    return _sinAcentos(p.name||'').indexOf(ql)>=0
+        || _sinAcentos(p.sku||'').indexOf(ql)>=0
+        || _sinAcentos(p.desc||'').indexOf(ql)>=0;
+  }).slice(0,20);
   if(count)count.textContent=filtrados.length?filtrados.length+' resultado(s)':'';
   if(!filtrados.length){lista.innerHTML='<div style="padding:20px;text-align:center;color:var(--muted);">Sin resultados</div>';return;}
   window['_prods_'+uid]=filtrados;
@@ -1800,17 +1818,18 @@ function recalcTotal(key) {
 
 function getMaterilesFor(key) {
   var tbody = document.getElementById('mat-tbody-'+key);
-  if (!tbody) return [];
+  if (!tbody) return '';
   var rows = tbody.querySelectorAll('tr');
-  var result = [];
+  var lineas = [];
   rows.forEach(function(tr) {
     var uid    = tr.id.replace('mat-row-','');
     var desc   = document.getElementById('mat-desc-'+uid)?.value.trim() || '';
     var cant   = parseFloat(document.getElementById('mat-cant-'+uid)?.value) || 1;
     var precio = parseFloat(document.getElementById('mat-precio-'+uid)?.value) || 0;
-    if (desc) result.push({ descripcion: desc, cantidad: cant, precio: precio, total: cant * precio });
+    var total  = cant * precio;
+    if (desc) lineas.push(desc + ' | Cant: ' + cant + ' | P.u.: ' + precio.toFixed(2) + '€ | Total: ' + total.toFixed(2));
   });
-  return result;
+  return lineas.length ? lineas.join('\n') : '';
 }
 
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type;setTimeout(()=>t.classList.add('show'),10);setTimeout(()=>t.classList.remove('show'),4000);}
