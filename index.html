@@ -713,17 +713,28 @@ function switchApp(app){
   document.getElementById('app-albaran').classList.toggle('active',app==='albaran');
   document.getElementById('nav-checklist').classList.toggle('active',app==='checklist');
   document.getElementById('nav-albaran').classList.toggle('active',app==='albaran');
+  // Al cambiar de tipo, re-evaluar bloqueo de técnico
+  desbloquearTecnicoSiProcede();
+}
+function desbloquearTecnicoSiProcede(){
   var tc=document.getElementById('c-tecnico'),ta=document.getElementById('a-tecnico');
-  if(app==='checklist'){
+  var checkActivo=document.getElementById('app-checklist').classList.contains('active');
+  var albActivo=document.getElementById('app-albaran').classList.contains('active');
+  // Checklist
+  if(checkActivo && empresaChecklist){
     tc.disabled=false;tc.placeholder='Escribe para buscar técnico...';
-    ta.disabled=true;ta.placeholder='Elige primero Checklist o Albarán...';
   }else{
+    tc.disabled=true;tc.placeholder=checkActivo?'Elige primero Marcres o Rivagua...':'Elige primero Checklist o Albarán...';
+  }
+  // Albarán
+  if(albActivo && empresaAlbaran){
     ta.disabled=false;ta.placeholder='Escribe para buscar técnico...';
-    tc.disabled=true;tc.placeholder='Elige primero Checklist o Albarán...';
+  }else{
+    ta.disabled=true;ta.placeholder=albActivo?'Elige primero Marcres o Rivagua...':'Elige primero Checklist o Albarán...';
   }
 }
 function switchChecklist(tab){document.getElementById('panel-elec').classList.toggle('active',tab==='elec');document.getElementById('panel-hid').classList.toggle('active',tab==='hid');document.getElementById('ptab-elec').classList.toggle('active',tab==='elec');document.getElementById('ptab-hid').classList.toggle('active',tab==='hid');}
-function selectEmpresa(e,prefix){if(prefix==='c'){empresaChecklist=e;document.getElementById('c-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('c-btn-marcres').classList.toggle('active',e==='marcres');}else{empresaAlbaran=e;document.getElementById('a-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('a-btn-marcres').classList.toggle('active',e==='marcres');}document.getElementById('header-empresa-label').textContent=e==='rivagua'?'Rivagua':'Marcres';}
+function selectEmpresa(e,prefix){if(prefix==='c'){empresaChecklist=e;document.getElementById('c-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('c-btn-marcres').classList.toggle('active',e==='marcres');}else{empresaAlbaran=e;document.getElementById('a-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('a-btn-marcres').classList.toggle('active',e==='marcres');}document.getElementById('header-empresa-label').textContent=e==='rivagua'?'Rivagua':'Marcres';desbloquearTecnicoSiProcede();}
 function selectTipo(t){tipoAlbaran=t;['mantenimiento','aviso','trabajo','guardia'].forEach(x=>document.getElementById('tipo-'+x).classList.toggle('active',x===t));const esMant=t==='mantenimiento';document.getElementById('panel-mantenimiento').classList.toggle('active',esMant);document.getElementById('panel-simple').classList.toggle('active',!esMant);if(!esMant){const labels={aviso:'Aviso',trabajo:'Trabajo',guardia:'Guardia'};document.getElementById('send-simple-btn').textContent='📤 Enviar albarán de '+labels[t];}}
 function toggleSec(id){const sec=document.getElementById(id);const hdr=sec.querySelector('.section-header');const body=sec.querySelector('.section-body');const open=hdr.classList.contains('section-open');hdr.classList.toggle('section-open',!open);body.style.display=open?'none':'block';}
 function selectCorte(el,prefix,val){const yaActivo=el.classList.contains('p-ok')||el.classList.contains('p-bad');el.parentElement.querySelectorAll('.pill').forEach(p=>p.className='pill');const horas=document.getElementById(prefix+'-corte-horas');if(yaActivo){if(horas)horas.classList.remove('show');return;}if(val==='Si')el.classList.add('p-bad');else el.classList.add('p-ok');el.dataset.group=prefix+'-corte';if(horas)horas.classList.toggle('show',val==='Si');}
