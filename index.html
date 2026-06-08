@@ -465,7 +465,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       <div style="position:relative;">
         <div style="display:flex;align-items:center;gap:6px;">
           <input type="text" class="field-input" id="a-tecnico" placeholder="Selecciona empresa primero..." autocomplete="off" oninput="buscarEmpleado(this.value,'a')" onfocus="buscarEmpleado(this.value,'a')" style="flex:1;" disabled>
-          <button onclick="resetTecnicoAlbaran()" title="Borrar técnico" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);flex-shrink:0;">✕</button>
+          <button onclick="resetTecnico('a')" title="Borrar técnico" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);flex-shrink:0;">✕</button>
         </div>
         <div class="holded-dropdown" id="a-tecnico-drop" style="display:none;"></div>
       </div>
@@ -473,6 +473,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <div class="field-group"><label class="field-label">Técnico 2 <span style="color:var(--muted);font-weight:400;font-size:11px;">(opcional)</span></label>
       <input type="text" class="field-input" id="a-tecnico2" placeholder="Nombre del segundo técnico..." autocomplete="off">
     </div>
+    <div class="field-group" id="a-tareas-wrap">
       <div class="tareas-seccion">
         <div class="tareas-seccion-header" onclick="toggleSeccionTareas()">
           <div class="tareas-seccion-titulo">
@@ -496,6 +497,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
         </div>
       </div>
     </div>
+    </div><!-- /a-tareas-wrap -->
     <div class="field-group cliente-wrap" id="a-cliente-wrap">
       <label class="field-label">Cliente <span style="color:var(--bad)">*</span> <span class="holded-badge">Holded</span></label>
       <div style="display:flex;align-items:center;gap:6px;">
@@ -1013,12 +1015,19 @@ function resetTecnico(prefix){
   const inp=document.getElementById(prefix+'-tecnico');
   inp.value='';inp.style.color='';inp.style.fontWeight='';
   document.getElementById(prefix+'-tecnico-drop').style.display='none';
-  // Resetear tareas del checklist
   if(prefix==='c'){
     document.getElementById('c-tareas-lista').innerHTML='<div class="tareas-cargando-alb">Selecciona un técnico para ver sus tareas asignadas</div>';
     document.getElementById('c-tareas-count').textContent='0';
     document.getElementById('c-tarea-seleccionada').style.display='none';
     window._tareasChecklist=[];
+  }
+  if(prefix==='a'){
+    tecnicoAlbaranElegido=false;
+    tecnicoAlbaranId=null;
+    document.getElementById('a-tareas-lista').innerHTML='<div class="tareas-cargando-alb">Selecciona un técnico para ver sus tareas asignadas</div>';
+    document.getElementById('a-tareas-count').textContent='0';
+    if(document.getElementById('a-tarea-seleccionada')) document.getElementById('a-tarea-seleccionada').style.display='none';
+    window._tareasAlbaran=[];
   }
 }
 
@@ -1393,7 +1402,7 @@ let tecnicoAlbaranId = null;
 let tareaAlbaranSeleccionada = null;
 
 async function buscarEmpleadoAlbaran(q) {
-  if (tecnicoAlbaranElegido) return;
+  // Función legacy — ya no se llama desde el input, pero se mantiene por compatibilidad
   const drop = document.getElementById('a-tecnico-drop');
   drop.style.display = 'block';
   drop.innerHTML = '<div class="holded-searching">Cargando técnicos...</div>';
