@@ -464,7 +464,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <div class="field-group"><label class="field-label">Técnico <span style="color:var(--bad)">*</span> <span class="holded-badge">Holded</span></label>
       <div style="position:relative;">
         <div style="display:flex;align-items:center;gap:6px;">
-          <input type="text" class="field-input" id="a-tecnico" placeholder="Selecciona empresa primero..." autocomplete="off" oninput="buscarEmpleadoAlbaran(this.value)" onfocus="buscarEmpleadoAlbaran(this.value)" style="flex:1;" disabled>
+          <input type="text" class="field-input" id="a-tecnico" placeholder="Selecciona empresa primero..." autocomplete="off" oninput="buscarEmpleado(this.value,'a')" onfocus="buscarEmpleado(this.value,'a')" style="flex:1;" disabled>
           <button onclick="resetTecnicoAlbaran()" title="Borrar técnico" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);flex-shrink:0;">✕</button>
         </div>
         <div class="holded-dropdown" id="a-tecnico-drop" style="display:none;"></div>
@@ -1000,8 +1000,12 @@ function elegirTecnico(id,nombre,prefix){
   inp.style.fontWeight='600';
   document.getElementById(prefix+'-tecnico-drop').style.display='none';
   tecnicoElegido[prefix]=true;
-  // Cargar tareas si es checklist
   if(prefix==='c') cargarTareasChecklist(id, nombre);
+  if(prefix==='a'){
+    tecnicoAlbaranElegido=true;
+    tecnicoAlbaranId=id;
+    cargarTareasAlbaran(id, nombre);
+  }
 }
 
 function resetTecnico(prefix){
@@ -1432,6 +1436,10 @@ async function elegirTecnicoAlbaran(idxOId, nombre) {
   tecnicoAlbaranId = id;
   tecnicoElegido['a'] = true;
 
+  cargarTareasAlbaran(id, nomFinal);
+}
+
+async function cargarTareasAlbaran(id, nomFinal) {
   const wrap = document.getElementById('a-tareas-wrap');
   wrap.style.display = 'block';
   const lista = document.getElementById('a-tareas-lista');
