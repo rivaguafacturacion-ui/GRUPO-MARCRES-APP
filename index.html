@@ -539,6 +539,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       <button class="tipo-btn" id="tipo-aviso" onclick="selectTipo('aviso')">📢 Aviso</button>
       <button class="tipo-btn" id="tipo-trabajo" onclick="selectTipo('trabajo')">🛠️ Trabajo</button>
       <button class="tipo-btn" id="tipo-guardia" onclick="selectTipo('guardia')">🕒 Guardia</button>
+      <button class="tipo-btn" id="tipo-bomba" onclick="selectTipo('bomba')">🔩 Bomba a Taller</button>
     </div>
     <div style="margin-top:12px;">
       <label class="field-label" style="margin-bottom:6px;display:block;">Estado general</label>
@@ -608,6 +609,28 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <div class="card"><div class="section-header section-open" onclick="toggleSec('sec-firma-simple')"><span class="sec-title">✍️ Firmas</span><span class="chevron">⌄</span></div><div class="section-body" id="sec-firma-simple" style="display:block;"><div class="firma-section"><div class="firma-label">Firma del técnico <span style="color:var(--bad);font-size:10px;">*obligatoria</span></div><canvas class="firma-canvas" id="firma-tecnico-simple"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('tecnico-simple')">🗑 Borrar</button></div></div><div class="firma-section" style="border-top:1px solid var(--border);"><div class="firma-label">Firma del cliente <span style="color:var(--bad);font-size:10px;">*obligatoria</span><button class="cliente-ausente-btn" id="btn-ausente-simple" onclick="toggleAusente('simple')">Cliente ausente</button></div><canvas class="firma-canvas" id="firma-cliente-simple"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('cliente-simple')">🗑 Borrar</button></div><div class="firma-ausente-obs" id="ausente-obs-simple"><textarea class="obs-textarea" id="ausente-motivo-simple" placeholder="Motivo por el que el cliente no puede firmar..." style="margin-top:8px;"></textarea></div></div></div></div>
     <button class="send-btn" id="send-simple-btn" onclick="enviarAlbaran('simple')">📤 Enviar albarán</button>
   </div>
+  <div id="panel-bomba" class="panel">
+    <div class="card" id="sec-obs-bomba">
+      <div class="section-header section-open" onclick="toggleSec('sec-obs-bomba')"><span class="sec-title">Observaciones / Descripción</span><span class="chevron">⌄</span></div>
+      <div class="section-body" style="display:block;"><div class="obs-section"><textarea class="obs-textarea" id="bomba-obs" placeholder="Describe el estado de la bomba, motivo de la retirada..."></textarea></div></div>
+    </div>
+    <div class="card">
+      <div class="section-header section-open" onclick="toggleSec('sec-foto-bomba')"><span class="sec-title">📷 Fotografía de la bomba <span style="font-size:11px;color:var(--bad);">*obligatoria</span></span><span class="chevron">⌄</span></div>
+      <div class="section-body" style="display:block;" id="sec-foto-bomba">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Adjunta una fotografía de la bomba antes de llevarla al taller.</div>
+        <div class="taller-grid" id="bomba-foto-grid">
+          <div class="taller-slot" id="bomba-foto-slot" onclick="document.getElementById('bomba-foto-input').click()">
+            <span style="font-size:28px;">📷</span>
+            <span style="font-size:11px;color:var(--muted);margin-top:4px;">Toca para fotografiar</span>
+          </div>
+        </div>
+        <input type="file" accept="image/*" capture="environment" id="bomba-foto-input" style="display:none;" onchange="onBombaFoto(this)">
+        <div class="fotos-aviso" id="fotos-aviso-bomba">⚠ La fotografía de la bomba es obligatoria para enviar</div>
+      </div>
+    </div>
+    <div class="card"><div class="section-header section-open" onclick="toggleSec('sec-firma-bomba')"><span class="sec-title">✍️ Firmas</span><span class="chevron">⌄</span></div><div class="section-body" id="sec-firma-bomba" style="display:block;"><div class="firma-section"><div class="firma-label">Firma del técnico <span style="color:var(--bad);font-size:10px;">*obligatoria</span></div><canvas class="firma-canvas" id="firma-tecnico-bomba"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('tecnico-bomba')">🗑 Borrar</button></div></div><div class="firma-section" style="border-top:1px solid var(--border);"><div class="firma-label">Firma del cliente <span style="color:var(--bad);font-size:10px;">*obligatoria</span><button class="cliente-ausente-btn" id="btn-ausente-bomba" onclick="toggleAusente('bomba')">Cliente ausente</button></div><canvas class="firma-canvas" id="firma-cliente-bomba"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('cliente-bomba')">🗑 Borrar</button></div><div class="firma-ausente-obs" id="ausente-obs-bomba"><textarea class="obs-textarea" id="ausente-motivo-bomba" placeholder="Motivo por el que el cliente no puede firmar..." style="margin-top:8px;"></textarea></div></div></div></div>
+    <button class="send-btn" id="send-bomba-btn" onclick="enviarAlbaran('bomba')">📤 Enviar Bomba a Taller</button>
+  </div>
 </div>
 </div><!-- fin contenido-parte-a -->
 </div>
@@ -632,9 +655,10 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 const GAS_URL='https://script.google.com/macros/s/AKfycbwMdbr48W3chZxft1IppcFmMm9RaEkvMrwrqIY9YofjYwJtLaVPirO8MpNM1rbumWE-2w/exec';
 let empresaChecklist=null,empresaAlbaran=null,tipoAlbaran=null,currentFotoKey=null,currentFotoSlot=null;
 const fotosData={mant:Array(5).fill(null),simple:Array(5).fill(null),elec:Array(5).fill(null),hid:Array(5).fill(null)};
-const ausenteState={elec:false,hid:false,mant:false,simple:false};
+const ausenteState={elec:false,hid:false,mant:false,simple:false,bomba:false};
 const firmaData={};
 const pdfData={elec:null,hid:null,mant:null,simple:null};
+let bombaFotoData=null;
 const holdedContactos={};
 let fechaTexto='';
 let holdedTimer=null;
@@ -744,7 +768,16 @@ function desbloquearTecnicoSiProcede(){
 }
 function switchChecklist(tab){document.getElementById('panel-elec').classList.toggle('active',tab==='elec');document.getElementById('panel-hid').classList.toggle('active',tab==='hid');document.getElementById('ptab-elec').classList.toggle('active',tab==='elec');document.getElementById('ptab-hid').classList.toggle('active',tab==='hid');}
 function selectEmpresa(e,prefix){if(prefix==='c'){empresaChecklist=e;document.getElementById('c-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('c-btn-marcres').classList.toggle('active',e==='marcres');var av=document.getElementById('c-empresa-aviso');if(av)av.classList.remove('show');}else{empresaAlbaran=e;document.getElementById('a-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('a-btn-marcres').classList.toggle('active',e==='marcres');var av2=document.getElementById('a-empresa-aviso');if(av2)av2.classList.remove('show');}document.getElementById('header-empresa-label').textContent=e==='rivagua'?'Rivagua':'Marcres';desbloquearTecnicoSiProcede();}
-function selectTipo(t){tipoAlbaran=t;['mantenimiento','aviso','trabajo','guardia'].forEach(x=>document.getElementById('tipo-'+x).classList.toggle('active',x===t));const esMant=t==='mantenimiento';document.getElementById('panel-mantenimiento').classList.toggle('active',esMant);document.getElementById('panel-simple').classList.toggle('active',!esMant);if(!esMant){const labels={aviso:'Aviso',trabajo:'Trabajo',guardia:'Guardia'};document.getElementById('send-simple-btn').textContent='📤 Enviar albarán de '+labels[t];}}
+function selectTipo(t){
+  tipoAlbaran=t;
+  ['mantenimiento','aviso','trabajo','guardia','bomba'].forEach(x=>document.getElementById('tipo-'+x).classList.toggle('active',x===t));
+  const esMant=t==='mantenimiento';
+  const esBomba=t==='bomba';
+  document.getElementById('panel-mantenimiento').classList.toggle('active',esMant);
+  document.getElementById('panel-bomba').classList.toggle('active',esBomba);
+  document.getElementById('panel-simple').classList.toggle('active',!esMant&&!esBomba);
+  if(!esMant&&!esBomba){const labels={aviso:'Aviso',trabajo:'Trabajo',guardia:'Guardia'};document.getElementById('send-simple-btn').textContent='📤 Enviar albarán de '+labels[t];}
+}
 function toggleSec(id){const sec=document.getElementById(id);const hdr=sec.querySelector('.section-header');const body=sec.querySelector('.section-body');const open=hdr.classList.contains('section-open');hdr.classList.toggle('section-open',!open);body.style.display=open?'none':'block';}
 function selectCorte(el,prefix,val){const yaActivo=el.classList.contains('p-ok')||el.classList.contains('p-bad');el.parentElement.querySelectorAll('.pill').forEach(p=>p.className='pill');const horas=document.getElementById(prefix+'-corte-horas');if(yaActivo){if(horas)horas.classList.remove('show');return;}if(val==='Si')el.classList.add('p-bad');else el.classList.add('p-ok');el.dataset.group=prefix+'-corte';if(horas)horas.classList.toggle('show',val==='Si');}
 
@@ -949,6 +982,25 @@ async function enviarAlbaran(panel){
   const tecnico=document.getElementById('a-tecnico').value.trim();
   if(!cliente){showToast('⚠ El cliente es obligatorio','error');return;}
   if(!tecnico){showToast('⚠ El técnico es obligatorio','error');return;}
+
+  // Panel Bomba a Taller
+  if(panel==='bomba'){
+    if(!bombaFotoData){
+      showToast('⚠ La fotografía de la bomba es obligatoria','error');
+      document.getElementById('fotos-aviso-bomba').classList.add('show');
+      return;
+    }
+    if(!validarFirmas('bomba'))return;
+    const btn=document.getElementById('send-bomba-btn');
+    btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
+    const ubicacion=await obtenerUbicacion();
+    btn.textContent='⏳ Generando PDF...';
+    const payload={empresa:empresaAlbaran,tipo:'Bomba a Taller',fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,tecnico2:document.getElementById('a-tecnico2')?.value.trim()||'',observaciones:document.getElementById('bomba-obs').value.trim(),fotos:[bombaFotoData],firmaTecnico:getFirmaBase64('tecnico-bomba'),firmaCliente:ausenteState['bomba']?null:getFirmaBase64('cliente-bomba'),clienteAusente:ausenteState['bomba'],motivoAusencia:document.getElementById('ausente-motivo-bomba')?.value.trim()||'',numDoc:genNumDoc(),ubicacion,horaEnvio:calcHoraFin()};
+    try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal();else throw new Error(data.error||'Error desconocido');}
+    catch(err){showToast('❌ Error: '+(err.message||'sin conexión'),'error');btn.disabled=false;btn.textContent='📤 Enviar Bomba a Taller';}
+    return;
+  }
+
   const fotoKey=panel==='mantenimiento'?'mant':'simple';
   if(!validarFotos(fotoKey))return;
   if(!validarFirmas(panel==='mantenimiento'?'mant':'simple'))return;
@@ -957,9 +1009,7 @@ async function enviarAlbaran(panel){
   const pKey=isMant?'mant':'simple';
   const btnId=isMant?'send-mant-btn':'send-simple-btn';
   const btn=document.getElementById(btnId);
-  // Validar foto taller si material=No
   if(tallerEstado==='No'&&!tallerFotoData){showToast('⚠ Adjunta la foto del material a taller','error');return;}
-  // Si no se seleccionó nada en taller, se envía como no indicado
   btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
   const ubicacion=await obtenerUbicacion();
   btn.textContent='⏳ Generando PDF...';
@@ -1845,6 +1895,36 @@ function onTallerFoto(input){
       input.value='';showToast('✅ Foto añadida','success');
     };img.src=e.target.result;
   };reader.readAsDataURL(file);
+}
+function onBombaFoto(input){
+  var file=input.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var img=new Image();
+    img.onload=function(){
+      var canvas=document.createElement('canvas'),MAX=1200;
+      var w=img.width,h=img.height;
+      if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}
+      canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);
+      bombaFotoData=canvas.toDataURL('image/jpeg',0.8);
+      var slot=document.getElementById('bomba-foto-slot');
+      if(slot){
+        slot.className='taller-slot filled';slot.onclick=null;
+        slot.innerHTML='<img src="'+bombaFotoData+'" alt="Foto bomba" style="width:100%;height:100%;object-fit:cover;border-radius:8px;"><button class="taller-remove" onclick="quitarFotoBomba(event)">&#x2715;</button>';
+      }
+      document.getElementById('fotos-aviso-bomba').classList.remove('show');
+      input.value='';showToast('✅ Foto de la bomba añadida','success');
+    };img.src=e.target.result;
+  };reader.readAsDataURL(file);
+}
+function quitarFotoBomba(e){
+  e.stopPropagation();bombaFotoData=null;
+  var slot=document.getElementById('bomba-foto-slot');
+  if(slot){
+    slot.className='taller-slot';
+    slot.innerHTML='<span style="font-size:28px;">📷</span><span style="font-size:11px;color:var(--muted);margin-top:4px;">Toca para fotografiar</span>';
+    slot.onclick=function(){document.getElementById('bomba-foto-input').click();};
+  }
 }
 function quitarFotoTaller(e){
   e.stopPropagation();tallerFotoData=null;
