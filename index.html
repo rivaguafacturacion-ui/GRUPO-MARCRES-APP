@@ -1872,11 +1872,11 @@ function filtrarProductosPanel(q){
   var uid=_prodUidActivo;
   var todos=productosCache[EMPRESA_INVENTARIO]||[],lista=document.getElementById('productos-lista'),count=document.getElementById('productos-count');
   if(!lista)return;
-  var ql=_sinAcentos(q||'');
-  var filtrados=!ql?[]:todos.filter(function(p){
-    return _sinAcentos(p.name||'').indexOf(ql)>=0
-        || _sinAcentos(p.sku||'').indexOf(ql)>=0
-        || _sinAcentos(p.desc||'').indexOf(ql)>=0;
+  var ql=_sinAcentos(q||'').replace(/[-\/()]/g,' ').replace(/\s+/g,' ').trim();
+  var palabras=ql?ql.split(' ').filter(function(p){return p.length>0;}):[];
+  var filtrados=!palabras.length?[]:todos.filter(function(p){
+    var haystack=_sinAcentos(p.name||'').replace(/[-\/()]/g,' ')+' '+_sinAcentos(p.sku||'')+' '+_sinAcentos(p.desc||'');
+    return palabras.every(function(pal){return haystack.indexOf(pal)>=0;});
   }).slice(0,20);
   if(count)count.textContent=filtrados.length?filtrados.length+' resultado(s)':'';
   if(!filtrados.length){lista.innerHTML='<div style="padding:20px;text-align:center;color:var(--muted);">Sin resultados</div>';return;}
