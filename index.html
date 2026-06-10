@@ -1835,8 +1835,8 @@ function desbloquearAntiRefresco() {
 
 
 var productosCache={},_prodUidActivo=null;
-// El inventario es siempre el de Marcres (catálogo compartido Grupo Marcres)
-var EMPRESA_INVENTARIO='marcres';
+// Inventario unificado: carga productos de Marcres Y Rivagua, fusionados sin duplicados
+var EMPRESA_INVENTARIO='ambas';
 async function buscarProductosHolded(q,uid){
   _prodUidActivo=uid;
   if(!q||q.length<1){cerrarOverlayProductos();return;}
@@ -1848,13 +1848,26 @@ async function buscarProductosHolded(q,uid){
   if(si){si.value=q;setTimeout(function(){si.focus();},100);}
   try{
     if(!productosCache[EMPRESA_INVENTARIO]){
-      var res=await fetch(GAS_URL+'?action=productos&empresa='+EMPRESA_INVENTARIO);
-      var data=await res.json();
-      if(!data.ok||!data.productos||!data.productos.length){
+      // Cargar ambas empresas en paralelo
+      var resMarcres=await fetch(GAS_URL+'?action=productos&empresa=marcres');
+      var resRivagua=await fetch(GAS_URL+'?action=productos&empresa=rivagua');
+      var dataMarcres=await resMarcres.json();
+      var dataRivagua=await resRivagua.json();
+      var listaM=dataMarcres.ok?dataMarcres.productos:[];
+      var listaR=dataRivagua.ok?dataRivagua.productos:[];
+      // Fusionar sin duplicados por nombre normalizado
+      var vistos={};
+      var fusionados=[];
+      listaM.concat(listaR).forEach(function(p){
+        var key=_sinAcentos(p.name||'').replace(/\s+/g,'');
+        if(!vistos[key]){vistos[key]=true;fusionados.push(p);}
+      });
+      fusionados.sort(function(a,b){return (a.name||'').localeCompare(b.name||'');});
+      if(!fusionados.length){
         lista.innerHTML='<div style="padding:20px;text-align:center;color:var(--bad);">No se pudo cargar el catálogo de productos.</div>';
         return;
       }
-      productosCache[EMPRESA_INVENTARIO]=data.productos;
+      productosCache[EMPRESA_INVENTARIO]=fusionados;
     }
     filtrarProductosPanel(q);
   }catch(err){lista.innerHTML='<div style="padding:20px;text-align:center;color:var(--bad);">Error: '+err.message+'</div>';}
