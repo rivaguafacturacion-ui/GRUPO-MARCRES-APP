@@ -404,7 +404,10 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
           </div>
           <div class="corte-horas" id="c-elec-corte-horas"><input type="text" placeholder="Número de horas del corte (ej: 2h)" id="c-elec-corte-horas-val"></div>
         </div>
-        <div class="field-group"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-elec" placeholder="Ej: 2h, 1h 30min..."></div>
+        <div class="field-group" style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
+          <div style="flex:1;min-width:120px;"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-elec" placeholder="Ej: 2h, 1h 30min..."></div>
+          <div style="flex:1;min-width:100px;"><label class="field-label">👷 Nº Técnicos</label><input type="text" class="field-input" id="num-tec-elec" placeholder="Ej: 2..."></div>
+        </div>
         <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-elec"></tbody></table></div>
         <div id="mat-total-display-elec" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-elec">0.00 €</span></div>
         <button class="add-row-btn" onclick="addMatRowFor('elec')">+ Añadir material</button>
@@ -433,7 +436,10 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
           </div>
           <div class="corte-horas" id="c-hid-corte-horas"><input type="text" placeholder="Número de horas del corte (ej: 2h)" id="c-hid-corte-horas-val"></div>
         </div>
-        <div class="field-group"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-hid" placeholder="Ej: 2h, 1h 30min..."></div>
+        <div class="field-group" style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
+          <div style="flex:1;min-width:120px;"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-hid" placeholder="Ej: 2h, 1h 30min..."></div>
+          <div style="flex:1;min-width:100px;"><label class="field-label">👷 Nº Técnicos</label><input type="text" class="field-input" id="num-tec-hid" placeholder="Ej: 2..."></div>
+        </div>
         <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-hid"></tbody></table></div>
         <div id="mat-total-display-hid" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-hid">0.00 €</span></div>
         <button class="add-row-btn" onclick="addMatRowFor('hid')">+ Añadir material</button>
@@ -542,6 +548,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       <button class="tipo-btn" id="tipo-guardia" onclick="selectTipo('guardia')">🕒 Guardia</button>
       <button class="tipo-btn" id="tipo-bomba" onclick="selectTipo('bomba')">🔩 Bomba a Taller</button>
       <button class="tipo-btn" id="tipo-preparacion" onclick="selectTipo('preparacion')">📦 Preparación Materiales</button>
+      <button class="tipo-btn" id="tipo-taller" onclick="selectTipo('taller')">🏭 Trabajo en Taller</button>
     </div>
     <div style="margin-top:12px;">
       <label class="field-label" style="margin-bottom:6px;display:block;">Estado general</label>
@@ -566,7 +573,10 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <div class="card" id="sec-mat-mant">
       <div class="section-header section-open" onclick="toggleSec('sec-mat-mant')"><span class="sec-title">Presupuesto Materiales</span><span class="chevron">⌄</span></div>
       <div class="section-body" style="display:block;">
-        <div class="field-group"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-mant" placeholder="Ej: 2h, 1h 30min..."></div>
+        <div class="field-group" style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
+          <div style="flex:1;min-width:120px;"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-mant" placeholder="Ej: 2h, 1h 30min..."></div>
+          <div style="flex:1;min-width:100px;"><label class="field-label">👷 Nº Técnicos</label><input type="text" class="field-input" id="num-tec-mant" placeholder="Ej: 2..."></div>
+        </div>
         <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-mant"></tbody></table></div>
         <div id="mat-total-display-mant" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-mant">0.00 €</span></div>
         <button class="add-row-btn" onclick="addMatRowFor('mant')">+ Añadir material</button>
@@ -600,7 +610,10 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <div class="card" id="sec-mat-simple">
       <div class="section-header section-open" onclick="toggleSec('sec-mat-simple')"><span class="sec-title">Presupuesto Materiales</span><span class="chevron">⌄</span></div>
       <div class="section-body" style="display:block;">
-        <div class="field-group"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-simple" placeholder="Ej: 2h, 1h 30min..."></div>
+        <div class="field-group" style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
+          <div style="flex:1;min-width:120px;"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-simple" placeholder="Ej: 2h, 1h 30min..."></div>
+          <div style="flex:1;min-width:100px;"><label class="field-label">👷 Nº Técnicos</label><input type="text" class="field-input" id="num-tec-simple" placeholder="Ej: 2..."></div>
+        </div>
         <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-simple"></tbody></table></div>
         <div id="mat-total-display-simple" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-simple">0.00 €</span></div>
         <button class="add-row-btn" onclick="addMatRowFor('simple')">+ Añadir material</button>
@@ -653,6 +666,68 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
     <div class="card"><div class="section-header section-open" onclick="toggleSec('sec-firma-preparacion')"><span class="sec-title">✍️ Firma del técnico</span><span class="chevron">⌄</span></div><div class="section-body" id="sec-firma-preparacion" style="display:block;"><div class="firma-section"><div class="firma-label">Firma del técnico <span style="color:var(--bad);font-size:10px;">*obligatoria</span></div><canvas class="firma-canvas" id="firma-tecnico-preparacion"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('tecnico-preparacion')">🗑 Borrar</button></div></div></div></div>
     <button class="send-btn" id="send-preparacion-btn" onclick="enviarAlbaran('preparacion')">📤 Enviar Preparación Materiales</button>
   </div>
+
+  <div id="panel-taller" class="panel">
+
+    <!-- FOTOS ANTES -->
+    <div class="card">
+      <div class="section-header section-open" onclick="toggleSec('sec-fotos-antes-taller')"><span class="sec-title">📷 Fotos del ANTES <span style="font-size:11px;color:var(--bad);">*3 obligatorias</span></span><span class="chevron">⌄</span></div>
+      <div class="section-body" style="display:block;" id="sec-fotos-antes-taller">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Estado inicial del trabajo antes de comenzar.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;" id="taller-antes-grid">
+          <div class="taller-slot" id="taller-antes-slot-0" onclick="document.getElementById('taller-antes-input-0').click()"><span style="font-size:20px;">📷</span><span style="font-size:10px;color:var(--muted);margin-top:3px;">Antes 1</span></div>
+          <div class="taller-slot" id="taller-antes-slot-1" onclick="document.getElementById('taller-antes-input-1').click()"><span style="font-size:20px;">📷</span><span style="font-size:10px;color:var(--muted);margin-top:3px;">Antes 2</span></div>
+          <div class="taller-slot" id="taller-antes-slot-2" onclick="document.getElementById('taller-antes-input-2').click()"><span style="font-size:20px;">📷</span><span style="font-size:10px;color:var(--muted);margin-top:3px;">Antes 3</span></div>
+        </div>
+        <input type="file" accept="image/*" capture="environment" id="taller-antes-input-0" style="display:none;" onchange="onTallerAntesFoto(this,0)">
+        <input type="file" accept="image/*" capture="environment" id="taller-antes-input-1" style="display:none;" onchange="onTallerAntesFoto(this,1)">
+        <input type="file" accept="image/*" capture="environment" id="taller-antes-input-2" style="display:none;" onchange="onTallerAntesFoto(this,2)">
+        <div class="fotos-aviso" id="fotos-aviso-taller-antes">⚠ Las 3 fotos del ANTES son obligatorias</div>
+      </div>
+    </div>
+
+    <!-- OBSERVACIONES -->
+    <div class="card" id="sec-obs-taller">
+      <div class="section-header section-open" onclick="toggleSec('sec-obs-taller')"><span class="sec-title">Observaciones / Descripción</span><span class="chevron">⌄</span></div>
+      <div class="section-body" style="display:block;"><div class="obs-section"><textarea class="obs-textarea" id="taller-obs" placeholder="Describe el trabajo realizado en taller..."></textarea></div></div>
+    </div>
+
+    <!-- PRESUPUESTO -->
+    <div class="card" id="sec-mat-taller">
+      <div class="section-header section-open" onclick="toggleSec('sec-mat-taller')"><span class="sec-title">Presupuesto Materiales</span><span class="chevron">⌄</span></div>
+      <div class="section-body" style="display:block;">
+        <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:10px;">
+          <div style="flex:1;min-width:120px;"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-taller" placeholder="Ej: 2h, 1h 30min..."></div>
+          <div style="flex:1;min-width:100px;"><label class="field-label">👷 Nº Técnicos</label><input type="text" class="field-input" id="num-tec-taller" placeholder="Ej: 2..."></div>
+        </div>
+        <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-taller"></tbody></table></div>
+        <div id="mat-total-display-taller" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-taller">0.00 €</span></div>
+        <button class="add-row-btn" onclick="addMatRowFor('taller')">+ Añadir material</button>
+      </div>
+    </div>
+
+    <!-- FOTOS DESPUÉS -->
+    <div class="card">
+      <div class="section-header section-open" onclick="toggleSec('sec-fotos-despues-taller')"><span class="sec-title">📷 Fotos del DESPUÉS <span style="font-size:11px;color:var(--bad);">*3 obligatorias</span></span><span class="chevron">⌄</span></div>
+      <div class="section-body" style="display:block;" id="sec-fotos-despues-taller">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Estado final del trabajo una vez terminado.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;" id="taller-despues-grid">
+          <div class="taller-slot" id="taller-despues-slot-0" onclick="document.getElementById('taller-despues-input-0').click()"><span style="font-size:20px;">📷</span><span style="font-size:10px;color:var(--muted);margin-top:3px;">Después 1</span></div>
+          <div class="taller-slot" id="taller-despues-slot-1" onclick="document.getElementById('taller-despues-input-1').click()"><span style="font-size:20px;">📷</span><span style="font-size:10px;color:var(--muted);margin-top:3px;">Después 2</span></div>
+          <div class="taller-slot" id="taller-despues-slot-2" onclick="document.getElementById('taller-despues-input-2').click()"><span style="font-size:20px;">📷</span><span style="font-size:10px;color:var(--muted);margin-top:3px;">Después 3</span></div>
+        </div>
+        <input type="file" accept="image/*" capture="environment" id="taller-despues-input-0" style="display:none;" onchange="onTallerDespuesFoto(this,0)">
+        <input type="file" accept="image/*" capture="environment" id="taller-despues-input-1" style="display:none;" onchange="onTallerDespuesFoto(this,1)">
+        <input type="file" accept="image/*" capture="environment" id="taller-despues-input-2" style="display:none;" onchange="onTallerDespuesFoto(this,2)">
+        <div class="fotos-aviso" id="fotos-aviso-taller-despues">⚠ Las 3 fotos del DESPUÉS son obligatorias</div>
+      </div>
+    </div>
+
+    <!-- FIRMA TÉCNICO -->
+    <div class="card"><div class="section-header section-open" onclick="toggleSec('sec-firma-taller')"><span class="sec-title">✍️ Firma del técnico</span><span class="chevron">⌄</span></div><div class="section-body" id="sec-firma-taller" style="display:block;"><div class="firma-section"><div class="firma-label">Firma del técnico <span style="color:var(--bad);font-size:10px;">*obligatoria</span></div><canvas class="firma-canvas" id="firma-tecnico-taller"></canvas><div class="firma-btns"><button class="firma-clear" onclick="limpiarFirma('tecnico-taller')">🗑 Borrar</button></div></div></div></div>
+
+    <button class="send-btn" id="send-taller-btn" onclick="enviarAlbaran('taller')">📤 Enviar Trabajo en Taller</button>
+  </div>
 </div>
 </div><!-- fin contenido-parte-a -->
 </div>
@@ -677,10 +752,12 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 const GAS_URL='https://script.google.com/macros/s/AKfycbwMdbr48W3chZxft1IppcFmMm9RaEkvMrwrqIY9YofjYwJtLaVPirO8MpNM1rbumWE-2w/exec';
 let empresaChecklist=null,empresaAlbaran=null,tipoAlbaran=null,currentFotoKey=null,currentFotoSlot=null;
 const fotosData={mant:Array(5).fill(null),simple:Array(5).fill(null),elec:Array(5).fill(null),hid:Array(5).fill(null)};
-const ausenteState={elec:false,hid:false,mant:false,simple:false,bomba:false,preparacion:false};
+const ausenteState={elec:false,hid:false,mant:false,simple:false,bomba:false,preparacion:false,taller:false};
 const firmaData={};
 const pdfData={elec:null,hid:null,mant:null,simple:null};
 let bombaFotoData=[null,null];
+let tallerAntesData=[null,null,null];
+let tallerDespuesData=[null,null,null];
 const holdedContactos={};
 let fechaTexto='';
 let holdedTimer=null;
@@ -802,15 +879,17 @@ function switchChecklist(tab){document.getElementById('panel-elec').classList.to
 function selectEmpresa(e,prefix){if(prefix==='c'){empresaChecklist=e;document.getElementById('c-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('c-btn-marcres').classList.toggle('active',e==='marcres');var av=document.getElementById('c-empresa-aviso');if(av)av.classList.remove('show');}else{empresaAlbaran=e;document.getElementById('a-btn-rivagua').classList.toggle('active',e==='rivagua');document.getElementById('a-btn-marcres').classList.toggle('active',e==='marcres');var av2=document.getElementById('a-empresa-aviso');if(av2)av2.classList.remove('show');}document.getElementById('header-empresa-label').textContent=e==='rivagua'?'Rivagua':'Marcres';desbloquearTecnicoSiProcede();}
 function selectTipo(t){
   tipoAlbaran=t;
-  ['mantenimiento','aviso','trabajo','guardia','bomba','preparacion'].forEach(x=>document.getElementById('tipo-'+x).classList.toggle('active',x===t));
+  ['mantenimiento','aviso','trabajo','guardia','bomba','preparacion','taller'].forEach(x=>document.getElementById('tipo-'+x).classList.toggle('active',x===t));
   const esMant=t==='mantenimiento';
   const esBomba=t==='bomba';
   const esPrep=t==='preparacion';
+  const esTaller=t==='taller';
   document.getElementById('panel-mantenimiento').classList.toggle('active',esMant);
   document.getElementById('panel-bomba').classList.toggle('active',esBomba);
   document.getElementById('panel-preparacion').classList.toggle('active',esPrep);
-  document.getElementById('panel-simple').classList.toggle('active',!esMant&&!esBomba&&!esPrep);
-  if(!esMant&&!esBomba&&!esPrep){const labels={aviso:'Aviso',trabajo:'Trabajo',guardia:'Guardia'};document.getElementById('send-simple-btn').textContent='📤 Enviar albarán de '+labels[t];}
+  document.getElementById('panel-taller').classList.toggle('active',esTaller);
+  document.getElementById('panel-simple').classList.toggle('active',!esMant&&!esBomba&&!esPrep&&!esTaller);
+  if(!esMant&&!esBomba&&!esPrep&&!esTaller){const labels={aviso:'Aviso',trabajo:'Trabajo',guardia:'Guardia'};document.getElementById('send-simple-btn').textContent='📤 Enviar albarán de '+labels[t];}
 }
 function toggleSec(id){const sec=document.getElementById(id);const hdr=sec.querySelector('.section-header');const body=sec.querySelector('.section-body');const open=hdr.classList.contains('section-open');hdr.classList.toggle('section-open',!open);body.style.display=open?'none':'block';}
 function selectCorte(el,prefix,val){const yaActivo=el.classList.contains('p-ok')||el.classList.contains('p-bad');el.parentElement.querySelectorAll('.pill').forEach(p=>p.className='pill');const horas=document.getElementById(prefix+'-corte-horas');if(yaActivo){if(horas)horas.classList.remove('show');return;}if(val==='Si')el.classList.add('p-bad');else el.classList.add('p-ok');el.dataset.group=prefix+'-corte';if(horas)horas.classList.toggle('show',val==='Si');}
@@ -1004,7 +1083,7 @@ async function enviarChecklist(tipo){
   btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
   const ubicacion=await obtenerUbicacion();
   btn.textContent='⏳ Enviando...';
-  const payload={empresa:empresaChecklist,tipo:tipoNombre,fecha:fechaTexto,horaInicio:document.getElementById('c-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('c-direccion').value.trim(),poblacion:document.getElementById('c-poblacion').value.trim(),cp:document.getElementById('c-cp').value.trim(),tecnico,tecnico2:document.getElementById('c-tecnico2')?.value.trim()||'',corte:getPill('c-'+tipo+'-corte'),corteHoras:document.getElementById('c-'+tipo+'-corte-horas-val')?.value.trim()||'',resumen:buildResumenChecklist(tipo),observaciones:tipo==='elec'?document.getElementById('elec-obs').value.trim():document.getElementById('hid-obs').value.trim(),horasPresupuestadas:document.getElementById('horas-pres-'+tipo)?.value.trim()||'',materiales:getMaterilesFor(tipo),estadoGeneral:null,numDoc:genNumDoc(),fotos:fotosData[tipo].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+tipo),firmaCliente:ausenteState[tipo]?null:getFirmaBase64('cliente-'+tipo),clienteAusente:ausenteState[tipo],motivoAusencia:document.getElementById('ausente-motivo-'+tipo)?.value.trim()||'',presupuestoPdf:pdfData[tipo]||null,ubicacion,horaEnvio:calcHoraFin()};
+  const payload={empresa:empresaChecklist,tipo:tipoNombre,fecha:fechaTexto,horaInicio:document.getElementById('c-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('c-direccion').value.trim(),poblacion:document.getElementById('c-poblacion').value.trim(),cp:document.getElementById('c-cp').value.trim(),tecnico,tecnico2:document.getElementById('c-tecnico2')?.value.trim()||'',corte:getPill('c-'+tipo+'-corte'),corteHoras:document.getElementById('c-'+tipo+'-corte-horas-val')?.value.trim()||'',resumen:buildResumenChecklist(tipo),observaciones:tipo==='elec'?document.getElementById('elec-obs').value.trim():document.getElementById('hid-obs').value.trim(),horasPresupuestadas:document.getElementById('horas-pres-'+tipo)?.value.trim()||'',numTecnicos:document.getElementById('num-tec-'+tipo)?.value.trim()||'',materiales:getMaterilesFor(tipo),estadoGeneral:null,numDoc:genNumDoc(),fotos:fotosData[tipo].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+tipo),firmaCliente:ausenteState[tipo]?null:getFirmaBase64('cliente-'+tipo),clienteAusente:ausenteState[tipo],motivoAusencia:document.getElementById('ausente-motivo-'+tipo)?.value.trim()||'',presupuestoPdf:pdfData[tipo]||null,ubicacion,horaEnvio:calcHoraFin()};
   try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal(data.url||null);else throw new Error(data.error||'Error desconocido');}
   catch(err){showToast('❌ Error: '+(err.message||'sin conexión'),'error');btn.disabled=false;btn.textContent=`📤 Enviar ${tipoNombre.toLowerCase()}`;}
 }
@@ -1048,6 +1127,23 @@ async function enviarAlbaran(panel){
     return;
   }
 
+  // Panel Trabajo en Taller
+  if(panel==='taller'){
+    const antesOk=tallerAntesData.every(function(f){return f;});
+    const despuesOk=tallerDespuesData.every(function(f){return f;});
+    if(!antesOk){showToast('⚠ Las 3 fotos del ANTES son obligatorias','error');document.getElementById('fotos-aviso-taller-antes').classList.add('show');return;}
+    if(!despuesOk){showToast('⚠ Las 3 fotos del DESPUÉS son obligatorias','error');document.getElementById('fotos-aviso-taller-despues').classList.add('show');return;}
+    if(!validarFirmas('taller','soloTecnico'))return;
+    const btn=document.getElementById('send-taller-btn');
+    btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
+    const ubicacion=await obtenerUbicacion();
+    btn.textContent='⏳ Generando PDF...';
+    const payload={empresa:empresaAlbaran,tipo:'Trabajo en Taller',fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,tecnico2:document.getElementById('a-tecnico2')?.value.trim()||'',observaciones:document.getElementById('taller-obs').value.trim(),horasPresupuestadas:document.getElementById('horas-pres-taller')?.value.trim()||'',numTecnicos:document.getElementById('num-tec-taller')?.value.trim()||'',materiales:getMaterilesFor('taller'),fotosAntes:tallerAntesData.filter(Boolean),fotosDespues:tallerDespuesData.filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-taller'),firmaCliente:null,clienteAusente:true,motivoAusencia:'No requerida',numDoc:genNumDoc(),ubicacion,horaEnvio:calcHoraFin()};
+    try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal(data.url||null);else throw new Error(data.error||'Error desconocido');}
+    catch(err){showToast('❌ Error: '+(err.message||'sin conexión'),'error');btn.disabled=false;btn.textContent='📤 Enviar Trabajo en Taller';}
+    return;
+  }
+
   const fotoKey=panel==='mantenimiento'?'mant':'simple';
   if(!validarFotos(fotoKey))return;
   if(!validarFirmas(panel==='mantenimiento'?'mant':'simple'))return;
@@ -1060,7 +1156,7 @@ async function enviarAlbaran(panel){
   btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
   const ubicacion=await obtenerUbicacion();
   btn.textContent='⏳ Generando PDF...';
-  const payload={empresa:empresaAlbaran,tipo:tipoLabel,fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,tecnico2:document.getElementById('a-tecnico2')?.value.trim()||'',corte:getPill('a-corte'),corteHoras:document.getElementById('a-corte-horas-val')?.value.trim()||'',materialTaller:tallerEstado||'—',fotoTaller:tallerFotoData||null,estadoGeneral:getPill('estado-general'),resumen:isMant?buildResumenMant():'',observaciones:isMant?document.getElementById('mant-obs').value.trim():document.getElementById('simple-obs').value.trim(),incidencia:isMant?document.getElementById('mant-incidencia').value.trim():'',horasPresupuestadas:document.getElementById('horas-pres-'+pKey)?.value.trim()||'',materiales:getMaterilesFor(pKey),numDoc:genNumDoc(),fotos:fotosData[fotoKey].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+pKey),firmaCliente:ausenteState[pKey]?null:getFirmaBase64('cliente-'+pKey),clienteAusente:ausenteState[pKey],motivoAusencia:document.getElementById('ausente-motivo-'+pKey)?.value.trim()||'',presupuestoPdf:pdfData[pKey]||null,ubicacion,horaEnvio:calcHoraFin()};
+  const payload={empresa:empresaAlbaran,tipo:tipoLabel,fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,tecnico2:document.getElementById('a-tecnico2')?.value.trim()||'',corte:getPill('a-corte'),corteHoras:document.getElementById('a-corte-horas-val')?.value.trim()||'',materialTaller:tallerEstado||'—',fotoTaller:tallerFotoData||null,estadoGeneral:getPill('estado-general'),resumen:isMant?buildResumenMant():'',observaciones:isMant?document.getElementById('mant-obs').value.trim():document.getElementById('simple-obs').value.trim(),incidencia:isMant?document.getElementById('mant-incidencia').value.trim():'',horasPresupuestadas:document.getElementById('horas-pres-'+pKey)?.value.trim()||'',numTecnicos:document.getElementById('num-tec-'+pKey)?.value.trim()||'',materiales:getMaterilesFor(pKey),numDoc:genNumDoc(),fotos:fotosData[fotoKey].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+pKey),firmaCliente:ausenteState[pKey]?null:getFirmaBase64('cliente-'+pKey),clienteAusente:ausenteState[pKey],motivoAusencia:document.getElementById('ausente-motivo-'+pKey)?.value.trim()||'',presupuestoPdf:pdfData[pKey]||null,ubicacion,horaEnvio:calcHoraFin()};
   try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal(data.url||null);else throw new Error(data.error||'Error desconocido');}
   catch(err){showToast('❌ Error: '+(err.message||'sin conexión'),'error');btn.disabled=false;btn.textContent='📤 Enviar '+tipoLabel;}
 }
@@ -1985,6 +2081,46 @@ function quitarFotoBomba(e,idx){
     slot.innerHTML='<span style="font-size:22px;">📷</span><span style="font-size:11px;color:var(--muted);margin-top:4px;">Foto '+(idx+1)+'</span>';
     slot.onclick=(function(i){return function(){document.getElementById('bomba-foto-input-'+i).click();};})(idx);
   }
+}
+
+function _procesarFotoTaller(file, dataArr, slotPrefix, inputPrefix, avisoId, labelPrefix, idx, cb){
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var img=new Image();
+    img.onload=function(){
+      var canvas=document.createElement('canvas'),MAX=1200;
+      var w=img.width,h=img.height;
+      if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}
+      canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);
+      dataArr[idx]=canvas.toDataURL('image/jpeg',0.8);
+      var slot=document.getElementById(slotPrefix+idx);
+      if(slot){
+        slot.className='taller-slot filled';slot.onclick=null;
+        slot.innerHTML='<img src="'+dataArr[idx]+'" style="width:100%;height:100%;object-fit:cover;border-radius:8px;"><button class="taller-remove" onclick="'+cb+'(event,'+idx+')">&#x2715;</button>';
+      }
+      if(dataArr.every(function(f){return f;}))document.getElementById(avisoId).classList.remove('show');
+      file=null;showToast('✅ '+labelPrefix+' '+(idx+1)+' añadida','success');
+    };img.src=e.target.result;
+  };reader.readAsDataURL(file);
+}
+function onTallerAntesFoto(input,idx){
+  _procesarFotoTaller(input.files[0],tallerAntesData,'taller-antes-slot-','taller-antes-input-','fotos-aviso-taller-antes','Foto antes',idx,'quitarTallerAntes');
+  input.value='';
+}
+function onTallerDespuesFoto(input,idx){
+  _procesarFotoTaller(input.files[0],tallerDespuesData,'taller-despues-slot-','taller-despues-input-','fotos-aviso-taller-despues','Foto después',idx,'quitarTallerDespues');
+  input.value='';
+}
+function quitarTallerAntes(e,idx){
+  e.stopPropagation();tallerAntesData[idx]=null;
+  var slot=document.getElementById('taller-antes-slot-'+idx);
+  if(slot){slot.className='taller-slot';slot.innerHTML='<span style="font-size:20px;">📷</span><span style="font-size:10px;color:var(--muted);margin-top:3px;">Antes '+(idx+1)+'</span>';slot.onclick=(function(i){return function(){document.getElementById('taller-antes-input-'+i).click();};})(idx);}
+}
+function quitarTallerDespues(e,idx){
+  e.stopPropagation();tallerDespuesData[idx]=null;
+  var slot=document.getElementById('taller-despues-slot-'+idx);
+  if(slot){slot.className='taller-slot';slot.innerHTML='<span style="font-size:20px;">📷</span><span style="font-size:10px;color:var(--muted);margin-top:3px;">Después '+(idx+1)+'</span>';slot.onclick=(function(i){return function(){document.getElementById('taller-despues-input-'+i).click();};})(idx);}
 }
 function quitarFotoTaller(e){
   e.stopPropagation();tallerFotoData=null;
