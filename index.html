@@ -1069,8 +1069,15 @@ function calcHoraFin(){const n=new Date();return String(n.getHours()).padStart(2
 function calcDuracion(){if(!window._horaInicio)return'—';const diff=Math.round((new Date()-window._horaInicio)/60000);return diff>=60?`${Math.floor(diff/60)}h ${diff%60}min`:`${diff}min`;}
 function genNumDoc(){return '';}
 function obtenerUbicacion(){
-  // Si ya tenemos la ubicación del INICIO, la reutilizamos
+  // Solo para el INICIO — reutiliza la caché si ya existe
   if(window._ubicacionInicio) return Promise.resolve(window._ubicacionInicio);
+  return _pedirGPS();
+}
+function obtenerUbicacionFinal(){
+  // Para el ENVÍO — siempre pide coordenadas nuevas, ignora la caché
+  return _pedirGPS();
+}
+function _pedirGPS(){
   return new Promise(resolve=>{
     if(!navigator.geolocation){resolve(null);return;}
     navigator.geolocation.getCurrentPosition(
@@ -1093,7 +1100,7 @@ async function enviarChecklist(tipo){
   const btnId=tipo==='elec'?'send-elec-btn':'send-hid-btn';
   const btn=document.getElementById(btnId);
   btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
-  const ubicacion=await obtenerUbicacion();
+  const ubicacion=await obtenerUbicacionFinal();
   btn.textContent='⏳ Enviando...';
   const payload={empresa:empresaChecklist,tipo:tipoNombre,fecha:fechaTexto,horaInicio:document.getElementById('c-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('c-direccion').value.trim(),poblacion:document.getElementById('c-poblacion').value.trim(),cp:document.getElementById('c-cp').value.trim(),tecnico,tecnico2:document.getElementById('c-tecnico2')?.value.trim()||'',corte:getPill('c-'+tipo+'-corte'),corteHoras:document.getElementById('c-'+tipo+'-corte-horas-val')?.value.trim()||'',resumen:buildResumenChecklist(tipo),observaciones:tipo==='elec'?document.getElementById('elec-obs').value.trim():document.getElementById('hid-obs').value.trim(),horasPresupuestadas:document.getElementById('horas-pres-'+tipo)?.value.trim()||'',numTecnicos:document.getElementById('num-tec-'+tipo)?.value.trim()||'',materiales:getMaterilesFor(tipo),estadoGeneral:null,numDoc:genNumDoc(),fotos:fotosData[tipo].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+tipo),firmaCliente:ausenteState[tipo]?null:getFirmaBase64('cliente-'+tipo),clienteAusente:ausenteState[tipo],motivoAusencia:document.getElementById('ausente-motivo-'+tipo)?.value.trim()||'',presupuestoPdf:pdfData[tipo]||null,ubicacion,ubicacionInicio:window._ubicacionInicio||null,horaEnvio:calcHoraFin()};
   try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal(data.url||null);else throw new Error(data.error||'Error desconocido');}
@@ -1118,7 +1125,7 @@ async function enviarAlbaran(panel){
     if(!validarFirmas('bomba','soloTecnico'))return;
     const btn=document.getElementById('send-bomba-btn');
     btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
-    const ubicacion=await obtenerUbicacion();
+    const ubicacion=await obtenerUbicacionFinal();
     btn.textContent='⏳ Generando PDF...';
     const payload={empresa:empresaAlbaran,tipo:'Bomba a Taller',fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,tecnico2:document.getElementById('a-tecnico2')?.value.trim()||'',observaciones:document.getElementById('bomba-obs').value.trim(),fotos:bombaFotoData.filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-bomba'),firmaCliente:null,clienteAusente:true,motivoAusencia:'No requerida',numDoc:genNumDoc(),ubicacion,ubicacionInicio:window._ubicacionInicio||null,horaEnvio:calcHoraFin()};
     try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal(data.url||null);else throw new Error(data.error||'Error desconocido');}
@@ -1131,7 +1138,7 @@ async function enviarAlbaran(panel){
     if(!validarFirmas('preparacion','soloTecnico'))return;
     const btn=document.getElementById('send-preparacion-btn');
     btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
-    const ubicacion=await obtenerUbicacion();
+    const ubicacion=await obtenerUbicacionFinal();
     btn.textContent='⏳ Generando PDF...';
     const payload={empresa:empresaAlbaran,tipo:'Preparación Materiales',fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,tecnico2:document.getElementById('a-tecnico2')?.value.trim()||'',observaciones:document.getElementById('preparacion-obs').value.trim(),materiales:getMaterilesFor('preparacion'),firmaTecnico:getFirmaBase64('tecnico-preparacion'),firmaCliente:null,clienteAusente:true,motivoAusencia:'No requerida',numDoc:genNumDoc(),ubicacion,ubicacionInicio:window._ubicacionInicio||null,horaEnvio:calcHoraFin()};
     try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal(data.url||null);else throw new Error(data.error||'Error desconocido');}
@@ -1148,7 +1155,7 @@ async function enviarAlbaran(panel){
     if(!validarFirmas('taller','soloTecnico'))return;
     const btn=document.getElementById('send-taller-btn');
     btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
-    const ubicacion=await obtenerUbicacion();
+    const ubicacion=await obtenerUbicacionFinal();
     btn.textContent='⏳ Generando PDF...';
     const payload={empresa:empresaAlbaran,tipo:'Trabajo en Taller',fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,tecnico2:document.getElementById('a-tecnico2')?.value.trim()||'',observaciones:document.getElementById('taller-obs').value.trim(),horasPresupuestadas:document.getElementById('horas-pres-taller')?.value.trim()||'',numTecnicos:document.getElementById('num-tec-taller')?.value.trim()||'',materiales:getMaterilesFor('taller'),fotosAntes:tallerAntesData.filter(Boolean),fotosDespues:tallerDespuesData.filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-taller'),firmaCliente:null,clienteAusente:true,motivoAusencia:'No requerida',numDoc:genNumDoc(),ubicacion,ubicacionInicio:window._ubicacionInicio||null,horaEnvio:calcHoraFin()};
     try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal(data.url||null);else throw new Error(data.error||'Error desconocido');}
@@ -1166,7 +1173,7 @@ async function enviarAlbaran(panel){
   const btn=document.getElementById(btnId);
   if(tallerEstado==='No'&&!tallerFotoData){showToast('⚠ Adjunta la foto del material a taller','error');return;}
   btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
-  const ubicacion=await obtenerUbicacion();
+  const ubicacion=await obtenerUbicacionFinal();
   btn.textContent='⏳ Generando PDF...';
   const payload={empresa:empresaAlbaran,tipo:tipoLabel,fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,tecnico2:document.getElementById('a-tecnico2')?.value.trim()||'',corte:getPill('a-corte'),corteHoras:document.getElementById('a-corte-horas-val')?.value.trim()||'',materialTaller:tallerEstado||'—',fotoTaller:tallerFotoData||null,estadoGeneral:getPill('estado-general'),resumen:isMant?buildResumenMant():'',observaciones:isMant?document.getElementById('mant-obs').value.trim():document.getElementById('simple-obs').value.trim(),incidencia:isMant?document.getElementById('mant-incidencia').value.trim():'',horasPresupuestadas:document.getElementById('horas-pres-'+pKey)?.value.trim()||'',numTecnicos:document.getElementById('num-tec-'+pKey)?.value.trim()||'',materiales:getMaterilesFor(pKey),numDoc:genNumDoc(),fotos:fotosData[fotoKey].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+pKey),firmaCliente:ausenteState[pKey]?null:getFirmaBase64('cliente-'+pKey),clienteAusente:ausenteState[pKey],motivoAusencia:document.getElementById('ausente-motivo-'+pKey)?.value.trim()||'',presupuestoPdf:pdfData[pKey]||null,ubicacion,ubicacionInicio:window._ubicacionInicio||null,horaEnvio:calcHoraFin()};
   try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal(data.url||null);else throw new Error(data.error||'Error desconocido');}
@@ -1352,6 +1359,7 @@ function _arrancarParte(prefix) {
       body: JSON.stringify({
         accion:'emailInicio',
         empresa, tecnico, cliente,
+        tipo: prefix==='c' ? (tipoChecklist||'Checklist') : (tipoAlbaran ? ({mantenimiento:'Albarán Mantenimiento',aviso:'Albarán Aviso',trabajo:'Albarán Trabajo',guardia:'Albarán Guardia',bomba:'Bomba a Taller',preparacion:'Preparación Materiales',taller:'Trabajo en Taller'}[tipoAlbaran]||tipoAlbaran) : 'Albarán'),
         horaInicio,
         fecha: new Date().toLocaleDateString('es-ES'),
         ubicacionInicio: ubInicio
