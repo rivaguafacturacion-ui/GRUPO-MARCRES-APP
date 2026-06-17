@@ -331,9 +331,8 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
         <div class="holded-dropdown" id="c-tecnico-drop" style="display:none;"></div>
       </div>
     </div>
-    <div class="field-group"><label class="field-label">Técnico 2 <span style="color:var(--muted);font-weight:400;font-size:11px;">(opcional)</span></label>
-      <input type="text" class="field-input" id="c-tecnico2" placeholder="Nombre del segundo técnico..." autocomplete="off">
-    </div>
+    <div id="c-tecnicos-extra-wrap"></div>
+    <button class="add-row-btn" id="c-add-tecnico-btn" onclick="addTecnicoExtra('c')" style="margin-bottom:8px;">+ Añadir técnico</button>
       <div class="tareas-seccion">
         <div class="tareas-seccion-header" onclick="toggleSeccionTareasC()">
           <div class="tareas-seccion-titulo">
@@ -478,9 +477,8 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
         <div class="holded-dropdown" id="a-tecnico-drop" style="display:none;"></div>
       </div>
     </div>
-    <div class="field-group"><label class="field-label">Técnico 2 <span style="color:var(--muted);font-weight:400;font-size:11px;">(opcional)</span></label>
-      <input type="text" class="field-input" id="a-tecnico2" placeholder="Nombre del segundo técnico..." autocomplete="off">
-    </div>
+    <div id="a-tecnicos-extra-wrap"></div>
+    <button class="add-row-btn" id="a-add-tecnico-btn" onclick="addTecnicoExtra('a')" style="margin-bottom:8px;">+ Añadir técnico</button>
     <div class="field-group" id="a-tareas-wrap">
       <div class="tareas-seccion">
         <div class="tareas-seccion-header" onclick="toggleSeccionTareas()">
@@ -1102,7 +1100,7 @@ async function enviarChecklist(tipo){
   btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
   const ubicacion=await obtenerUbicacionFinal();
   btn.textContent='⏳ Enviando...';
-  const payload={empresa:empresaChecklist,tipo:tipoNombre,fecha:fechaTexto,horaInicio:document.getElementById('c-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('c-direccion').value.trim(),poblacion:document.getElementById('c-poblacion').value.trim(),cp:document.getElementById('c-cp').value.trim(),tecnico,tecnico2:document.getElementById('c-tecnico2')?.value.trim()||'',corte:getPill('c-'+tipo+'-corte'),corteHoras:document.getElementById('c-'+tipo+'-corte-horas-val')?.value.trim()||'',resumen:buildResumenChecklist(tipo),observaciones:tipo==='elec'?document.getElementById('elec-obs').value.trim():document.getElementById('hid-obs').value.trim(),horasPresupuestadas:document.getElementById('horas-pres-'+tipo)?.value.trim()||'',numTecnicos:document.getElementById('num-tec-'+tipo)?.value.trim()||'',materiales:getMaterilesFor(tipo),estadoGeneral:null,numDoc:genNumDoc(),fotos:fotosData[tipo].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+tipo),firmaCliente:ausenteState[tipo]?null:getFirmaBase64('cliente-'+tipo),clienteAusente:ausenteState[tipo],motivoAusencia:document.getElementById('ausente-motivo-'+tipo)?.value.trim()||'',presupuestoPdf:pdfData[tipo]||null,ubicacion,ubicacionInicio:window._ubicacionInicio||null,horaEnvio:calcHoraFin()};
+  const payload={empresa:empresaChecklist,tipo:tipoNombre,fecha:fechaTexto,horaInicio:document.getElementById('c-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('c-direccion').value.trim(),poblacion:document.getElementById('c-poblacion').value.trim(),cp:document.getElementById('c-cp').value.trim(),tecnico,tecnicosExtra:getTecnicosExtra('c'),corte:getPill('c-'+tipo+'-corte'),corteHoras:document.getElementById('c-'+tipo+'-corte-horas-val')?.value.trim()||'',resumen:buildResumenChecklist(tipo),observaciones:tipo==='elec'?document.getElementById('elec-obs').value.trim():document.getElementById('hid-obs').value.trim(),horasPresupuestadas:document.getElementById('horas-pres-'+tipo)?.value.trim()||'',numTecnicos:document.getElementById('num-tec-'+tipo)?.value.trim()||'',materiales:getMaterilesFor(tipo),estadoGeneral:null,numDoc:genNumDoc(),fotos:fotosData[tipo].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+tipo),firmaCliente:ausenteState[tipo]?null:getFirmaBase64('cliente-'+tipo),clienteAusente:ausenteState[tipo],motivoAusencia:document.getElementById('ausente-motivo-'+tipo)?.value.trim()||'',presupuestoPdf:pdfData[tipo]||null,ubicacion,ubicacionInicio:window._ubicacionInicio||null,horaEnvio:calcHoraFin()};
   try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal(data.url||null);else throw new Error(data.error||'Error desconocido');}
   catch(err){showToast('❌ Error: '+(err.message||'sin conexión'),'error');btn.disabled=false;btn.textContent=`📤 Enviar ${tipoNombre.toLowerCase()}`;}
 }
@@ -1127,7 +1125,7 @@ async function enviarAlbaran(panel){
     btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
     const ubicacion=await obtenerUbicacionFinal();
     btn.textContent='⏳ Generando PDF...';
-    const payload={empresa:empresaAlbaran,tipo:'Bomba a Taller',fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,tecnico2:document.getElementById('a-tecnico2')?.value.trim()||'',observaciones:document.getElementById('bomba-obs').value.trim(),fotos:bombaFotoData.filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-bomba'),firmaCliente:null,clienteAusente:true,motivoAusencia:'No requerida',numDoc:genNumDoc(),ubicacion,ubicacionInicio:window._ubicacionInicio||null,horaEnvio:calcHoraFin()};
+    const payload={empresa:empresaAlbaran,tipo:'Bomba a Taller',fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,tecnicosExtra:getTecnicosExtra('a'),observaciones:document.getElementById('bomba-obs').value.trim(),fotos:bombaFotoData.filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-bomba'),firmaCliente:null,clienteAusente:true,motivoAusencia:'No requerida',numDoc:genNumDoc(),ubicacion,ubicacionInicio:window._ubicacionInicio||null,horaEnvio:calcHoraFin()};
     try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal(data.url||null);else throw new Error(data.error||'Error desconocido');}
     catch(err){showToast('❌ Error: '+(err.message||'sin conexión'),'error');btn.disabled=false;btn.textContent='📤 Enviar Bomba a Taller';}
     return;
@@ -1140,7 +1138,7 @@ async function enviarAlbaran(panel){
     btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
     const ubicacion=await obtenerUbicacionFinal();
     btn.textContent='⏳ Generando PDF...';
-    const payload={empresa:empresaAlbaran,tipo:'Preparación Materiales',fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,tecnico2:document.getElementById('a-tecnico2')?.value.trim()||'',observaciones:document.getElementById('preparacion-obs').value.trim(),materiales:getMaterilesFor('preparacion'),firmaTecnico:getFirmaBase64('tecnico-preparacion'),firmaCliente:null,clienteAusente:true,motivoAusencia:'No requerida',numDoc:genNumDoc(),ubicacion,ubicacionInicio:window._ubicacionInicio||null,horaEnvio:calcHoraFin()};
+    const payload={empresa:empresaAlbaran,tipo:'Preparación Materiales',fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,tecnicosExtra:getTecnicosExtra('a'),observaciones:document.getElementById('preparacion-obs').value.trim(),materiales:getMaterilesFor('preparacion'),firmaTecnico:getFirmaBase64('tecnico-preparacion'),firmaCliente:null,clienteAusente:true,motivoAusencia:'No requerida',numDoc:genNumDoc(),ubicacion,ubicacionInicio:window._ubicacionInicio||null,horaEnvio:calcHoraFin()};
     try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal(data.url||null);else throw new Error(data.error||'Error desconocido');}
     catch(err){showToast('❌ Error: '+(err.message||'sin conexión'),'error');btn.disabled=false;btn.textContent='📤 Enviar Preparación Materiales';}
     return;
@@ -1157,7 +1155,7 @@ async function enviarAlbaran(panel){
     btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
     const ubicacion=await obtenerUbicacionFinal();
     btn.textContent='⏳ Generando PDF...';
-    const payload={empresa:empresaAlbaran,tipo:'Trabajo en Taller',fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,tecnico2:document.getElementById('a-tecnico2')?.value.trim()||'',observaciones:document.getElementById('taller-obs').value.trim(),horasPresupuestadas:document.getElementById('horas-pres-taller')?.value.trim()||'',numTecnicos:document.getElementById('num-tec-taller')?.value.trim()||'',materiales:getMaterilesFor('taller'),fotosAntes:tallerAntesData.filter(Boolean),fotosDespues:tallerDespuesData.filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-taller'),firmaCliente:null,clienteAusente:true,motivoAusencia:'No requerida',numDoc:genNumDoc(),ubicacion,ubicacionInicio:window._ubicacionInicio||null,horaEnvio:calcHoraFin()};
+    const payload={empresa:empresaAlbaran,tipo:'Trabajo en Taller',fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,tecnicosExtra:getTecnicosExtra('a'),observaciones:document.getElementById('taller-obs').value.trim(),horasPresupuestadas:document.getElementById('horas-pres-taller')?.value.trim()||'',numTecnicos:document.getElementById('num-tec-taller')?.value.trim()||'',materiales:getMaterilesFor('taller'),fotosAntes:tallerAntesData.filter(Boolean),fotosDespues:tallerDespuesData.filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-taller'),firmaCliente:null,clienteAusente:true,motivoAusencia:'No requerida',numDoc:genNumDoc(),ubicacion,ubicacionInicio:window._ubicacionInicio||null,horaEnvio:calcHoraFin()};
     try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal(data.url||null);else throw new Error(data.error||'Error desconocido');}
     catch(err){showToast('❌ Error: '+(err.message||'sin conexión'),'error');btn.disabled=false;btn.textContent='📤 Enviar Trabajo en Taller';}
     return;
@@ -1175,7 +1173,7 @@ async function enviarAlbaran(panel){
   btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
   const ubicacion=await obtenerUbicacionFinal();
   btn.textContent='⏳ Generando PDF...';
-  const payload={empresa:empresaAlbaran,tipo:tipoLabel,fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,tecnico2:document.getElementById('a-tecnico2')?.value.trim()||'',corte:getPill('a-corte'),corteHoras:document.getElementById('a-corte-horas-val')?.value.trim()||'',materialTaller:tallerEstado||'—',fotoTaller:tallerFotoData||null,estadoGeneral:getPill('estado-general'),resumen:isMant?buildResumenMant():'',observaciones:isMant?document.getElementById('mant-obs').value.trim():document.getElementById('simple-obs').value.trim(),incidencia:isMant?document.getElementById('mant-incidencia').value.trim():'',horasPresupuestadas:document.getElementById('horas-pres-'+pKey)?.value.trim()||'',numTecnicos:document.getElementById('num-tec-'+pKey)?.value.trim()||'',materiales:getMaterilesFor(pKey),numDoc:genNumDoc(),fotos:fotosData[fotoKey].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+pKey),firmaCliente:ausenteState[pKey]?null:getFirmaBase64('cliente-'+pKey),clienteAusente:ausenteState[pKey],motivoAusencia:document.getElementById('ausente-motivo-'+pKey)?.value.trim()||'',presupuestoPdf:pdfData[pKey]||null,ubicacion,ubicacionInicio:window._ubicacionInicio||null,horaEnvio:calcHoraFin()};
+  const payload={empresa:empresaAlbaran,tipo:tipoLabel,fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,tecnicosExtra:getTecnicosExtra('a'),corte:getPill('a-corte'),corteHoras:document.getElementById('a-corte-horas-val')?.value.trim()||'',materialTaller:tallerEstado||'—',fotoTaller:tallerFotoData||null,estadoGeneral:getPill('estado-general'),resumen:isMant?buildResumenMant():'',observaciones:isMant?document.getElementById('mant-obs').value.trim():document.getElementById('simple-obs').value.trim(),incidencia:isMant?document.getElementById('mant-incidencia').value.trim():'',horasPresupuestadas:document.getElementById('horas-pres-'+pKey)?.value.trim()||'',numTecnicos:document.getElementById('num-tec-'+pKey)?.value.trim()||'',materiales:getMaterilesFor(pKey),numDoc:genNumDoc(),fotos:fotosData[fotoKey].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+pKey),firmaCliente:ausenteState[pKey]?null:getFirmaBase64('cliente-'+pKey),clienteAusente:ausenteState[pKey],motivoAusencia:document.getElementById('ausente-motivo-'+pKey)?.value.trim()||'',presupuestoPdf:pdfData[pKey]||null,ubicacion,ubicacionInicio:window._ubicacionInicio||null,horaEnvio:calcHoraFin()};
   try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal(data.url||null);else throw new Error(data.error||'Error desconocido');}
   catch(err){showToast('❌ Error: '+(err.message||'sin conexión'),'error');btn.disabled=false;btn.textContent='📤 Enviar '+tipoLabel;}
 }
@@ -1183,6 +1181,80 @@ async function enviarAlbaran(panel){
 // EMPLEADOS HOLDED
 let tecnicoElegido={c:false,a:false};
 let empleadosCache=null;
+
+// ── TÉCNICOS EXTRA (2, 3, 4...) con búsqueda Holded ──────────
+var _tecnicosExtra={c:[],a:[]};
+var _tecnicoExtraCounter=0;
+function addTecnicoExtra(prefix){
+  var wrap=document.getElementById(prefix+'-tecnicos-extra-wrap');
+  if(!wrap)return;
+  var idx=++_tecnicoExtraCounter;
+  var num=_tecnicosExtra[prefix].length+2;
+  _tecnicosExtra[prefix].push({idx:idx,valor:''});
+  var div=document.createElement('div');
+  div.className='field-group';div.id='tecnico-extra-wrap-'+idx;
+  div.innerHTML='<label class="field-label">Técnico '+num+' <span style="color:var(--muted);font-weight:400;font-size:11px;">(opcional)</span></label>'
+    +'<div style="display:flex;gap:6px;align-items:center;"><div style="flex:1;position:relative;">'
+    +'<input type="text" class="field-input" id="tecnico-extra-'+idx+'" placeholder="Escribe para buscar técnico..." autocomplete="off"'
+    +' oninput="buscarTecnicoExtra(this.value,\''+prefix+'\','+idx+')"'
+    +' onfocus="buscarTecnicoExtra(this.value,\''+prefix+'\','+idx+')">'
+    +'<div class="holded-dropdown" id="tecnico-extra-drop-'+idx+'" style="display:none;"></div>'
+    +'</div>'
+    +'<button onclick="removeTecnicoExtra(\''+prefix+'\','+idx+')" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--muted);flex-shrink:0;">✕</button>'
+    +'</div>';
+  wrap.appendChild(div);
+  var btn=document.getElementById(prefix+'-add-tecnico-btn');
+  if(btn)btn.style.display=_tecnicosExtra[prefix].length>=4?'none':'block';
+}
+function removeTecnicoExtra(prefix,idx){
+  var wrap=document.getElementById('tecnico-extra-wrap-'+idx);
+  if(wrap)wrap.remove();
+  _tecnicosExtra[prefix]=_tecnicosExtra[prefix].filter(function(t){return t.idx!==idx;});
+  var items=document.getElementById(prefix+'-tecnicos-extra-wrap').querySelectorAll('.field-group');
+  items.forEach(function(el,i){var label=el.querySelector('.field-label');if(label)label.childNodes[0].textContent='Técnico '+(i+2)+' ';});
+  var btn=document.getElementById(prefix+'-add-tecnico-btn');if(btn)btn.style.display='block';
+}
+async function buscarTecnicoExtra(q,prefix,idx){
+  var drop=document.getElementById('tecnico-extra-drop-'+idx);
+  if(!drop)return;
+  if(!q||q.length<2){drop.style.display='none';return;}
+  drop.style.display='block';
+  drop.innerHTML='<div class="holded-searching">⏳ Buscando...</div>';
+  try{
+    var res=await fetch(GAS_URL+'?action=empleados&q='+encodeURIComponent(q));
+    var data=await res.json();
+    var empleados=data.ok?data.empleados:[];
+    if(!empleados.length){drop.innerHTML='<div class="holded-searching">Sin resultados</div>';return;}
+    drop.innerHTML=empleados.slice(0,8).map(function(e){
+      return '<div class="holded-item" onclick="elegirTecnicoExtra(\''+prefix+'\','+idx+',\''+e.name.replace(/'/g,"\\'")+'\')">'
+        +'<div class="holded-name">'+e.name+'</div></div>';
+    }).join('');
+  }catch(err){drop.style.display='none';}
+}
+function elegirTecnicoExtra(prefix,idx,nombre){
+  var inp=document.getElementById('tecnico-extra-'+idx);
+  var drop=document.getElementById('tecnico-extra-drop-'+idx);
+  if(inp){inp.value=nombre;inp.style.color='var(--ok)';inp.style.fontWeight='600';}
+  if(drop)drop.style.display='none';
+  var found=_tecnicosExtra[prefix].find(function(t){return t.idx===idx;});
+  if(found)found.valor=nombre;
+}
+function getTecnicosExtra(prefix){
+  return _tecnicosExtra[prefix]
+    .map(function(t){return (document.getElementById('tecnico-extra-'+t.idx)?.value.trim()||'');})
+    .filter(Boolean);
+}
+function resetTecnicosExtra(prefix){
+  var wrap=document.getElementById(prefix+'-tecnicos-extra-wrap');
+  if(wrap)wrap.innerHTML='';
+  _tecnicosExtra[prefix]=[];
+  var btn=document.getElementById(prefix+'-add-tecnico-btn');
+  if(btn)btn.style.display='block';
+}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('[id^="tecnico-extra-"]'))
+    document.querySelectorAll('[id^="tecnico-extra-drop-"]').forEach(function(d){d.style.display='none';});
+});
 
 async function buscarEmpleado(q,prefix){
   if(tecnicoElegido[prefix])return;
