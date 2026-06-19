@@ -751,6 +751,7 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
 const GAS_URL='https://script.google.com/macros/s/AKfycbwMdbr48W3chZxft1IppcFmMm9RaEkvMrwrqIY9YofjYwJtLaVPirO8MpNM1rbumWE-2w/exec';
 let empresaChecklist=null,empresaAlbaran=null,tipoAlbaran=null,currentFotoKey=null,currentFotoSlot=null;
 const fotosData={mant:Array(5).fill(null),simple:Array(5).fill(null),elec:Array(5).fill(null),hid:Array(5).fill(null)};
+const fotosExtra={mant:[],simple:[],elec:[],hid:[]};
 const ausenteState={elec:false,hid:false,mant:false,simple:false,bomba:false,preparacion:false,taller:false};
 const firmaData={};
 const pdfData={elec:null,hid:null,mant:null,simple:null};
@@ -1007,11 +1008,19 @@ function addMatRowFor(key) {
 function cargarPdf(input,key){const file=input.files[0];if(!file)return;if(file.size>5*1024*1024){showToast('⚠ El PDF no puede superar 5 MB','error');input.value='';return;}const reader=new FileReader();reader.onload=e=>{pdfData[key]={base64:e.target.result.split(',')[1],nombre:file.name};document.getElementById('pdf-name-'+key).textContent='✅ '+file.name;document.getElementById('pdf-name-'+key).style.color='var(--ok)';document.getElementById('pdf-label-'+key).style.borderColor='var(--ok)';document.getElementById('pdf-clear-'+key).style.display='inline-block';};reader.readAsDataURL(file);}
 function borrarPdf(key){pdfData[key]=null;document.getElementById('pdf-input-'+key).value='';document.getElementById('pdf-name-'+key).textContent='Seleccionar PDF...';document.getElementById('pdf-name-'+key).style.color='var(--muted)';document.getElementById('pdf-label-'+key).style.borderColor='var(--border)';document.getElementById('pdf-clear-'+key).style.display='none';}
 
-function buildFotoGrid(key){const grid=document.getElementById('fotos-grid-'+key);grid.innerHTML='';for(let i=0;i<5;i++){const slot=document.createElement('div');slot.className='foto-slot'+(fotosData[key][i]?' filled':'');if(fotosData[key][i]){slot.innerHTML=`<img src="${fotosData[key][i]}" alt="Foto ${i+1}"><button class="remove-btn" onclick="removePhoto('${key}',${i},event)">✕</button>`;}else{slot.innerHTML=`<span class="slot-icon">📷</span><span class="slot-num">${i+1}</span>`;slot.onclick=()=>openCamera(key,i);}grid.appendChild(slot);}updateFotoCounter(key);}
+function buildFotoGrid(key){
+  const grid=document.getElementById('fotos-grid-'+key);grid.innerHTML='';
+  for(let i=0;i<5;i++){const slot=document.createElement('div');slot.className='foto-slot'+(fotosData[key][i]?' filled':'');if(fotosData[key][i]){slot.innerHTML=`<img src="${fotosData[key][i]}" alt="Foto ${i+1}"><button class="remove-btn" onclick="removePhoto('${key}',${i},event)">✕</button>`;}else{slot.innerHTML=`<span class="slot-icon">📷</span><span class="slot-num">${i+1}</span>`;slot.onclick=()=>openCamera(key,i);}grid.appendChild(slot);}
+  fotosExtra[key].forEach(function(foto,ei){const slot=document.createElement('div');slot.className='foto-slot filled';slot.innerHTML=`<img src="${foto}" alt="Extra ${ei+1}"><button class="remove-btn" onclick="removePhotoExtra('${key}',${ei},event)">✕</button>`;grid.appendChild(slot);});
+  const btnAdd=document.createElement('div');btnAdd.className='foto-slot';btnAdd.style.cssText='border-style:dashed;border-color:var(--celeste);cursor:pointer;';btnAdd.innerHTML='<span style="font-size:18px;color:var(--celeste);">＋</span><span class="slot-num" style="color:var(--celeste);">más</span>';btnAdd.onclick=function(){openCameraExtra(key);};grid.appendChild(btnAdd);
+  updateFotoCounter(key);
+}
 function openCamera(key,slot){currentFotoKey=key;currentFotoSlot=slot;const inp=document.getElementById('foto-input-'+key);if(inp){inp.value='';inp.click();}}
 function removePhoto(key,slot,e){e.stopPropagation();fotosData[key][slot]=null;buildFotoGrid(key);}
-function updateFotoCounter(key){const cnt=fotosData[key].filter(Boolean).length;const el=document.getElementById('cnt-fotos-'+key)||document.getElementById('cnt-'+key);if(!el)return;el.textContent=cnt+'/5';el.style.background=cnt===5?'var(--ok-bg)':'var(--bad-bg)';el.style.color=cnt===5?'var(--ok)':'var(--bad)';el.style.borderColor=cnt===5?'var(--ok)':'var(--bad)';}
-function initFotos(){['mant','simple','elec','hid'].forEach(key=>{const inp=document.getElementById('foto-input-'+key);if(!inp)return;inp.addEventListener('change',function(){const file=this.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{const img=new Image();img.onload=()=>{const canvas=document.createElement('canvas'),MAX=800;let w=img.width,h=img.height;if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);fotosData[currentFotoKey][currentFotoSlot]=canvas.toDataURL('image/jpeg',0.75);buildFotoGrid(currentFotoKey);};img.src=e.target.result;};reader.readAsDataURL(file);});buildFotoGrid(key);});}
+function removePhotoExtra(key,idx,e){e.stopPropagation();fotosExtra[key].splice(idx,1);buildFotoGrid(key);}
+function openCameraExtra(key){currentFotoKey=key;currentFotoSlot='extra';const inp=document.getElementById('foto-input-'+key);if(inp){inp.value='';inp.click();}}
+function updateFotoCounter(key){const cnt=fotosData[key].filter(Boolean).length;const extra=(fotosExtra[key]||[]).length;const el=document.getElementById('cnt-fotos-'+key)||document.getElementById('cnt-'+key);if(!el)return;el.textContent=cnt+'/5'+(extra>0?' +'+extra:'');el.style.background=cnt===5?'var(--ok-bg)':'var(--bad-bg)';el.style.color=cnt===5?'var(--ok)':'var(--bad)';el.style.borderColor=cnt===5?'var(--ok)':'var(--bad)';}
+function initFotos(){['mant','simple','elec','hid'].forEach(key=>{const inp=document.getElementById('foto-input-'+key);if(!inp)return;inp.addEventListener('change',function(){const file=this.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{const img=new Image();img.onload=()=>{const canvas=document.createElement('canvas'),MAX=800;let w=img.width,h=img.height;if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);if(currentFotoSlot==='extra'){fotosExtra[currentFotoKey].push(canvas.toDataURL('image/jpeg',0.75));showToast('✅ Foto extra añadida','success');}else{fotosData[currentFotoKey][currentFotoSlot]=canvas.toDataURL('image/jpeg',0.75);}buildFotoGrid(currentFotoKey);};img.src=e.target.result;};reader.readAsDataURL(file);});buildFotoGrid(key);});}
 
 function initFirmas(){document.querySelectorAll('.firma-canvas').forEach(canvas=>{const id=canvas.id;firmaData[id]={signed:false};let drawing=false,lx=0,ly=0;const ctx=canvas.getContext('2d');ctx.strokeStyle='#184595';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';function getPos(e){const r=canvas.getBoundingClientRect();const src=e.touches?e.touches[0]:e;return{x:(src.clientX-r.left)*(canvas.width/r.width),y:(src.clientY-r.top)*(canvas.height/r.height)};}function start(e){e.preventDefault();drawing=true;const p=getPos(e);lx=p.x;ly=p.y;ctx.beginPath();ctx.arc(lx,ly,1,0,Math.PI*2);ctx.fill();}function move(e){e.preventDefault();if(!drawing)return;const p=getPos(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p.x,p.y);ctx.stroke();lx=p.x;ly=p.y;firmaData[id].signed=true;canvas.classList.add('signed');}function end(){drawing=false;}canvas.width=canvas.offsetWidth||300;canvas.height=140;canvas.addEventListener('mousedown',start);canvas.addEventListener('mousemove',move);canvas.addEventListener('mouseup',end);canvas.addEventListener('touchstart',start,{passive:false});canvas.addEventListener('touchmove',move,{passive:false});canvas.addEventListener('touchend',end);});}
 function limpiarFirma(id){const canvas=document.getElementById('firma-'+id);if(!canvas)return;canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);firmaData['firma-'+id]={signed:false};canvas.classList.remove('signed');}
@@ -1100,7 +1109,7 @@ async function enviarChecklist(tipo){
   btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
   const ubicacion=await obtenerUbicacionFinal();
   btn.textContent='⏳ Enviando...';
-  const payload={empresa:empresaChecklist,tipo:tipoNombre,fecha:fechaTexto,horaInicio:document.getElementById('c-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('c-direccion').value.trim(),poblacion:document.getElementById('c-poblacion').value.trim(),cp:document.getElementById('c-cp').value.trim(),tecnico,tecnicosExtra:getTecnicosExtra('c'),corte:getPill('c-'+tipo+'-corte'),corteHoras:document.getElementById('c-'+tipo+'-corte-horas-val')?.value.trim()||'',resumen:buildResumenChecklist(tipo),observaciones:tipo==='elec'?document.getElementById('elec-obs').value.trim():document.getElementById('hid-obs').value.trim(),horasPresupuestadas:document.getElementById('horas-pres-'+tipo)?.value.trim()||'',numTecnicos:document.getElementById('num-tec-'+tipo)?.value.trim()||'',materiales:getMaterilesFor(tipo),estadoGeneral:null,numDoc:genNumDoc(),fotos:fotosData[tipo].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+tipo),firmaCliente:ausenteState[tipo]?null:getFirmaBase64('cliente-'+tipo),clienteAusente:ausenteState[tipo],motivoAusencia:document.getElementById('ausente-motivo-'+tipo)?.value.trim()||'',presupuestoPdf:pdfData[tipo]||null,ubicacion,ubicacionInicio:window._ubicacionInicio||null,horaEnvio:calcHoraFin()};
+  const payload={empresa:empresaChecklist,tipo:tipoNombre,fecha:fechaTexto,horaInicio:document.getElementById('c-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('c-direccion').value.trim(),poblacion:document.getElementById('c-poblacion').value.trim(),cp:document.getElementById('c-cp').value.trim(),tecnico,tecnicosExtra:getTecnicosExtra('c'),corte:getPill('c-'+tipo+'-corte'),corteHoras:document.getElementById('c-'+tipo+'-corte-horas-val')?.value.trim()||'',resumen:buildResumenChecklist(tipo),observaciones:tipo==='elec'?document.getElementById('elec-obs').value.trim():document.getElementById('hid-obs').value.trim(),horasPresupuestadas:document.getElementById('horas-pres-'+tipo)?.value.trim()||'',numTecnicos:document.getElementById('num-tec-'+tipo)?.value.trim()||'',materiales:getMaterilesFor(tipo),estadoGeneral:null,numDoc:genNumDoc(),fotos:[...fotosData[tipo].filter(Boolean),...(fotosExtra[tipo]||[])],firmaTecnico:getFirmaBase64('tecnico-'+tipo),firmaCliente:ausenteState[tipo]?null:getFirmaBase64('cliente-'+tipo),clienteAusente:ausenteState[tipo],motivoAusencia:document.getElementById('ausente-motivo-'+tipo)?.value.trim()||'',presupuestoPdf:pdfData[tipo]||null,ubicacion,ubicacionInicio:window._ubicacionInicio||null,horaEnvio:calcHoraFin()};
   try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal(data.url||null);else throw new Error(data.error||'Error desconocido');}
   catch(err){showToast('❌ Error: '+(err.message||'sin conexión'),'error');btn.disabled=false;btn.textContent=`📤 Enviar ${tipoNombre.toLowerCase()}`;}
 }
@@ -1173,7 +1182,7 @@ async function enviarAlbaran(panel){
   btn.disabled=true;btn.textContent='📍 Obteniendo ubicación...';
   const ubicacion=await obtenerUbicacionFinal();
   btn.textContent='⏳ Generando PDF...';
-  const payload={empresa:empresaAlbaran,tipo:tipoLabel,fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,tecnicosExtra:getTecnicosExtra('a'),corte:getPill('a-corte'),corteHoras:document.getElementById('a-corte-horas-val')?.value.trim()||'',materialTaller:tallerEstado||'—',fotoTaller:tallerFotoData||null,estadoGeneral:getPill('estado-general'),resumen:isMant?buildResumenMant():'',observaciones:isMant?document.getElementById('mant-obs').value.trim():document.getElementById('simple-obs').value.trim(),incidencia:isMant?document.getElementById('mant-incidencia').value.trim():'',horasPresupuestadas:document.getElementById('horas-pres-'+pKey)?.value.trim()||'',numTecnicos:document.getElementById('num-tec-'+pKey)?.value.trim()||'',materiales:getMaterilesFor(pKey),numDoc:genNumDoc(),fotos:fotosData[fotoKey].filter(Boolean),firmaTecnico:getFirmaBase64('tecnico-'+pKey),firmaCliente:ausenteState[pKey]?null:getFirmaBase64('cliente-'+pKey),clienteAusente:ausenteState[pKey],motivoAusencia:document.getElementById('ausente-motivo-'+pKey)?.value.trim()||'',presupuestoPdf:pdfData[pKey]||null,ubicacion,ubicacionInicio:window._ubicacionInicio||null,horaEnvio:calcHoraFin()};
+  const payload={empresa:empresaAlbaran,tipo:tipoLabel,fecha:fechaTexto,horaInicio:document.getElementById('a-hora-inicio').value,horaFin:calcHoraFin(),totalHoras:calcDuracion(),tiempoTranscurrido:getTiempoTranscurrido(),cliente,direccion:document.getElementById('a-direccion').value.trim(),poblacion:document.getElementById('a-poblacion').value.trim(),cp:document.getElementById('a-cp').value.trim(),tecnico,tecnicosExtra:getTecnicosExtra('a'),corte:getPill('a-corte'),corteHoras:document.getElementById('a-corte-horas-val')?.value.trim()||'',materialTaller:tallerEstado||'—',fotoTaller:tallerFotoData||null,estadoGeneral:getPill('estado-general'),resumen:isMant?buildResumenMant():'',observaciones:isMant?document.getElementById('mant-obs').value.trim():document.getElementById('simple-obs').value.trim(),incidencia:isMant?document.getElementById('mant-incidencia').value.trim():'',horasPresupuestadas:document.getElementById('horas-pres-'+pKey)?.value.trim()||'',numTecnicos:document.getElementById('num-tec-'+pKey)?.value.trim()||'',materiales:getMaterilesFor(pKey),numDoc:genNumDoc(),fotos:[...fotosData[fotoKey].filter(Boolean),...(fotosExtra[fotoKey]||[])],firmaTecnico:getFirmaBase64('tecnico-'+pKey),firmaCliente:ausenteState[pKey]?null:getFirmaBase64('cliente-'+pKey),clienteAusente:ausenteState[pKey],motivoAusencia:document.getElementById('ausente-motivo-'+pKey)?.value.trim()||'',presupuestoPdf:pdfData[pKey]||null,ubicacion,ubicacionInicio:window._ubicacionInicio||null,horaEnvio:calcHoraFin()};
   try{const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();if(data.ok)mostrarPantallaFinal(data.url||null);else throw new Error(data.error||'Error desconocido');}
   catch(err){showToast('❌ Error: '+(err.message||'sin conexión'),'error');btn.disabled=false;btn.textContent='📤 Enviar '+tipoLabel;}
 }
@@ -2444,6 +2453,195 @@ setInterval(()=>{
   document.getElementById('a-hora-inicio').value=h;
   window._horaInicio=n;
 },1000);
+
+// ══════════════════════════════════════════════════════════════
+// GUARDADO AUTOMÁTICO EN LOCALSTORAGE
+// Guarda cada 30s mientras hay un parte en curso.
+// Al recargar, detecta el parte y ofrece recuperarlo.
+// ══════════════════════════════════════════════════════════════
+var _SAVE_KEY = 'marcres_parte_activo';
+
+function guardarEstadoParte() {
+  if (!parteEnCurso) return;
+  try {
+    var prefix = timerPrefix;
+    var empresa = prefix === 'c' ? empresaChecklist : empresaAlbaran;
+    var estado = {
+      prefix: prefix,
+      empresa: empresa,
+      tipoAlbaran: tipoAlbaran,
+      tecnico: document.getElementById(prefix+'-tecnico')?.value || '',
+      cliente: document.getElementById(prefix+'-cliente')?.value || '',
+      direccion: document.getElementById(prefix+'-direccion')?.value || '',
+      poblacion: document.getElementById(prefix+'-poblacion')?.value || '',
+      cp: document.getElementById(prefix+'-cp')?.value || '',
+      horaInicio: document.getElementById(prefix+'-hora-inicio')?.value || '',
+      fechaTexto: fechaTexto,
+      timerStart: timerStart,
+      timestamp: Date.now()
+    };
+    localStorage.setItem(_SAVE_KEY, JSON.stringify(estado));
+  } catch(e) {}
+}
+
+function borrarEstadoGuardado() {
+  try { localStorage.removeItem(_SAVE_KEY); } catch(e) {}
+}
+
+function comprobarParteGuardado() {
+  try {
+    var raw = localStorage.getItem(_SAVE_KEY);
+    if (!raw) return;
+    var estado = JSON.parse(raw);
+    // Ignorar si tiene más de 12 horas
+    if (!estado || !estado.timestamp || (Date.now() - estado.timestamp) > 12 * 3600 * 1000) {
+      borrarEstadoGuardado();
+      return;
+    }
+    // Ignorar si no tiene datos mínimos
+    if (!estado.prefix || !estado.empresa) { borrarEstadoGuardado(); return; }
+
+    // Mostrar banner de recuperación
+    var banner = document.createElement('div');
+    banner.id = 'recovery-banner';
+    banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9998;background:#184595;color:#fff;padding:16px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.4);';
+    var hora = estado.horaInicio || '—';
+    var nombreEmpresa = estado.empresa === 'rivagua' ? 'Rivagua' : 'Marcres';
+    banner.innerHTML =
+      '<div style="font-size:14px;font-weight:700;margin-bottom:8px;">⚠️ Parte en curso no enviado</div>' +
+      '<div style="font-size:12px;opacity:.85;margin-bottom:12px;">' +
+        nombreEmpresa + ' · ' + (estado.cliente || 'Sin cliente') + ' · Iniciado a las ' + hora +
+      '</div>' +
+      '<div style="display:flex;gap:10px;justify-content:center;">' +
+        '<button onclick="recuperarParte()" style="background:#fff;color:#184595;border:none;padding:10px 22px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;">✅ Recuperar parte</button>' +
+        '<button onclick="descartarParte()" style="background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.4);padding:10px 22px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;">✕ Descartar</button>' +
+      '</div>';
+    document.body.insertBefore(banner, document.body.firstChild);
+  } catch(e) {}
+}
+
+function recuperarParte() {
+  try {
+    var raw = localStorage.getItem(_SAVE_KEY);
+    if (!raw) return;
+    var estado = JSON.parse(raw);
+    var prefix = estado.prefix;
+    var empresa = estado.empresa;
+
+    // Quitar banner
+    var banner = document.getElementById('recovery-banner');
+    if (banner) banner.remove();
+
+    // Restaurar empresa
+    selectEmpresa(empresa, prefix);
+
+    // Cambiar a la pestaña correcta
+    switchApp(prefix === 'c' ? 'checklist' : 'albaran');
+
+    // Restaurar tipo albarán si aplica
+    if (prefix === 'a' && estado.tipoAlbaran) {
+      setTimeout(function() { selectTipo(estado.tipoAlbaran); }, 100);
+    }
+
+    // Restaurar campos de texto
+    setTimeout(function() {
+      var campos = ['tecnico','cliente','direccion','poblacion','cp'];
+      campos.forEach(function(campo) {
+        var el = document.getElementById(prefix+'-'+campo);
+        if (el && estado[campo]) {
+          el.value = estado[campo];
+          if (campo === 'cliente' || campo === 'tecnico') {
+            el.style.color = 'var(--ok)';
+            el.style.fontWeight = '600';
+            if (campo === 'cliente') clienteElegido[prefix] = true;
+            if (campo === 'tecnico') tecnicoElegido[prefix] = true;
+          }
+        }
+      });
+
+      // Restaurar hora de inicio
+      if (estado.horaInicio) {
+        var horaEl = document.getElementById(prefix+'-hora-inicio');
+        if (horaEl) horaEl.value = estado.horaInicio;
+      }
+
+      // Restaurar fecha
+      if (estado.fechaTexto) {
+        fechaTexto = estado.fechaTexto;
+        var fdC = document.getElementById('c-fecha-display');
+        var fdA = document.getElementById('a-fecha-display');
+        if (fdC) fdC.textContent = estado.fechaTexto;
+        if (fdA) fdA.textContent = estado.fechaTexto;
+      }
+
+      // Reanudar timer desde el tiempo original
+      timerStart = estado.timerStart || Date.now();
+      _arrancarParteRecuperado(prefix);
+
+      showToast('✅ Parte recuperado correctamente', 'success');
+    }, 300);
+
+  } catch(e) {
+    showToast('❌ No se pudo recuperar el parte', 'error');
+    borrarEstadoGuardado();
+    var banner = document.getElementById('recovery-banner');
+    if (banner) banner.remove();
+  }
+}
+
+function descartarParte() {
+  borrarEstadoGuardado();
+  var banner = document.getElementById('recovery-banner');
+  if (banner) banner.remove();
+  showToast('Parte descartado', '');
+}
+
+// Versión de _arrancarParte para recuperación (sin resetear timerStart)
+function _arrancarParteRecuperado(prefix) {
+  parteEnCurso = true;
+  timerPrefix = prefix;
+  bloquearEmpresa(prefix);
+  document.body.style.overscrollBehaviorY = 'contain';
+  document.addEventListener('keydown', bloquearTeclaRefresco);
+  document.addEventListener('touchstart', bloquarPullRefresh, { passive: false });
+
+  var contenido = document.getElementById('contenido-parte-' + prefix);
+  if (contenido) contenido.classList.add('visible');
+
+  window.onbeforeunload = function(e) {
+    var msg = '⚠️ Tienes un parte en curso. ¿Seguro que quieres salir?';
+    e.preventDefault(); e.returnValue = msg; return msg;
+  };
+
+  var btn = document.getElementById('btn-inicio-' + prefix);
+  btn.classList.remove('esperando-ubic', 'bloqueado');
+  btn.classList.add('activo');
+  btn.onclick = null;
+  btn.innerHTML = '<div style="text-align:center;width:100%;"><div class="timer-label">⏱ Parte en curso (recuperado)</div><div class="timer-display" id="timer-display-' + prefix + '">00:00:00</div></div>';
+
+  timerInterval = setInterval(function() {
+    var elapsed = Date.now() - timerStart;
+    var totalSec = Math.floor(elapsed / 1000);
+    var h = String(Math.floor(totalSec / 3600)).padStart(2,'0');
+    var m = String(Math.floor((totalSec % 3600) / 60)).padStart(2,'0');
+    var s = String(totalSec % 60).padStart(2,'0');
+    var display = document.getElementById('timer-display-' + prefix);
+    if (display) display.textContent = h + ':' + m + ':' + s;
+  }, 1000);
+}
+
+// Guardar cada 30 segundos mientras hay parte en curso
+setInterval(guardarEstadoParte, 30000);
+
+// Al enviar correctamente, borrar el estado guardado
+var _origMostrarPantallaFinal = mostrarPantallaFinal;
+mostrarPantallaFinal = function(urlPdf) {
+  borrarEstadoGuardado();
+  _origMostrarPantallaFinal(urlPdf);
+};
+
+// Comprobar al arrancar si hay parte guardado
+setTimeout(comprobarParteGuardado, 500);
 </script>
 </body>
 </html>
