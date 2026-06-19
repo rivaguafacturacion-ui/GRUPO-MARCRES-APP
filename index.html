@@ -405,8 +405,8 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
           <div class="corte-horas" id="c-elec-corte-horas"><input type="text" placeholder="Número de horas del corte (ej: 2h)" id="c-elec-corte-horas-val"></div>
         </div>
         <div class="field-group" style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
-          <div style="flex:1;min-width:120px;"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-elec" placeholder="Ej: 2h, 1h 30min..."></div>
-          <div style="flex:1;min-width:100px;"><label class="field-label">👷 Nº Técnicos</label><input type="text" class="field-input" id="num-tec-elec" placeholder="Ej: 2..."></div>
+          <div style="flex:1;min-width:120px;"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-elec" oninput="recalcTotal('elec')" placeholder="Ej: 2h, 1h 30min..."></div>
+          <div style="flex:1;min-width:100px;"><label class="field-label">👷 Nº Técnicos</label><input type="text" class="field-input" id="num-tec-elec" oninput="recalcTotal('elec')" placeholder="Ej: 2..."></div>
         </div>
         <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-elec"></tbody></table></div>
         <div id="mat-total-display-elec" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-elec">0.00 €</span></div>
@@ -437,8 +437,8 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
           <div class="corte-horas" id="c-hid-corte-horas"><input type="text" placeholder="Número de horas del corte (ej: 2h)" id="c-hid-corte-horas-val"></div>
         </div>
         <div class="field-group" style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
-          <div style="flex:1;min-width:120px;"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-hid" placeholder="Ej: 2h, 1h 30min..."></div>
-          <div style="flex:1;min-width:100px;"><label class="field-label">👷 Nº Técnicos</label><input type="text" class="field-input" id="num-tec-hid" placeholder="Ej: 2..."></div>
+          <div style="flex:1;min-width:120px;"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-hid" oninput="recalcTotal('hid')" placeholder="Ej: 2h, 1h 30min..."></div>
+          <div style="flex:1;min-width:100px;"><label class="field-label">👷 Nº Técnicos</label><input type="text" class="field-input" id="num-tec-hid" oninput="recalcTotal('hid')" placeholder="Ej: 2..."></div>
         </div>
         <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-hid"></tbody></table></div>
         <div id="mat-total-display-hid" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-hid">0.00 €</span></div>
@@ -573,8 +573,8 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       <div class="section-header section-open" onclick="toggleSec('sec-mat-mant')"><span class="sec-title">Presupuesto Materiales</span><span class="chevron">⌄</span></div>
       <div class="section-body" style="display:block;">
         <div class="field-group" style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
-          <div style="flex:1;min-width:120px;"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-mant" placeholder="Ej: 2h, 1h 30min..."></div>
-          <div style="flex:1;min-width:100px;"><label class="field-label">👷 Nº Técnicos</label><input type="text" class="field-input" id="num-tec-mant" placeholder="Ej: 2..."></div>
+          <div style="flex:1;min-width:120px;"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-mant" oninput="recalcTotal('mant')" placeholder="Ej: 2h, 1h 30min..."></div>
+          <div style="flex:1;min-width:100px;"><label class="field-label">👷 Nº Técnicos</label><input type="text" class="field-input" id="num-tec-mant" oninput="recalcTotal('mant')" placeholder="Ej: 2..."></div>
         </div>
         <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-mant"></tbody></table></div>
         <div id="mat-total-display-mant" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-mant">0.00 €</span></div>
@@ -610,8 +610,8 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       <div class="section-header section-open" onclick="toggleSec('sec-mat-simple')"><span class="sec-title">Presupuesto Materiales</span><span class="chevron">⌄</span></div>
       <div class="section-body" style="display:block;">
         <div class="field-group" style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
-          <div style="flex:1;min-width:120px;"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-simple" placeholder="Ej: 2h, 1h 30min..."></div>
-          <div style="flex:1;min-width:100px;"><label class="field-label">👷 Nº Técnicos</label><input type="text" class="field-input" id="num-tec-simple" placeholder="Ej: 2..."></div>
+          <div style="flex:1;min-width:120px;"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-simple" oninput="recalcTotal('simple')" placeholder="Ej: 2h, 1h 30min..."></div>
+          <div style="flex:1;min-width:100px;"><label class="field-label">👷 Nº Técnicos</label><input type="text" class="field-input" id="num-tec-simple" oninput="recalcTotal('simple')" placeholder="Ej: 2..."></div>
         </div>
         <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-simple"></tbody></table></div>
         <div id="mat-total-display-simple" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-simple">0.00 €</span></div>
@@ -696,8 +696,8 @@ table.hid-table{width:100%;border-collapse:collapse;font-size:12px;}
       <div class="section-header section-open" onclick="toggleSec('sec-mat-taller')"><span class="sec-title">Presupuesto Materiales</span><span class="chevron">⌄</span></div>
       <div class="section-body" style="display:block;">
         <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:10px;">
-          <div style="flex:1;min-width:120px;"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-taller" placeholder="Ej: 2h, 1h 30min..."></div>
-          <div style="flex:1;min-width:100px;"><label class="field-label">👷 Nº Técnicos</label><input type="text" class="field-input" id="num-tec-taller" placeholder="Ej: 2..."></div>
+          <div style="flex:1;min-width:120px;"><label class="field-label">⏱ Horas presupuestadas</label><input type="text" class="field-input" id="horas-pres-taller" oninput="recalcTotal('taller')" placeholder="Ej: 2h, 1h 30min..."></div>
+          <div style="flex:1;min-width:100px;"><label class="field-label">👷 Nº Técnicos</label><input type="text" class="field-input" id="num-tec-taller" oninput="recalcTotal('taller')" placeholder="Ej: 2..."></div>
         </div>
         <div style="overflow-x:auto;"><table class="mat-table"><thead><tr><th style="min-width:130px;">Descripción</th><th style="width:55px;">Cant.</th><th style="width:80px;">P. unit.</th><th style="width:80px;">Total</th><th style="width:30px;"></th></tr></thead><tbody id="mat-tbody-taller"></tbody></table></div>
         <div id="mat-total-display-taller" style="padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);text-align:right;display:none;">Total sin IVA: <span id="mat-total-sum-taller">0.00 €</span></div>
@@ -2257,21 +2257,55 @@ function calcTotalFor(uid, key) {
   recalcTotal(key);
 }
 
+var PRECIO_HORA_MO = 32; // €/hora mano de obra
+
+function parsearHorasADecimal(str) {
+  if (!str) return 0;
+  var h = str.match(/(\d+)\s*h/i);
+  var m = str.match(/(\d+)\s*min/i);
+  var total = 0;
+  if (h) total += parseInt(h[1]);
+  if (m) total += parseInt(m[1]) / 60;
+  if (!h && !m) { var n = parseFloat(str); if (!isNaN(n)) total = n; }
+  return total;
+}
+
 function recalcTotal(key) {
   var tbody = document.getElementById('mat-tbody-'+key);
   if (!tbody) return;
   var rows  = tbody.querySelectorAll('tr');
-  var suma  = 0;
+  var sumaMat = 0;
   rows.forEach(function(tr) {
     var uid = tr.id.replace('mat-row-','');
     var cant   = parseFloat(document.getElementById('mat-cant-'+uid)?.value) || 0;
     var precio = parseFloat(document.getElementById('mat-precio-'+uid)?.value) || 0;
-    suma += cant * precio;
+    sumaMat += cant * precio;
   });
+
+  // Calcular mano de obra: horas × técnicos × 32€
+  var horasStr = document.getElementById('horas-pres-'+key)?.value || '';
+  var numTec   = parseFloat(document.getElementById('num-tec-'+key)?.value) || 1;
+  var horas    = parsearHorasADecimal(horasStr);
+  var sumaMO   = horas * numTec * PRECIO_HORA_MO;
+
+  var sumaTotal = sumaMat + sumaMO;
   var disp = document.getElementById('mat-total-display-'+key);
   var span = document.getElementById('mat-total-sum-'+key);
-  if (disp) disp.style.display = suma > 0 ? 'block' : 'none';
-  if (span) span.textContent = suma.toFixed(2) + ' €';
+
+  if (sumaTotal > 0) {
+    if (disp) disp.style.display = 'block';
+    if (span) {
+      var detalle = '';
+      if (sumaMat > 0 && sumaMO > 0) {
+        detalle = '<span style="font-size:11px;color:var(--muted);font-weight:400;"> (mat: ' + sumaMat.toFixed(2) + ' € + MO: ' + sumaMO.toFixed(2) + ' €)</span>';
+      } else if (sumaMO > 0) {
+        detalle = '<span style="font-size:11px;color:var(--muted);font-weight:400;"> (' + horas.toFixed(1) + 'h × ' + numTec + ' téc × ' + PRECIO_HORA_MO + '€/h)</span>';
+      }
+      span.innerHTML = sumaTotal.toFixed(2) + ' €' + detalle;
+    }
+  } else {
+    if (disp) disp.style.display = 'none';
+  }
 }
 
 function getMaterilesFor(key) {
@@ -2455,7 +2489,135 @@ setInterval(()=>{
 },1000);
 
 // ══════════════════════════════════════════════════════════════
-// GUARDADO AUTOMÁTICO EN LOCALSTORAGE
+// TRACKING GPS EN TIEMPO REAL
+// Se activa al pulsar INICIO y se detiene al enviar.
+// Muestra posición actual cada 10s mientras la app está activa.
+// ══════════════════════════════════════════════════════════════
+var _gpsWatchId = null;
+var _gpsBannerEl = null;
+var _gpsUltimaPos = null;
+var _gpsEnvioInterval = null;
+
+function iniciarTrackingGPS() {
+  if (!navigator.geolocation) return;
+
+  // Crear banner GPS si no existe
+  if (!_gpsBannerEl) {
+    _gpsBannerEl = document.createElement('div');
+    _gpsBannerEl.id = 'gps-tracking-banner';
+    _gpsBannerEl.style.cssText = [
+      'display:none',
+      'position:fixed',
+      'bottom:70px',
+      'left:50%',
+      'transform:translateX(-50%)',
+      'z-index:9990',
+      'background:rgba(24,69,149,0.95)',
+      'color:#fff',
+      'border-radius:99px',
+      'padding:8px 16px',
+      'font-size:12px',
+      'font-weight:600',
+      'box-shadow:0 4px 16px rgba(0,0,0,0.3)',
+      'display:flex',
+      'align-items:center',
+      'gap:8px',
+      'cursor:pointer',
+      'white-space:nowrap',
+      'max-width:90vw',
+      'overflow:hidden',
+      'text-overflow:ellipsis',
+      'backdrop-filter:blur(4px)',
+    ].join(';');
+    _gpsBannerEl.innerHTML = '<span style="font-size:14px;">📍</span><span id="gps-banner-txt">Obteniendo GPS...</span><span style="font-size:10px;opacity:.7;margin-left:4px;">↗</span>';
+    _gpsBannerEl.onclick = function() {
+      if (_gpsUltimaPos) {
+        var url = 'https://www.google.com/maps?q=' + _gpsUltimaPos.lat + ',' + _gpsUltimaPos.lng + '&z=17';
+        window.open(url, '_blank');
+      }
+    };
+    document.body.appendChild(_gpsBannerEl);
+  }
+
+  _gpsBannerEl.style.display = 'flex';
+
+  // Iniciar watchPosition
+  _gpsWatchId = navigator.geolocation.watchPosition(
+    function(pos) {
+      _gpsUltimaPos = {
+        lat: pos.coords.latitude.toFixed(5),
+        lng: pos.coords.longitude.toFixed(5),
+        precision: Math.round(pos.coords.accuracy)
+      };
+      var txt = document.getElementById('gps-banner-txt');
+      if (txt) {
+        txt.textContent = _gpsUltimaPos.lat + ', ' + _gpsUltimaPos.lng
+          + '  ±' + _gpsUltimaPos.precision + 'm';
+      }
+    },
+    function() {
+      var txt = document.getElementById('gps-banner-txt');
+      if (txt) txt.textContent = 'GPS no disponible';
+    },
+    { enableHighAccuracy: true, maximumAge: 10000, timeout: 15000 }
+  );
+
+  // Enviar posición al GAS cada 2 minutos para el panel de seguimiento
+  _gpsEnvioInterval = setInterval(function() {
+    if (!_gpsUltimaPos || !parteEnCurso) return;
+    var prefix = timerPrefix;
+    var empresa = prefix === 'c' ? empresaChecklist : empresaAlbaran;
+    var tecnico = document.getElementById(prefix+'-tecnico')?.value || '';
+    var cliente = document.getElementById(prefix+'-cliente')?.value || '';
+    var tipo    = tipoAlbaran || 'Checklist';
+    var url = GAS_URL
+      + '?action=ubicacion'
+      + '&tecnico=' + encodeURIComponent(tecnico)
+      + '&empresa=' + encodeURIComponent(empresa || '')
+      + '&lat='     + encodeURIComponent(_gpsUltimaPos.lat)
+      + '&lng='     + encodeURIComponent(_gpsUltimaPos.lng)
+      + '&precision='+ encodeURIComponent(_gpsUltimaPos.precision)
+      + '&cliente=' + encodeURIComponent(cliente)
+      + '&tipo='    + encodeURIComponent(tipo);
+    fetch(url).catch(function(){});
+  }, 2 * 60 * 1000); // cada 2 minutos
+}
+
+function detenerTrackingGPS() {
+  if (_gpsWatchId !== null) {
+    navigator.geolocation.clearWatch(_gpsWatchId);
+    _gpsWatchId = null;
+  }
+  if (_gpsEnvioInterval) {
+    clearInterval(_gpsEnvioInterval);
+    _gpsEnvioInterval = null;
+  }
+  // Avisar al GAS que el técnico ya no está activo
+  if (timerPrefix) {
+    var prefix = timerPrefix;
+    var tecnico = document.getElementById(prefix+'-tecnico')?.value || '';
+    if (tecnico) {
+      fetch(GAS_URL + '?action=offline&tecnico=' + encodeURIComponent(tecnico)).catch(function(){});
+    }
+  }
+  if (_gpsBannerEl) {
+    _gpsBannerEl.style.display = 'none';
+  }
+}
+
+// Enganchar al ciclo de vida del parte sin modificar las funciones originales
+var _orig_arrancarParte = _arrancarParte;
+_arrancarParte = function(prefix) {
+  _orig_arrancarParte(prefix);
+  iniciarTrackingGPS();
+};
+
+var _orig_detenerTimer = detenerTimer;
+detenerTimer = function() {
+  _orig_detenerTimer();
+  detenerTrackingGPS();
+};
+
 // Guarda cada 30s mientras hay un parte en curso.
 // Al recargar, detecta el parte y ofrece recuperarlo.
 // ══════════════════════════════════════════════════════════════
