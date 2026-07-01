@@ -2584,7 +2584,10 @@ function detenerTrackingGPS() {
     var prefix = timerPrefix;
     var tecnico = document.getElementById(prefix+'-tecnico')?.value || '';
     var empresa = prefix === 'c' ? empresaChecklist : empresaAlbaran;
-    if (tecnico && _gpsUltimaPos) {
+    if (tecnico) {
+      var latFin = _gpsUltimaPos ? String(_gpsUltimaPos.lat / 1000000).replace(',','.') : '0';
+      var lngFin = _gpsUltimaPos ? String(_gpsUltimaPos.lng / 1000000).replace(',','.') : '0';
+      var precFin = _gpsUltimaPos ? _gpsUltimaPos.precision : 0;
       fetch(GAS_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -2592,9 +2595,9 @@ function detenerTrackingGPS() {
           accion: 'ubicacion',
           tecnico: tecnico,
           empresa: empresa || '',
-          lat: String(_gpsUltimaPos.lat / 1000000).replace(',','.'),
-          lng: String(_gpsUltimaPos.lng / 1000000).replace(',','.'),
-          precision: _gpsUltimaPos.precision,
+          lat: latFin,
+          lng: lngFin,
+          precision: precFin,
           cliente: '',
           tipo: '',
           activo: false
