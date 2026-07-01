@@ -1073,7 +1073,21 @@ function buildResumenChecklist(tipo){
 }
 
 function calcHoraFin(){const n=new Date();return String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
-function calcDuracion(){if(!window._horaInicio)return'—';const diff=Math.round((new Date()-window._horaInicio)/60000);return diff>=60?`${Math.floor(diff/60)}h ${diff%60}min`:`${diff}min`;}
+function calcDuracion(){
+  // Calcular diferencia real entre hora inicio y hora fin actual
+  var horaInicioStr = (document.getElementById('a-hora-inicio')||document.getElementById('c-hora-inicio'))?.value||'';
+  if(!horaInicioStr && window._horaInicio){
+    var d=window._horaInicio;
+    horaInicioStr=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  }
+  if(!horaInicioStr) return '—';
+  var ahora=new Date();
+  var partes=horaInicioStr.split(':');
+  var inicio=new Date(ahora.getFullYear(),ahora.getMonth(),ahora.getDate(),parseInt(partes[0]),parseInt(partes[1]),0);
+  var diff=Math.round((ahora-inicio)/60000);
+  if(diff<=0) return '—';
+  return diff>=60?`${Math.floor(diff/60)}h ${diff%60}min`:`${diff}min`;
+}
 function genNumDoc(){return '';}
 function obtenerUbicacion(){
   // Solo para el INICIO — reutiliza la caché si ya existe
@@ -1088,7 +1102,15 @@ function _pedirGPS(){
   return new Promise(resolve=>{
     if(!navigator.geolocation){resolve(null);return;}
     navigator.geolocation.getCurrentPosition(
-      pos=>resolve({lat:pos.coords.latitude.toFixed(6),lng:pos.coords.longitude.toFixed(6),precision:Math.round(pos.coords.accuracy)}),
+      pos=>{
+        var latInt = Math.round(pos.coords.latitude  * 1000000);
+        var lngInt = Math.round(pos.coords.longitude * 1000000);
+        resolve({
+          lat: String(latInt / 1000000).replace(',','.'),
+          lng: String(lngInt / 1000000).replace(',','.'),
+          precision: Math.round(pos.coords.accuracy)
+        });
+      },
       ()=>resolve(null),
       {timeout:10000,enableHighAccuracy:true}
     );
@@ -1499,15 +1521,18 @@ function detenerTimer() {
 }
 
 function getTiempoTranscurrido() {
-  if(!timerStart) return '';
-  const elapsed = Date.now() - timerStart;
-  const totalSec = Math.floor(elapsed / 1000);
-  const h = Math.floor(totalSec / 3600);
-  const m = Math.floor((totalSec % 3600) / 60);
-  const s = totalSec % 60;
-  if(h > 0) return h + 'h ' + m + 'min ' + s + 's';
-  if(m > 0) return m + 'min ' + s + 's';
-  return s + 's';
+  var horaInicioStr = (document.getElementById('a-hora-inicio')||document.getElementById('c-hora-inicio'))?.value||'';
+  if(!horaInicioStr && timerStart){ const elapsed=Date.now()-timerStart; const totalSec=Math.floor(elapsed/1000); const h=Math.floor(totalSec/3600); const m=Math.floor((totalSec%3600)/60); const s=totalSec%60; if(h>0) return h+'h '+m+'min '+s+'s'; if(m>0) return m+'min '+s+'s'; return s+'s'; }
+  if(!horaInicioStr) return '';
+  var ahora=new Date();
+  var partes=horaInicioStr.split(':');
+  var inicio=new Date(ahora.getFullYear(),ahora.getMonth(),ahora.getDate(),parseInt(partes[0]),parseInt(partes[1]),0);
+  var totalSec=Math.floor((ahora-inicio)/1000);
+  if(totalSec<=0) return '';
+  var h=Math.floor(totalSec/3600); var m=Math.floor((totalSec%3600)/60); var s=totalSec%60;
+  if(h>0) return h+'h '+m+'min '+s+'s';
+  if(m>0) return m+'min '+s+'s';
+  return s+'s';
 }
 
 
@@ -2504,9 +2529,14 @@ function iniciarTrackingGPS() {
   // Iniciar watchPosition en segundo plano (sin banner visible)
   _gpsWatchId = navigator.geolocation.watchPosition(
     function(pos) {
+      // Usar aritmética entera para evitar problemas con separador decimal en iOS
+      var latInt = Math.round(pos.coords.latitude  * 1000000);
+      var lngInt = Math.round(pos.coords.longitude * 1000000);
       _gpsUltimaPos = {
-        lat: pos.coords.latitude.toFixed(5),
-        lng: pos.coords.longitude.toFixed(5),
+        lat: latInt,
+        lng: lngInt,
+        latDec: (latInt / 1000000).toFixed(6),
+        lngDec: (lngInt / 1000000).toFixed(6),
         precision: Math.round(pos.coords.accuracy)
       };
     },
@@ -2529,14 +2559,15 @@ function iniciarTrackingGPS() {
         accion: 'ubicacion',
         tecnico: tecnico,
         empresa: empresa || '',
-        lat: _gpsUltimaPos.lat,
-        lng: _gpsUltimaPos.lng,
+        lat: String(_gpsUltimaPos.lat / 1000000).replace(',','.'),
+        lng: String(_gpsUltimaPos.lng / 1000000).replace(',','.'),
         precision: _gpsUltimaPos.precision,
         cliente: cliente,
-        tipo: tipo
+        tipo: tipo,
+        activo: true
       })
     }).catch(function(){});
-  }, 2 * 60 * 1000);
+  }, 30 * 1000); // cada 30 segundos
 }
 
 function detenerTrackingGPS() {
@@ -2565,7 +2596,8 @@ function detenerTrackingGPS() {
           lng: _gpsUltimaPos.lng,
           precision: _gpsUltimaPos.precision,
           cliente: '',
-          tipo: ''
+          tipo: '',
+          activo: false
         })
       }).catch(function(){});
     }
