@@ -427,6 +427,7 @@ function renderizarTecnicos(posiciones) {
       + '<div class="tecnico-card-footer">'
       +   '<button class="btn-maps" onclick="window.open(\'' + mapsUrl + '\',\'_blank\')">📍 Ver en Maps</button>'
       +   '<button class="btn-centrar" onclick="centrarEnTecnico(\'' + p.tecnico + '\')">🎯</button>'
+      +   '<button class="btn-centrar btn-borrar" style="color:#e53935;border-color:#e53935;" data-tecnico="' + p.tecnico.replace(/"/g,'&quot;') + '" onclick="borrarTecnicoBtn(this)">🗑️</button>'
       + '</div>'
       + '</div>';
   }).join('');
@@ -452,6 +453,31 @@ function centrarEnTecnico(tecnico) {
     map.setView(marker.getLatLng(), 17);
     marker.openPopup();
   }
+}
+
+// ── BORRAR TÉCNICO DEL PANEL ─────────────────────────────────
+function borrarTecnicoBtn(btn) {
+  var tecnico = btn.getAttribute('data-tecnico');
+  borrarTecnico(tecnico);
+}
+
+function borrarTecnico(tecnico) {
+  if (!confirm('¿Eliminar a ' + tecnico + ' del panel? Volverá a aparecer cuando pulse INICIO.')) return;
+  fetch(GAS_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ accion: 'offline', tecnico: tecnico })
+  })
+  .then(function() {
+    // Quitar marcador del mapa
+    if (markers[tecnico]) {
+      map.removeLayer(markers[tecnico]);
+      delete markers[tecnico];
+    }
+    // Recargar panel
+    cargarPosiciones();
+  })
+  .catch(function(e) { console.error(e); });
 }
 
 // ── ARRANCAR ─────────────────────────────────────────────────
