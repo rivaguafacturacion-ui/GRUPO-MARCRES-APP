@@ -80,8 +80,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .filtro-tab{padding:5px 12px;border-radius:99px;border:1.5px solid var(--border);font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;background:var(--surface);color:var(--muted);transition:all .12s;}
 .filtro-tab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
 .notif-dot{width:7px;height:7px;background:#E63946;border-radius:50%;display:inline-block;margin-left:4px;vertical-align:middle;}
-.nav-btn{padding:12px 8px;border:none;background:transparent;font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer;color:var(--muted);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;border-bottom:2px solid transparent;}
-.nav-btn.active{color:var(--accent);font-weight:700;background:var(--surface);border-bottom-color:var(--accent);}
+.nav-btn{padding:16px 12px;border:none;background:transparent;font-family:var(--font);font-size:17px;font-weight:600;cursor:pointer;color:var(--muted);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;border-bottom:3px solid transparent;flex:1;}
+.nav-btn.active{color:var(--accent);font-weight:800;background:var(--surface);border-bottom-color:var(--accent);}
 .main{padding:14px;max-width:600px;margin:0 auto;}
 .page-title{font-size:15px;font-weight:700;color:var(--accent);text-align:center;margin-bottom:12px;}
 .app-panel{display:none;}.app-panel.active{display:block;}
@@ -2522,14 +2522,16 @@ var _gpsWatchId = null;
 var _gpsBannerEl = null;
 var _gpsUltimaPos = null;
 var _gpsEnvioInterval = null;
+var _gpsPrimerEnvioHecho = false;
 
 function iniciarTrackingGPS() {
   if (!navigator.geolocation) return;
 
+  _gpsPrimerEnvioHecho = false;
+
   // Iniciar watchPosition en segundo plano (sin banner visible)
   _gpsWatchId = navigator.geolocation.watchPosition(
     function(pos) {
-      // Usar aritmética entera para evitar problemas con separador decimal en iOS
       var latInt = Math.round(pos.coords.latitude  * 1000000);
       var lngInt = Math.round(pos.coords.longitude * 1000000);
       _gpsUltimaPos = {
@@ -2539,35 +2541,47 @@ function iniciarTrackingGPS() {
         lngDec: (lngInt / 1000000).toFixed(6),
         precision: Math.round(pos.coords.accuracy)
       };
+      // Envío inmediato la primera vez
+      if (!_gpsPrimerEnvioHecho) {
+        _gpsPrimerEnvioHecho = true;
+        _enviarUbicacionGAS(true);
+      }
     },
     function() {},
-    { enableHighAccuracy: true, maximumAge: 10000, timeout: 15000 }
+    { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 }
   );
 
-  // Enviar posición al GAS cada 2 minutos para el panel de seguimiento
+  // Enviar posición cada 30 segundos
   _gpsEnvioInterval = setInterval(function() {
-    if (!_gpsUltimaPos || !parteEnCurso) return;
-    var prefix = timerPrefix;
-    var empresa = prefix === 'c' ? empresaChecklist : empresaAlbaran;
-    var tecnico = document.getElementById(prefix+'-tecnico')?.value || '';
-    var cliente = document.getElementById(prefix+'-cliente')?.value || '';
-    var tipo    = tipoAlbaran || 'Checklist';
-    fetch(GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({
-        accion: 'ubicacion',
-        tecnico: tecnico,
-        empresa: empresa || '',
-        lat: String(_gpsUltimaPos.lat / 1000000).replace(',','.'),
-        lng: String(_gpsUltimaPos.lng / 1000000).replace(',','.'),
-        precision: _gpsUltimaPos.precision,
-        cliente: cliente,
-        tipo: tipo,
-        activo: true
-      })
-    }).catch(function(){});
-  }, 30 * 1000); // cada 30 segundos
+    _enviarUbicacionGAS(true);
+  }, 30 * 1000);
+}
+
+// Función centralizada de envío de ubicación
+function _enviarUbicacionGAS(activo) {
+  if (!_gpsUltimaPos) return;
+  var prefix = timerPrefix;
+  var empresa = prefix === 'c' ? empresaChecklist : empresaAlbaran;
+  var tecnico = document.getElementById(prefix+'-tecnico')?.value || '';
+  var cliente = document.getElementById(prefix+'-cliente')?.value || '';
+  var tipo    = tipoAlbaran || 'Checklist';
+  if (!tecnico) return;
+  fetch(GAS_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({
+      accion: 'ubicacion',
+      tecnico: tecnico,
+      empresa: empresa || '',
+      lat: String(_gpsUltimaPos.lat / 1000000).replace(',','.'),
+      lng: String(_gpsUltimaPos.lng / 1000000).replace(',','.'),
+      precision: _gpsUltimaPos.precision,
+      cliente: cliente,
+      tipo: tipo,
+      activo: activo,
+      tecnicosExtra: getTecnicosExtra(prefix)
+    })
+  }).catch(function(){});
 }
 
 function detenerTrackingGPS() {
