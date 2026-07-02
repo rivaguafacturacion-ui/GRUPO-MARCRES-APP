@@ -426,14 +426,32 @@ function renderizarTecnicos(posiciones) {
       + '</div>'
       + '<div class="tecnico-card-footer">'
       +   '<button class="btn-maps" onclick="window.open(\'' + mapsUrl + '\',\'_blank\')">📍 Ver en Maps</button>'
-      +   '<button class="btn-centrar" onclick="centrarEn(' + p.lat + ',' + p.lng + ')">🎯</button>'
+      +   '<button class="btn-centrar" onclick="centrarEnTecnico(\'' + p.tecnico + '\')">🎯</button>'
       + '</div>'
       + '</div>';
   }).join('');
 }
 
 function centrarEn(lat, lng) {
-  if (map) map.setView([lat, lng], 16);
+  var latN = normalizarCoordenada(lat, true);
+  var lngN = normalizarCoordenada(lng, false);
+  if (map && latN && lngN) {
+    map.setView([latN, lngN], 17);
+    // Abrir popup del marcador si existe
+    Object.keys(markers).forEach(function(k) {
+      var m = markers[k];
+      if (Math.abs(m.getLatLng().lat - latN) < 0.001) m.openPopup();
+    });
+  }
+}
+
+function centrarEnTecnico(tecnico) {
+  if (!map) return;
+  var marker = markers[tecnico];
+  if (marker) {
+    map.setView(marker.getLatLng(), 17);
+    marker.openPopup();
+  }
 }
 
 // ── ARRANCAR ─────────────────────────────────────────────────
