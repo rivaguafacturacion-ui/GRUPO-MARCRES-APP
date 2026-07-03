@@ -197,6 +197,29 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); min-
   #map-container { height: 280px; }
   .tecnicos-grid { grid-template-columns: 1fr; }
 }
+
+.notif-toast {
+  position: fixed;
+  top: 70px;
+  right: 16px;
+  z-index: 9999;
+  background: #184595;
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.3);
+  font-size: 13px;
+  font-weight: 600;
+  max-width: 280px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideIn .3s ease;
+  cursor: pointer;
+}
+.notif-toast.rivagua { background: #B7800A; }
+@keyframes slideIn { from { transform: translateX(120%); opacity:0; } to { transform: translateX(0); opacity:1; } }
+@keyframes slideOut { from { transform: translateX(0); opacity:1; } to { transform: translateX(120%); opacity:0; } }
 </style>
 </head>
 <body>
@@ -352,6 +375,7 @@ function cargarPosiciones() {
 }
 
 function renderizarTecnicos(posiciones) {
+  detectarNuevosTecnicos(posiciones);
   var grid = document.getElementById('tecnicos-grid');
   var count = document.getElementById('count-tecnicos');
   count.textContent = posiciones.length + (posiciones.length === 1 ? ' técnico activo' : ' técnicos activos');
@@ -483,17 +507,70 @@ function borrarTecnico(tecnico) {
 
 // ── ARRANCAR ─────────────────────────────────────────────────
 
+// ── NOTIFICACIONES ───────────────────────────────────────────
+var _tecnicosAnteriores = {};
+
+function mostrarNotificacion(tecnico, empresa, cliente) {
+  var toast = document.createElement('div');
+  toast.className = 'notif-toast' + (empresa === 'rivagua' ? ' rivagua' : '');
+  var primerNombre = tecnico.split(' ')[0];
+  toast.innerHTML = ['🔔 <div><div>', primerNombre, ' inició un parte</div>',
+    '<div style="font-size:11px;font-weight:400;opacity:.85;">', (cliente || ''), '</div></div>'].join('');
+  toast.onclick = function() { toast.remove(); };
+  document.body.appendChild(toast);
+
+  // Sonido de notificación
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.4);
+  } catch(e) {}
+
+  // Auto-cerrar tras 6 segundos
+  setTimeout(function() {
+    toast.style.animation = 'slideOut .3s ease forwards';
+    setTimeout(function() { toast.remove(); }, 300);
+  }, 6000);
+}
+
+function detectarNuevosTecnicos(posicionesNuevas) {
+  posicionesNuevas.forEach(function(p) {
+    var key = p.tecnico;
+    var anterior = _tecnicosAnteriores[key];
+    // Notificar si es nuevo o si pasó de inactivo a activo
+    if (p.activo && (!anterior || !anterior.activo)) {
+      mostrarNotificacion(p.tecnico, p.empresa, p.cliente);
+    }
+    _tecnicosAnteriores[key] = { activo: p.activo };
+  });
+}
+
 var rutaActual = null;
 var rutaMarkers = [];
 
 function verRutaBtn(btn) {
-  verRuta(btn.getAttribute('data-tecnico'));
+  var tecnico = btn.getAttribute('data-tecnico');
+  // Mostrar selector de período
+  var periodo = prompt('¿Qué período quieres ver?
+1 = Hoy
+2 = Esta semana
+
+Escribe 1 o 2:', '1');
+  if (!periodo) return;
+  verRuta(tecnico, periodo === '2' ? 'semana' : 'hoy');
 }
 
-function verRuta(tecnico) {
+function verRuta(tecnico, periodo) {
   if (!GAS_URL || !map) return;
   limpiarRuta();
-  fetch(GAS_URL + '?action=ruta&tecnico=' + encodeURIComponent(tecnico) + '&t=' + Date.now())
+  fetch(GAS_URL + '?action=ruta&tecnico=' + encodeURIComponent(tecnico) + '&periodo=' + (periodo||'hoy') + '&t=' + Date.now())
     .then(function(r) { return r.json(); })
     .then(function(data) {
       if (!data.ok || !data.puntos.length) { alert('Sin historial de ruta para ' + tecnico); return; }
