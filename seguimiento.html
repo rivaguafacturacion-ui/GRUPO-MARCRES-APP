@@ -232,7 +232,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); min-
       <span class="status-count" id="count-tecnicos">0 técnicos activos</span>
       <span class="last-update" id="last-update" style="margin-left:8px;"></span>
     </div>
-    <div class="status-info">Se actualiza automáticamente cada 30 segundos</div>
+    <div class="status-info">Se actualiza automáticamente cada 15 segundos</div>
   </div>
 
   <!-- Mapa -->
@@ -428,6 +428,7 @@ function renderizarTecnicos(posiciones) {
       +   '<button class="btn-maps" onclick="window.open(\'' + mapsUrl + '\',\'_blank\')">📍 Ver en Maps</button>'
       +   '<button class="btn-centrar" onclick="centrarEnTecnico(\'' + p.tecnico + '\')">🎯</button>'
       +   '<button class="btn-centrar btn-borrar" style="color:#e53935;border-color:#e53935;" data-tecnico="' + p.tecnico.replace(/"/g,'&quot;') + '" onclick="borrarTecnicoBtn(this)">🗑️</button>'
+      +   '<button class="btn-centrar" style="color:#2D6A4F;border-color:#2D6A4F;" data-tecnico="' + p.tecnico.replace(/"/g,'&quot;') + '" onclick="verRutaBtn(this)" title="Ver ruta">🗺️</button>'
       + '</div>'
       + '</div>';
   }).join('');
@@ -481,11 +482,55 @@ function borrarTecnico(tecnico) {
 }
 
 // ── ARRANCAR ─────────────────────────────────────────────────
+
+var rutaActual = null;
+var rutaMarkers = [];
+
+function verRutaBtn(btn) {
+  verRuta(btn.getAttribute('data-tecnico'));
+}
+
+function verRuta(tecnico) {
+  if (!GAS_URL || !map) return;
+  limpiarRuta();
+  fetch(GAS_URL + '?action=ruta&tecnico=' + encodeURIComponent(tecnico) + '&t=' + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (!data.ok || !data.puntos.length) { alert('Sin historial de ruta para ' + tecnico); return; }
+      var coords = [];
+      data.puntos.forEach(function(p) {
+        var lat = normalizarCoordenada(p.lat, true);
+        var lng = normalizarCoordenada(p.lng, false);
+        if (!lat || !lng) return;
+        coords.push([lat, lng]);
+        var iconoVerde = L.divIcon({
+          html: '<div style="width:10px;height:10px;border-radius:50%;background:#2D6A4F;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4);"></div>',
+          className: '', iconSize: [10,10], iconAnchor: [5,5]
+        });
+        var ts = p.timestamp ? new Date(p.timestamp).toLocaleTimeString('es-ES') : '';
+        var mk = L.marker([lat,lng], { icon: iconoVerde })
+          .bindPopup('<div style="font-family:Arial;font-size:12px;min-width:140px;"><b style="color:#2D6A4F;">Ruta: ' + p.tecnico + '</b><br>' + (p.cliente ? '👥 ' + p.cliente + '<br>' : '') + (ts ? '🕐 ' + ts : '') + '</div>')
+          .addTo(map);
+        rutaMarkers.push(mk);
+      });
+      if (coords.length > 1) {
+        rutaActual = L.polyline(coords, { color: '#2D6A4F', weight: 3, opacity: 0.7, dashArray: '6,4' }).addTo(map);
+        map.fitBounds(rutaActual.getBounds(), { padding: [30,30] });
+      } else if (coords.length === 1) { map.setView(coords[0], 15); }
+    }).catch(function(e) { console.error(e); });
+}
+
+function limpiarRuta() {
+  if (rutaActual) { map.removeLayer(rutaActual); rutaActual = null; }
+  rutaMarkers.forEach(function(m) { map.removeLayer(m); });
+  rutaMarkers = [];
+}
+
 initMapa();
 if (GAS_URL) cargarPosiciones();
 
 // Auto-refresh cada 60 segundos
-autoRefreshInterval = setInterval(cargarPosiciones, 30 * 1000); // cada 30 segundos
+autoRefreshInterval = setInterval(cargarPosiciones, 15 * 1000); // cada 15 segundos
 
 // Mostrar config si el usuario quiere cambiar la URL
 document.querySelector('.header-logo').addEventListener('click', function() {
