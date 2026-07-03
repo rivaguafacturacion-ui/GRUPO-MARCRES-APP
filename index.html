@@ -1824,8 +1824,11 @@ async function cargarTareasAlbaran(id, nomFinal) {
   lista.innerHTML = '<div class="tareas-cargando-alb">⏳ Cargando tareas asignadas...</div>';
 
   try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 30000);
     const url = GAS_URL + '?action=tareas&empleadoId=' + encodeURIComponent(id) + '&empleadoNombre=' + encodeURIComponent(nomFinal);
-    const res = await fetch(url);
+    const res = await fetch(url, { signal: ctrl.signal });
+    clearTimeout(timer);
     const data = await res.json();
     const tareas = (data.ok && data.tareas && data.tareas.length) ? data.tareas : [];
 
@@ -1878,7 +1881,7 @@ async function cargarTareasAlbaran(id, nomFinal) {
     if (arrow) arrow.classList.add('open');
 
   } catch(e) {
-    lista.innerHTML = '<div class="tareas-cargando-alb" style="color:var(--bad);">Error cargando tareas. Puedes rellenar el cliente manualmente.</div>';
+    lista.innerHTML = '<div class="tareas-cargando-alb" style="color:var(--bad);">⚠️ Error. Reintentar o rellena manualmente.</div>';
     var body = document.getElementById('a-tareas-body');
     if (body) body.classList.add('open');
   }
