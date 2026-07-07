@@ -2842,14 +2842,15 @@ function getCheckedDescal(ids) {
 
 async function enviarDescalcificador() {
   const btn = document.getElementById('send-descal-btn');
-  if (!validarInicioYEmpresa()) return;
+  if (!parteEnCurso) { showToast('⚠️ Primero pulsa INICIO','warning'); return; }
+  if (!empresaAlbaran) { showToast('⚠️ Selecciona una empresa','warning'); return; }
   const tecnico = document.getElementById('a-tecnico').value.trim();
-  if (!tecnico) { showToast('Selecciona un técnico','warning'); return; }
+  if (!tecnico) { showToast('⚠️ Selecciona un técnico','warning'); return; }
   const cliente = document.getElementById('a-cliente').value.trim();
-  if (!cliente) { showToast('Indica el cliente','warning'); return; }
+  if (!cliente) { showToast('⚠️ Indica el cliente','warning'); return; }
   const firma = getFirmaBase64('tecnico-descal');
-  if (!firma) { showToast('Firma del técnico obligatoria','warning'); return; }
-  btn.disabled = true; btn.textContent = 'Enviando...';
+  if (!firma) { showToast('⚠️ Firma del técnico obligatoria','warning'); return; }
+  btn.disabled = true; btn.textContent = '⏳ Enviando...';
   const fechaTexto = document.getElementById('a-fecha').textContent.trim();
   const ubicacion = await obtenerUbicacion().catch(()=>null);
   const acceso = getCheckedDescal(['descal-acceso-llaves','descal-acceso-maestra','descal-acceso-conserje']);
